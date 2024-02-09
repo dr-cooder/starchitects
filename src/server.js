@@ -1,29 +1,25 @@
-const http = require('http');
-const url = require('url');
-const { startGameWebSockets } = require('./gameWebSocket.js');
+const express = require('express');
+const bodyParser = require('body-parser');
+const { startGameWebSockets } = require('./webSocketServer.js');
 const htmlHandler = require('./htmlResponses.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
-const urlStruct = {
-  '/': htmlHandler.getIndex,
-  '/style.css': htmlHandler.getCSS,
-  '/bundle.js': htmlHandler.getJS,
-  notFound: htmlHandler.getIndex,
-};
+const app = express();
 
-const onRequest = (request, response) => {
-  const parsedUrl = url.parse(request.url, true);
-  const handlerFunction = urlStruct[parsedUrl.pathname];
-  if (handlerFunction) {
-    handlerFunction(request, response, parsedUrl.query);
-  } else {
-    urlStruct.notFound(request, response);
-  }
-};
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
-http.createServer(onRequest).listen(port, () => {
-  console.log(`Listening on 127.0.0.1:${port}`);
+app.get('/', htmlHandler.getIndex);
+app.get('/style.css', htmlHandler.getCSS);
+app.get('/bundle.js', htmlHandler.getJS);
+
+// Miscellaneous URL's return index
+// https://expressjs.com/en/starter/faq.html
+app.use(htmlHandler.getIndex);
+
+app.listen(port, () => {
+  console.log(`Server listening on 127.0.0.1:${port}`);
 });
 
 startGameWebSockets();

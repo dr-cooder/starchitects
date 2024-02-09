@@ -16,8 +16,15 @@
       <button id="simulateRoomBtn">(DEBUG) Simulate room</button>
     </div>
     <div id="personalityQuizScreen"></div>
-    <div id="starScreen">
-      <div id="placeholderStarDisplay"></div>
+    <div id="unbornStarScreen">
+      <div>Congratulations! Here is your star! Now, go to (insert our room building+number here) and swipe your star up into the galaxy!</div>
+      <div id="placeholderUnbornStarDisplay"></div>
+      <button id="placeholderBirthStarBtn">"Swipe up"</button>
+    </div>
+    <div id="bornStarScreen">
+      <div id="placeholderBornStarDisplay"></div>
+      <button id="glowBtn">Hold to glow</button>
+      <input id="spinSpeedRange" type="range" min="0" max="1000" value="0">
     </div>
     <div id="errorScreen">
       <div id="errorMessage"></div>

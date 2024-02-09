@@ -4,10 +4,15 @@ const textDecoder = new TextDecoder();
 const wsPort = 443;
 
 const wsHeaders = {
-  newClient: {
+  newClientToServer: {
     joinAsRoom: 0,
     joinAsNewStar: 1,
-    joinAsReturningStar: 2,
+    joinAsExistingStar: 2,
+  },
+  webAppToServer: {
+    birthStar: 0,
+    setStarGlow: 1,
+    setStarSpinSpeed: 2,
   },
   serverToWebApp: {
     errorMsg: 0,

@@ -8,4 +8,8 @@ Take a personality quiz to form your personalized star, then find it in the gala
 ### External Components
 - Bootstrap
 ## To-Do
-- Everything
+- Room simulation
+- Make it possible for stars to be deleted
+- Quiz functionality
+- Database storage of stars
+- Visuals
