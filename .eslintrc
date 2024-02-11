@@ -1,12 +1,20 @@
-{ 
-  "extends": "airbnb/base",
+{
+  "extends": [
+    "airbnb/base",
+    "plugin:react/recommended"
+  ],
   "rules": {
-    "no-underscore-dangle" : "off",
+    "no-underscore-dangle": "off",
     "no-plusplus": "off",
     "import/extensions": "off"
   },
   "env": {
     "browser": true,
     "node": true
+  },
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    }
   }
 }

@@ -4,7 +4,7 @@
   "description": "Take a personality quiz to form your personalized star, then find it in the galaxy room.",
   "main": "./src/server.js",
   "scripts": {
-    "start": "npm-run-all --parallel nodemon webpack",
+    "start": "npm-run-all --parallel webpack nodemon",
     "pretest": "eslint ./src --fix",
     "test": "echo \"Tests complete\"",
     "nodemon": "nodemon -e html,css,js,mjs,json --watch ./src --watch ./hosted ./src/server.js",
@@ -31,8 +31,16 @@
     "webpack-cli": "^4.10.0"
   },
   "dependencies": {
+    "@babel/core": "^7.23.9",
+    "@babel/preset-env": "^7.23.9",
+    "@babel/preset-react": "^7.23.3",
+    "babel-loader": "^9.1.3",
     "body-parser": "^1.20.2",
     "express": "^4.18.2",
+    "framer-motion": "^11.0.3",
+    "prop-types": "^15.8.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "ws": "^8.14.2"
   }
 }

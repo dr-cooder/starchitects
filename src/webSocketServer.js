@@ -22,10 +22,10 @@ const applyBornStarBehavior = (id) => {
     const webAppToServerHeaders = wsHeaders.webAppToServer;
     switch (header) {
       case webAppToServerHeaders.setStarGlow:
-        // Tell the server
+        // TODO: Tell the server
         break;
       case webAppToServerHeaders.setStarSpinSpeed:
-        // Tell the server
+        // TODO: Tell the server
         break;
       default:
         socket.send(makeWsMsg(wsHeaders.serverToWebApp.errorMsg, 'Unexpected star action header.'));

@@ -13,6 +13,7 @@ app.use(bodyParser.json());
 app.get('/', htmlHandler.getIndex);
 app.get('/style.css', htmlHandler.getCSS);
 app.get('/bundle.js', htmlHandler.getJS);
+app.get('/bundle.js.LICENSE.txt', htmlHandler.getJSLicense);
 
 // Miscellaneous URL's return index
 // https://expressjs.com/en/starter/faq.html
