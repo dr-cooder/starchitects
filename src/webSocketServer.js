@@ -11,21 +11,31 @@ const getNextStarId = () => nextStarId++;
 
 const stars = {};
 const starSockets = {};
-// let roomSocket;
+let roomSocket;
 
 const applyBornStarBehavior = (id) => {
   const socket = starSockets[id];
   // const star = stars[id];
   socket.removeAllListeners('message');
   socket.on('message', (rawData) => {
-    const { header/* , data */ } = parseWsMsg(rawData);
+    const { header, data } = parseWsMsg(rawData);
     const webAppToServerHeaders = wsHeaders.webAppToServer;
     switch (header) {
       case webAppToServerHeaders.setStarGlow:
-        // TODO: Tell the server
+        if (roomSocket) {
+          roomSocket.send(makeWsMsg(
+            wsHeaders.serverToRoom.setStarGlow,
+            { id, glow: data },
+          ));
+        }
         break;
       case webAppToServerHeaders.setStarSpinSpeed:
-        // TODO: Tell the server
+        if (roomSocket) {
+          roomSocket.send(makeWsMsg(
+            wsHeaders.serverToRoom.setStarSpinSpeed,
+            { id, spinSpeed: data },
+          ));
+        }
         break;
       default:
         socket.send(makeWsMsg(wsHeaders.serverToWebApp.errorMsg, 'Unexpected star action header.'));
@@ -41,12 +51,28 @@ const applyUnbornStarBehavior = (id) => {
     const { header } = parseWsMsg(rawData);
     if (header === wsHeaders.webAppToServer.birthStar) {
       star.born = true;
-      // TODO: Send star to room
+      if (roomSocket) {
+        roomSocket.send(makeWsMsg(
+          wsHeaders.serverToRoom.newStar,
+          star,
+        ));
+      }
       applyBornStarBehavior(id);
     } else {
       socket.send(makeWsMsg(wsHeaders.serverToWebApp.errorMsg, 'Expected "birth star" header.'));
     }
   });
+};
+
+const joinAsRoom = (socket) => {
+  if (roomSocket) {
+    socket.send(makeWsMsg(wsHeaders.serverToRoom.errorMsg, 'There is already an active room.'));
+  } else {
+    roomSocket = socket;
+    socket.on('close', () => { roomSocket = undefined; });
+    socket.send(makeWsMsg(wsHeaders.serverToRoom.allStars, stars));
+    // socket.on('message', ???);
+  }
 };
 
 const joinAsExistingStar = (socket, id) => {
@@ -88,24 +114,28 @@ const startGameWebSockets = () => {
   const socketServer = new WebSocketServer({ port: wsPort });
   socketServer.on('connection', (socket) => {
     // Initial message establishes client type, and determines what to do with this new socket
-    socket.on('message', (rawData) => {
+    const handleInitialMessage = (rawData) => {
       const { header, data } = parseWsMsg(rawData);
       const newClientHeaders = wsHeaders.newClientToServer;
       switch (header) {
         case newClientHeaders.joinAsRoom:
-          // TODO: This socket will be the room if there is not one already
+          socket.removeEventListener('message', handleInitialMessage);
+          joinAsRoom(socket);
           break;
         case newClientHeaders.joinAsNewStar:
+          socket.removeEventListener('message', handleInitialMessage);
           joinAsNewStar(socket, data);
           break;
         case newClientHeaders.joinAsExistingStar:
+          socket.removeEventListener('message', handleInitialMessage);
           joinAsExistingStar(socket, data);
           break;
         default:
           // Send error but don't disconnect (leave that up to the client)
           socket.send(makeWsMsg(wsHeaders.serverToWebApp.errorMsg, 'Invalid join header.'));
       }
-    });
+    };
+    socket.on('message', handleInitialMessage);
   });
 };
 

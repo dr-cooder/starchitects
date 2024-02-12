@@ -18,6 +18,13 @@ const wsHeaders = {
     errorMsg: 0,
     joinSuccess: 1,
   },
+  serverToRoom: {
+    errorMsg: 0,
+    allStars: 1,
+    newStar: 2,
+    setStarGlow: 3,
+    setStarSpinSpeed: 4,
+  },
 };
 
 const makeWsMsg = (header, data) => textEncoder.encode(JSON.stringify({ header, data }));

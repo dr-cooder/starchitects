@@ -11,6 +11,9 @@ const {
   parseWsMsg,
 } = require('../common/webSocket.js');
 
+// Set rejoin to null to affix stars to sessions/tabs rather than browsers via local storage
+// (optimal for debugging multiple client instances on one device), otherwise set to non-nullish
+const rejoin = null;
 const webSocketURL = `ws://${window.location.hostname}:${wsPort}`;
 const screenRef = createRef();
 let webSocket; // = new WebSocket(webSocketURL); // This is just here for autocomplete purposes
@@ -48,13 +51,13 @@ const setScreen = (screen) => {
 
 // Self-referencing set of app states and their behaviors
 const setAppState = {
-  start: () => setScreen(screens.start({
-    onCreateStar: setAppState.personalityQuiz,
-    onSimulateRoom: () => {}, // TODO: temporary room simulation state
-  })),
-  personalityQuiz: () => setScreen(screens.personalityQuiz({
-    questions: '(Pretend there are questions here)',
-    onSubmit: (quizAnswers) => {
+  start: () => setScreen(<screens.start
+    onCreateStar={setAppState.personalityQuiz}
+    onSimulateRoom={setAppState.roomSim} // TODO: remove this once Unreal app has this functionality
+  />),
+  personalityQuiz: () => setScreen(<screens.personalityQuiz
+    questions='(Pretend there are questions here)'
+    onSubmit={(quizAnswers) => {
       setScreen();
       initializeWebSocket(
         wsHeaders.newClientToServer.joinAsNewStar,
@@ -70,32 +73,36 @@ const setAppState = {
           }
         },
       );
-    },
-  })),
-  unbornStar: (starData) => setScreen(screens.unbornStar({
-    starData,
-    onSwipeStarUp: () => {
+    }}
+  />),
+  unbornStar: (starData) => setScreen(<screens.unbornStar
+    starData={starData}
+    onSwipeStarUp={() => {
       webSocket.send(makeWsMsg(wsHeaders.webAppToServer.birthStar));
       setAppState.bornStar(starData);
-    },
-  })),
-  bornStar: (starData) => setScreen(screens.bornStar({
-    starData,
-    // TODO: these should do what they are meant to do
-    onSetStarGlow: () => {},
-    onSetStarSpinSpeed: () => {},
-  })),
-  error: (message) => setScreen(screens.error({
-    message,
-    onLeave: setAppState.start,
-  })),
+    }}
+  />),
+  bornStar: (starData) => setScreen(<screens.bornStar
+    starData={starData}
+    onSetStarGlow={(value) => {
+      webSocket.send(makeWsMsg(wsHeaders.webAppToServer.setStarGlow, value));
+    }}
+    onSetStarSpinSpeed={(value) => {
+      webSocket.send(makeWsMsg(wsHeaders.webAppToServer.setStarSpinSpeed, value));
+    }}
+  />),
+  error: (message) => setScreen(<screens.error
+    message={message}
+    onLeave={setAppState.start}
+  />),
+  roomSim: () => setScreen(<screens.roomSim/>),
 };
 
 connectionLost = () => setAppState.error('Connection lost.');
 
 const init = () => {
   // Automatically try to join with a previously-existing star ID
-  const initialStarId = getStarId();
+  const initialStarId = rejoin && getStarId();
   if (initialStarId !== null) {
     initializeWebSocket(
       wsHeaders.newClientToServer.joinAsExistingStar,
