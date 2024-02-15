@@ -3,7 +3,7 @@ const PropTypes = require('prop-types');
 
 const PersonalityQuizScreen = ({ questions, onSubmit }) => (
   <>
-    <div>{questions}</div>
+    <p>{questions}</p>
     <button onClick={() => onSubmit({
       sampleQuestion: 'Sample Answer',
     })}>Submit</button>

@@ -11,3 +11,7 @@ html {
 #root {
   text-align: center;
 }
+
+.emphasized {
+  font-weight: bold;
+}

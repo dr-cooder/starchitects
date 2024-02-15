@@ -9,7 +9,7 @@ const BornStarScreen = ({ starData, onSetStarGlow, onSetStarSpinSpeed }) => {
   const [spinSpeedValue, setSpinSpeedValue] = useState(defaultSpinSpeedValue);
   return (
     <>
-      <div>{JSON.stringify(starData)}</div>
+      <p>{JSON.stringify(starData)}</p>
       <button onMouseDown={() => onSetStarGlow(true)} onMouseUp={() => onSetStarGlow(false)}>
         Hold to glow
       </button>
@@ -24,7 +24,7 @@ const BornStarScreen = ({ starData, onSetStarGlow, onSetStarSpinSpeed }) => {
         max={1000}
         defaultValue={defaultSpinSpeedValue}
       />
-      <div>{spinSpeedValue}</div>
+      <p>{spinSpeedValue}</p>
     </>
   );
 };

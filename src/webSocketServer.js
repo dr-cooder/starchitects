@@ -13,6 +13,7 @@ const stars = {};
 const starSockets = {};
 let roomSocket;
 
+// TODO: JSON format validating, alongside parse error handling
 const applyBornStarBehavior = (id) => {
   const socket = starSockets[id];
   // const star = stars[id];
@@ -48,9 +49,10 @@ const applyUnbornStarBehavior = (id) => {
   const star = stars[id];
   socket.removeAllListeners('message');
   socket.on('message', (rawData) => {
-    const { header } = parseWsMsg(rawData);
+    const { header, data } = parseWsMsg(rawData);
     if (header === wsHeaders.webAppToServer.birthStar) {
-      star.born = true;
+      const { primary, secondary, glow } = data;
+      star.colors = { primary, secondary, glow };
       if (roomSocket) {
         roomSocket.send(makeWsMsg(
           wsHeaders.serverToRoom.newStar,
@@ -70,7 +72,10 @@ const joinAsRoom = (socket) => {
   } else {
     roomSocket = socket;
     socket.on('close', () => { roomSocket = undefined; });
-    socket.send(makeWsMsg(wsHeaders.serverToRoom.allStars, stars));
+    socket.send(makeWsMsg(
+      wsHeaders.serverToRoom.allStars,
+      Object.values(stars).filter((e) => e.colors),
+    ));
     // socket.on('message', ???);
   }
 };
@@ -85,7 +90,7 @@ const joinAsExistingStar = (socket, id) => {
     starSockets[id] = socket;
     socket.send(makeWsMsg(wsHeaders.serverToWebApp.joinSuccess, existingStar));
     socket.on('close', () => { starSockets[id] = undefined; });
-    if (existingStar.born) {
+    if (existingStar.colors) {
       applyBornStarBehavior(id);
     } else {
       applyUnbornStarBehavior(id);
@@ -100,10 +105,8 @@ const joinAsNewStar = (socket/* , quizAnswers */) => {
   const newStar = {
     name: 'Starry',
     id,
-    color: 'Red',
     object: 'Toaster',
     shineShape: 'Pentagon',
-    born: false,
     position: [0, 0, 0],
   };
   stars[id] = newStar;

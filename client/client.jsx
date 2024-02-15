@@ -77,9 +77,13 @@ const setAppState = {
   />),
   unbornStar: (starData) => setScreen(<screens.unbornStar
     starData={starData}
-    onSwipeStarUp={() => {
-      webSocket.send(makeWsMsg(wsHeaders.webAppToServer.birthStar));
-      setAppState.bornStar(starData);
+    onSwipeStarUp={(colors) => {
+      const bornStarData = starData; // JSON.parse(JSON.stringify(starData));
+      bornStarData.colors = colors;
+      // Can't edit function parameters as per ESLint rules, but
+      // mutating starData via a shallow copy shouldn't be an issue
+      webSocket.send(makeWsMsg(wsHeaders.webAppToServer.birthStar, colors));
+      setAppState.bornStar(bornStarData);
     }}
   />),
   bornStar: (starData) => setScreen(<screens.bornStar

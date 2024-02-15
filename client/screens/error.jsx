@@ -3,7 +3,7 @@ const PropTypes = require('prop-types');
 
 const ErrorScreen = ({ message, onLeave }) => (
   <>
-    <div>{message}</div>
+    <p>{message}</p>
     <button onClick={onLeave}>Back</button>
   </>
 );

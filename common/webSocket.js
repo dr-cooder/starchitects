@@ -29,6 +29,7 @@ const wsHeaders = {
 
 const makeWsMsg = (header, data) => textEncoder.encode(JSON.stringify({ header, data }));
 
+// TODO: Catch parsing errors!
 const parseWsMsg = (arrayBuffer) => JSON.parse(textDecoder.decode(arrayBuffer));
 
 module.exports = {

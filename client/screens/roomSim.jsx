@@ -60,7 +60,7 @@ const RoomSimScreen = () => {
   }, []);
 
   return (
-      <>{latestLog}</>
+      <p>{latestLog}</p>
   );
 };
 
