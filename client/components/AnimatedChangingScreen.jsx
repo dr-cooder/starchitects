@@ -21,14 +21,16 @@ class AnimatedChangingScreen extends Component {
 
   render() {
     return (
-      <AnimatePresence mode='wait'>
+      <AnimatePresence mode='sync'>
         <motion.div
           key={this.state.timesScreenWasChanged}
-          initial={{ opacity: 0, x: 100 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -100 }}
+          initial={this.state.timesScreenWasChanged === 0 ? null : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          // Ensures an exit "animation" with no visual difference.
+          // Hope this isn't too much of a hack...
+          exit={{ opacity: 2 }}
           transition={{ duration: 0.5 }}
-          // Screens shouldn't be interactible during fade in/out
+          // Screens shouldn't be interactible during transition
           // https://stackblitz.com/edit/react-inert-demo
           ref={this.motionDivRef}
           onAnimationStart={() => this.motionDivRef.current.setAttribute('inert', '')}
@@ -42,7 +44,7 @@ class AnimatedChangingScreen extends Component {
 }
 
 AnimatedChangingScreen.propTypes = {
-  initialScreen: PropTypes.element,
+  initialScreen: PropTypes.node,
 };
 
 module.exports = AnimatedChangingScreen;

@@ -6,6 +6,11 @@ Take a personality quiz to form your personalized star, then find it in the gala
 - https://stackoverflow.com/questions/36212722/how-to-prevent-pull-down-to-refresh-of-mobile-chrome
 - https://github.com/TheCodersLife/animated-react-tabs
 - https://stackblitz.com/edit/react-inert-demo
+- https://stackoverflow.com/questions/6528876/how-to-redirect-404-errors-to-a-page-in-expressjs
+- https://stackoverflow.com/questions/36862334/get-viewport-window-height-in-reactjs
+- https://codesandbox.io/p/sandbox/34kr2rw285
+- https://dinbror.dk/blog/how-to-preload-entire-html5-video-before-play-solved/
+- https://stackoverflow.com/questions/14218607/javascript-loading-progress-of-an-image
 ### External Components
 - Bootstrap
 - React

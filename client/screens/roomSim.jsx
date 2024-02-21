@@ -6,6 +6,8 @@ const {
   makeWsMsg,
   parseWsMsg,
 } = require('../../common/webSocket.js');
+const { BackgroundImage, ScalingSection } = require('../components');
+const { blobFilenames, blobs } = require('../preload.js');
 
 const serverDomainName = window.location.hostname;
 
@@ -60,7 +62,14 @@ const RoomSimScreen = () => {
   }, []);
 
   return (
-      <p>{latestLog}</p>
+    <BackgroundImage
+      src={blobs[blobFilenames.tempBG]}
+      darkness={0.75}
+    >
+      <ScalingSection>
+        <p>{latestLog}</p>
+      </ScalingSection>
+    </BackgroundImage>
   );
 };
 

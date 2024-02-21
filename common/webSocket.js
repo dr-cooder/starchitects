@@ -10,13 +10,15 @@ const wsHeaders = {
     joinAsExistingStar: 2,
   },
   webAppToServer: {
-    birthStar: 0,
-    setStarGlow: 1,
-    setStarSpinSpeed: 2,
+    newName: 0,
+    birthStar: 1,
+    setStarGlow: 2,
+    setStarSpinSpeed: 3,
   },
   serverToWebApp: {
     errorMsg: 0,
-    joinSuccess: 1,
+    newName: 1,
+    joinSuccess: 2,
   },
   serverToRoom: {
     errorMsg: 0,

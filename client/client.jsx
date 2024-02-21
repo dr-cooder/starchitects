@@ -11,13 +11,21 @@ const {
   parseWsMsg,
 } = require('../common/webSocket.js');
 
-// Set rejoin to null to affix stars to sessions/tabs rather than browsers via local storage
-// (optimal for debugging multiple client instances on one device), otherwise set to non-nullish
-const rejoin = null;
+// Set rejoin to truthy to affix stars to sessions/tabs rather than browsers via local storage
+// (optimal for debugging multiple client instances on one device)
+const rejoin = false;
 const webSocketURL = `ws://${window.location.hostname}:${wsPort}`;
 const screenRef = createRef();
 let webSocket; // = new WebSocket(webSocketURL); // This is just here for autocomplete purposes
 let connectionLost;
+
+const uponNextMessage = (callback) => {
+  const selfRemovingFirstResponseCallback = (firstMessageEvent) => {
+    webSocket.removeEventListener('message', selfRemovingFirstResponseCallback);
+    callback(firstMessageEvent);
+  };
+  webSocket.addEventListener('message', selfRemovingFirstResponseCallback);
+};
 
 // Freshly initializes webSocket to automatically connect to the server
 // and send firstMsgHeader and firstMsgData after doing so, invoking
@@ -31,11 +39,7 @@ const initializeWebSocket = (firstMsgHeader, firstMsgData, firstResponseCallback
     webSocket.send(makeWsMsg(firstMsgHeader, firstMsgData));
   });
   webSocket.addEventListener('close', connectionLost);
-  const selfRemovingFirstResponseCallback = (firstMessageEvent) => {
-    webSocket.removeEventListener('message', selfRemovingFirstResponseCallback);
-    firstResponseCallback(firstMessageEvent);
-  };
-  webSocket.addEventListener('message', selfRemovingFirstResponseCallback);
+  uponNextMessage(firstResponseCallback);
 };
 
 // Closes webSocket without invoking connectionLost
@@ -75,17 +79,33 @@ const setAppState = {
       );
     }}
   />),
-  unbornStar: (starData) => setScreen(<screens.unbornStar
-    starData={starData}
-    onSwipeStarUp={(colors) => {
-      const bornStarData = starData; // JSON.parse(JSON.stringify(starData));
-      bornStarData.colors = colors;
-      // Can't edit function parameters as per ESLint rules, but
-      // mutating starData via a shallow copy shouldn't be an issue
-      webSocket.send(makeWsMsg(wsHeaders.webAppToServer.birthStar, colors));
-      setAppState.bornStar(bornStarData);
-    }}
-  />),
+  unbornStar: (starData) => {
+    const unbornStarScreenRef = createRef();
+    return setScreen(<screens.unbornStar
+      ref={unbornStarScreenRef}
+      starData={starData}
+      onNewName={() => {
+        webSocket.send(makeWsMsg(wsHeaders.webAppToServer.newName));
+        uponNextMessage((event) => {
+          const { header, data } = parseWsMsg(event.data);
+          if (header === wsHeaders.serverToWebApp.errorMsg) {
+            setAppState.error(data);
+            hangUpWebSocket();
+          } else if (header === wsHeaders.serverToWebApp.newName) {
+            unbornStarScreenRef.current.applyNewName(data);
+          }
+        });
+      }}
+      onSwipeStarUp={(customization) => {
+        const bornStarData = starData; // JSON.parse(JSON.stringify(starData));
+        Object.assign(bornStarData, customization);
+        // Can't edit function parameters as per ESLint rules, but
+        // mutating starData via a shallow copy shouldn't be an issue
+        webSocket.send(makeWsMsg(wsHeaders.webAppToServer.birthStar, customization));
+        setAppState.bornStar(bornStarData);
+      }}
+    />);
+  },
   bornStar: (starData) => setScreen(<screens.bornStar
     starData={starData}
     onSetStarGlow={(value) => {
@@ -105,34 +125,37 @@ const setAppState = {
 connectionLost = () => setAppState.error('Connection lost.');
 
 const init = () => {
-  // Automatically try to join with a previously-existing star ID
-  const initialStarId = rejoin && getStarId();
-  if (initialStarId !== null) {
-    initializeWebSocket(
-      wsHeaders.newClientToServer.joinAsExistingStar,
-      initialStarId,
-      (joinResult) => {
-        const { header, data } = parseWsMsg(joinResult.data);
-        if (header === wsHeaders.serverToWebApp.errorMsg) {
-          // Automatically joining with the stored star ID failed; start as normal
-          unsetStarId();
-          hangUpWebSocket();
-          setAppState.start();
-        } else if (header === wsHeaders.serverToWebApp.joinSuccess) {
-          if (data.born) {
-            setAppState.bornStar(data);
-          } else {
-            setAppState.unbornStar(data);
-          }
-        }
-      },
-    );
-  }
-
   const root = createRoot(document.querySelector('#root'));
   root.render(<AnimatedChangingScreen
     ref={screenRef}
-    initialScreen={!initialStarId && setAppState.start()}
+    initialScreen={<screens.loading
+      onLoad={() => {
+        const initialStarId = rejoin ? getStarId() : null;
+        if (initialStarId !== null) {
+          initializeWebSocket(
+            wsHeaders.newClientToServer.joinAsExistingStar,
+            initialStarId,
+            (joinResult) => {
+              const { header, data } = parseWsMsg(joinResult.data);
+              if (header === wsHeaders.serverToWebApp.errorMsg) {
+                // Automatically joining with the stored star ID failed; start as normal
+                unsetStarId();
+                hangUpWebSocket();
+                setAppState.start();
+              } else if (header === wsHeaders.serverToWebApp.joinSuccess) {
+                if (data.born) {
+                  setAppState.bornStar(data);
+                } else {
+                  setAppState.unbornStar(data);
+                }
+              }
+            },
+          );
+        } else {
+          setAppState.start();
+        }
+      }}
+    />}
   />);
 };
 

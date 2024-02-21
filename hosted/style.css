@@ -1,17 +1,106 @@
+:root {
+  --color-bright: #FAFAF0;
+  --color-shine: #FFBE00;
+  --color-radiance: #F60;
+  --color-midnight: #0E0A09;
+}
+
 /* https://stackoverflow.com/questions/36212722/how-to-prevent-pull-down-to-refresh-of-mobile-chrome */
 html, body {
   overscroll-behavior: contain;
   overflow: hidden;
 }
 
-html {
-  font-size: 24px;
+body {
+  color: var(--color-bright);
+  background-color: var(--color-midnight);
+  user-select: none;
 }
 
-#root {
-  text-align: center;
+p {
+  margin-bottom: 1em;
+  line-height: 1.5em;
+}
+
+.header {
+  font-weight: bold;
+  font-size: 1.5em;
+  margin-bottom: 0;
+}
+
+.header::after {
+  display: block;
+  content: '';
+  font-size: calc(2em / 3);
+  margin: 0.5em 0;
+  height: 0.125em;
+  background-color: var(--color-bright);
+}
+
+button {
+  font-weight: bold;
+  outline: none;
+  border: none;
+  padding: none;
+  background-color: var(--color-midnight);
+  color: var(--color-bright);
+}
+
+.background, .foreground {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+}
+
+.background {
+  object-fit: cover;
+}
+
+.outlined {
+  width: 100%;
+  height: 100%;
+  border-radius: 0.25em;
+  outline: var(--color-bright) solid 0.125em !important;
+}
+
+.outlinedWithTopNeighbor, .outlinedWithLeftNeighbor {
+  border-top-left-radius: 0;
+}
+
+.outlinedWithTopNeighbor, .outlinedWithRightNeighbor {
+  border-top-right-radius: 0;
+}
+
+.outlinedWithBottomNeighbor, .outlinedWithLeftNeighbor {
+  border-bottom-left-radius: 0;
+}
+
+.outlinedWithBottomNeighbor, .outlinedWithRightNeighbor {
+  border-bottom-right-radius: 0;
 }
 
 .emphasized {
   font-weight: bold;
+  color: var(--color-shine);
+}
+
+.header .emphasized {
+  font-weight: normal;
+  color: var(--color-radiance)
+}
+
+.centeredText {
+  text-align: center;
+}
+
+.questionBlock {
+  padding: calc(2em / 3) calc(4em / 3);
+  font-size: 1.5em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
 }

@@ -9,6 +9,9 @@ const {
 let nextStarId = 0;
 const getNextStarId = () => nextStarId++;
 
+// TODO: We obviosuly shouldn't name every star "Starry"
+const generateName = () => `Starry ${Math.random()}`;
+
 const stars = {};
 const starSockets = {};
 let roomSocket;
@@ -50,9 +53,26 @@ const applyUnbornStarBehavior = (id) => {
   socket.removeAllListeners('message');
   socket.on('message', (rawData) => {
     const { header, data } = parseWsMsg(rawData);
-    if (header === wsHeaders.webAppToServer.birthStar) {
-      const { primary, secondary, glow } = data;
-      star.colors = { primary, secondary, glow };
+    if (header === wsHeaders.webAppToServer.newName) {
+      const newName = generateName();
+      star.name = newName;
+      socket.send(makeWsMsg(
+        wsHeaders.serverToWebApp.newName,
+        newName,
+      ));
+    } else if (header === wsHeaders.webAppToServer.birthStar) {
+      const {
+        color,
+        size,
+        shine,
+        name,
+      } = data;
+      Object.assign(star, {
+        color,
+        size,
+        shine,
+        name,
+      });
       if (roomSocket) {
         roomSocket.send(makeWsMsg(
           wsHeaders.serverToRoom.newStar,
@@ -74,7 +94,7 @@ const joinAsRoom = (socket) => {
     socket.on('close', () => { roomSocket = undefined; });
     socket.send(makeWsMsg(
       wsHeaders.serverToRoom.allStars,
-      Object.values(stars).filter((e) => e.colors),
+      Object.values(stars).filter((e) => e.color != null),
     ));
     // socket.on('message', ???);
   }
@@ -90,24 +110,26 @@ const joinAsExistingStar = (socket, id) => {
     starSockets[id] = socket;
     socket.send(makeWsMsg(wsHeaders.serverToWebApp.joinSuccess, existingStar));
     socket.on('close', () => { starSockets[id] = undefined; });
-    if (existingStar.colors) {
-      applyBornStarBehavior(id);
-    } else {
+    if (existingStar.color == null) { // If the star has not been customized, it is unborn
       applyUnbornStarBehavior(id);
+    } else {
+      applyBornStarBehavior(id);
     }
   }
 };
 
 const joinAsNewStar = (socket/* , quizAnswers */) => {
-  // TODO: Make data (quiz answers) actually impact the star
+  // TODO: Make data (quizAnswers) actually impact the star
   // TODO: Store star in database
   const id = getNextStarId();
+  // Parameters initialized in the unborn state
   const newStar = {
-    name: 'Starry',
-    id,
-    object: 'Toaster',
-    shineShape: 'Pentagon',
-    position: [0, 0, 0],
+    name: generateName(), // String
+    id, // Nonnegative int
+    shape: 0, // This will be a "Shape ID", a 0-based int (we can agree upon these later)
+    position: [0, 0, 0], // [x, y, z]
+    // TO BE INITIALIZED AFTER BIRTH AND SENT TO ROOM ALONGSIDE OTHER PARAMETERS:
+    // color, size, shine (floats ranging from 0 to 1)
   };
   stars[id] = newStar;
   joinAsExistingStar(socket, id);

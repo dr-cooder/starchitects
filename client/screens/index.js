@@ -1,3 +1,4 @@
+module.exports.loading = require('./loading.jsx');
 module.exports.start = require('./start.jsx');
 module.exports.personalityQuiz = require('./personalityQuiz.jsx');
 module.exports.unbornStar = require('./unbornStar.jsx');
