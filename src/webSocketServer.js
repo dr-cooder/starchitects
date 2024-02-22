@@ -91,7 +91,10 @@ const joinAsRoom = (socket) => {
     socket.send(makeWsMsg(wsHeaders.serverToRoom.errorMsg, 'There is already an active room.'));
   } else {
     roomSocket = socket;
-    socket.on('close', () => { roomSocket = undefined; });
+    socket.on('close', () => {
+      roomSocket = undefined;
+      console.log('Room disconnected');
+    });
     socket.send(makeWsMsg(
       wsHeaders.serverToRoom.allStars,
       Object.values(stars).filter((e) => e.color != null),
@@ -109,7 +112,10 @@ const joinAsExistingStar = (socket, id) => {
   } else {
     starSockets[id] = socket;
     socket.send(makeWsMsg(wsHeaders.serverToWebApp.joinSuccess, existingStar));
-    socket.on('close', () => { starSockets[id] = undefined; });
+    socket.on('close', () => {
+      starSockets[id] = undefined;
+      console.log(`Client of star with ID ${id} disconnected`);
+    });
     if (existingStar.color == null) { // If the star has not been customized, it is unborn
       applyUnbornStarBehavior(id);
     } else {
@@ -127,12 +133,13 @@ const joinAsNewStar = (socket/* , quizAnswers */) => {
     name: generateName(), // String
     id, // Nonnegative int
     shape: 0, // This will be a "Shape ID", a 0-based int (we can agree upon these later)
-    position: [0, 0, 0], // [x, y, z]
+    // position: [0, 0, 0], // [x, y, z] // DISUSED; UNREAL APP WILL DETERMINE THIS STATEFULLY
     // TO BE INITIALIZED AFTER BIRTH AND SENT TO ROOM ALONGSIDE OTHER PARAMETERS:
     // color, size, shine (floats ranging from 0 to 1)
   };
   stars[id] = newStar;
   joinAsExistingStar(socket, id);
+  console.log(`Client of new star with ID ${id} joined`);
 };
 
 const startGameWebSockets = () => {
@@ -146,6 +153,7 @@ const startGameWebSockets = () => {
         case newClientHeaders.joinAsRoom:
           socket.removeEventListener('message', handleInitialMessage);
           joinAsRoom(socket);
+          console.log('Room joined');
           break;
         case newClientHeaders.joinAsNewStar:
           socket.removeEventListener('message', handleInitialMessage);
@@ -154,6 +162,7 @@ const startGameWebSockets = () => {
         case newClientHeaders.joinAsExistingStar:
           socket.removeEventListener('message', handleInitialMessage);
           joinAsExistingStar(socket, data);
+          console.log(`Client of star with ID ${data} rejoined`);
           break;
         default:
           // Send error but don't disconnect (leave that up to the client)
