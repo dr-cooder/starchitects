@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  entry: './client/client.js',
+  entry: './client/client.jsx',
   mode: 'production',
   output: {
     path: path.resolve(__dirname, 'hosted'),
