@@ -14,7 +14,10 @@ if (process.env.NODE_ENV === 'production') {
   app.use(helmet({
     contentSecurityPolicy: {
       directives: {
-        defaultSrc: ["'self'"],
+        defaultSrc: [
+          "'self'",
+          'blob:',
+        ],
         scriptSrc: [
           "'self'",
           "'unsafe-inline'",
@@ -23,7 +26,10 @@ if (process.env.NODE_ENV === 'production') {
           "'self'",
           'https://cdn.jsdelivr.net/',
         ],
-        imgSrc: ["'self'"],
+        imgSrc: [
+          "'self'",
+          'blob:',
+        ],
         connectSrc: ["'self'"],
         frameSrc: ["'self'"],
       },
