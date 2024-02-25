@@ -1,6 +1,5 @@
 const { WebSocketServer } = require('ws');
 const {
-  wsPort,
   wsHeaders,
   makeWsMsg,
   parseWsMsg,
@@ -142,8 +141,8 @@ const joinAsNewStar = (socket/* , quizAnswers */) => {
   console.log(`Client of new star with ID ${id} joined`);
 };
 
-const startGameWebSockets = () => {
-  const socketServer = new WebSocketServer({ port: wsPort });
+const startWebSocketServer = (server) => {
+  const socketServer = new WebSocketServer({ server });
   socketServer.on('connection', (socket) => {
     // Initial message establishes client type, and determines what to do with this new socket
     const handleInitialMessage = (rawData) => {
@@ -173,4 +172,4 @@ const startGameWebSockets = () => {
   });
 };
 
-module.exports = { startGameWebSockets };
+module.exports = { startWebSocketServer };

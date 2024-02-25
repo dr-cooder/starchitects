@@ -2,7 +2,7 @@ const path = require('path');
 const express = require('express');
 const compression = require('compression');
 const helmet = require('helmet');
-const { startGameWebSockets } = require('./webSocketServer.js');
+const { startWebSocketServer } = require('./webSocketServer.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 const staticPath = 'hosted';
@@ -47,8 +47,9 @@ app.get('*', (req, res) => {
 });
 app.use(compression);
 
-app.listen(port, () => {
+// https://stackoverflow.com/questions/42472726/websockets-express-js-and-can-t-establish-a-connection-to-the-server
+const server = app.listen(port, () => {
   console.log(`Server listening on 127.0.0.1:${port}`);
 });
 
-startGameWebSockets();
+startWebSocketServer(server);

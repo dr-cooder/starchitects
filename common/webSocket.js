@@ -1,7 +1,8 @@
 const textEncoder = new TextEncoder();
 const textDecoder = new TextDecoder();
 
-const wsPort = 443;
+// https://stackoverflow.com/questions/19754922/why-wont-my-app-establish-websocket-connection-on-heroku
+const getWebSocketURL = () => window.origin.replace(/^http/, 'ws');
 
 const wsHeaders = {
   newClientToServer: {
@@ -35,7 +36,7 @@ const makeWsMsg = (header, data) => textEncoder.encode(JSON.stringify({ header, 
 const parseWsMsg = (arrayBuffer) => JSON.parse(textDecoder.decode(arrayBuffer));
 
 module.exports = {
-  wsPort,
+  getWebSocketURL,
   wsHeaders,
   makeWsMsg,
   parseWsMsg,

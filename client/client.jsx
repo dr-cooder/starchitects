@@ -5,7 +5,7 @@ const { AnimatedChangingScreen } = require('./components');
 const screens = require('./screens');
 const { getStarId, setStarId, unsetStarId } = require('./localStorage.js');
 const {
-  wsPort,
+  getWebSocketURL,
   wsHeaders,
   makeWsMsg,
   parseWsMsg,
@@ -14,7 +14,7 @@ const {
 // Set rejoin to truthy to affix stars to sessions/tabs rather than browsers via local storage
 // (optimal for debugging multiple client instances on one device)
 const rejoin = false;
-const webSocketURL = `ws://${window.location.hostname}:${wsPort}`;
+const webSocketURL = getWebSocketURL();
 const screenRef = createRef();
 let webSocket; // = new WebSocket(webSocketURL); // This is just here for autocomplete purposes
 let connectionLost;

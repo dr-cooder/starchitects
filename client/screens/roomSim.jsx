@@ -1,7 +1,7 @@
 const React = require('react');
 const { useEffect, useState } = require('react');
 const {
-  wsPort,
+  getWebSocketURL,
   wsHeaders,
   makeWsMsg,
   parseWsMsg,
@@ -9,7 +9,7 @@ const {
 const { BackgroundImage, ScalingSection } = require('../components');
 const { blobFilenames, blobs } = require('../preload.js');
 
-const serverDomainName = window.location.hostname;
+const webSocketURL = getWebSocketURL();
 
 const RoomSimScreen = () => {
   const [latestLog, setLatestLog] = useState('Connecting to server as room...');
@@ -20,7 +20,7 @@ const RoomSimScreen = () => {
     // for better readability/translatability to self-contained C++)
 
     let joinedSuccessfully = false;
-    const webSocket = new WebSocket(`ws://${serverDomainName}:${wsPort}`);
+    const webSocket = new WebSocket(webSocketURL);
     webSocket.binaryType = 'arraybuffer';
 
     webSocket.addEventListener('open', () => {

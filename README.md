@@ -11,6 +11,8 @@ Take a personality quiz to form your personalized star, then find it in the gala
 - https://codesandbox.io/p/sandbox/34kr2rw285
 - https://dinbror.dk/blog/how-to-preload-entire-html5-video-before-play-solved/
 - https://stackoverflow.com/questions/14218607/javascript-loading-progress-of-an-image
+- https://stackoverflow.com/questions/19754922/why-wont-my-app-establish-websocket-connection-on-heroku
+- https://stackoverflow.com/questions/42472726/websockets-express-js-and-can-t-establish-a-connection-to-the-server
 ### External Components
 - Bootstrap
 - React
