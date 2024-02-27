@@ -21,22 +21,31 @@ const applyBornStarBehavior = (id) => {
   // const star = stars[id];
   socket.removeAllListeners('message');
   socket.on('message', (rawData) => {
-    const { header, data } = parseWsMsg(rawData);
+    const { header/* , data */ } = parseWsMsg(rawData);
     const webAppToServerHeaders = wsHeaders.webAppToServer;
+    const serverToRoomHeaders = wsHeaders.serverToRoom;
     switch (header) {
-      case webAppToServerHeaders.setStarGlow:
+      case webAppToServerHeaders.animSparkle:
         if (roomSocket) {
           roomSocket.send(makeWsMsg(
-            wsHeaders.serverToRoom.setStarGlow,
-            { id, glow: data },
+            serverToRoomHeaders.animSparkle,
+            id,
           ));
         }
         break;
-      case webAppToServerHeaders.setStarSpinSpeed:
+      case webAppToServerHeaders.animTwirl:
         if (roomSocket) {
           roomSocket.send(makeWsMsg(
-            wsHeaders.serverToRoom.setStarSpinSpeed,
-            { id, spinSpeed: data },
+            serverToRoomHeaders.animTwirl,
+            id,
+          ));
+        }
+        break;
+      case webAppToServerHeaders.animSupernova:
+        if (roomSocket) {
+          roomSocket.send(makeWsMsg(
+            serverToRoomHeaders.animSupernova,
+            id,
           ));
         }
         break;
@@ -63,13 +72,13 @@ const applyUnbornStarBehavior = (id) => {
       const {
         color,
         size,
-        shine,
+        shade,
         name,
       } = data;
       Object.assign(star, {
         color,
         size,
-        shine,
+        shade,
         name,
       });
       if (roomSocket) {
@@ -98,7 +107,15 @@ const joinAsRoom = (socket) => {
       wsHeaders.serverToRoom.allStars,
       Object.values(stars).filter((e) => e.color != null),
     ));
-    // socket.on('message', ???);
+    socket.on('message', (rawData) => {
+      const { header, data } = parseWsMsg(rawData);
+      if (header === wsHeaders.roomToServer.animationFinished) {
+        const starSocket = starSockets[data];
+        if (starSocket !== undefined) {
+          starSocket.send(makeWsMsg(wsHeaders.serverToWebApp.animationFinished));
+        }
+      }
+    });
   }
 };
 
@@ -134,7 +151,7 @@ const joinAsNewStar = (socket/* , quizAnswers */) => {
     shape: 0, // This will be a "Shape ID", a 0-based int (we can agree upon these later)
     // position: [0, 0, 0], // [x, y, z] // DISUSED; UNREAL APP WILL DETERMINE THIS STATEFULLY
     // TO BE INITIALIZED AFTER BIRTH AND SENT TO ROOM ALONGSIDE OTHER PARAMETERS:
-    // color, size, shine (floats ranging from 0 to 1)
+    // color, size, shade (floats ranging from 0 to 1)
   };
   stars[id] = newStar;
   joinAsExistingStar(socket, id);

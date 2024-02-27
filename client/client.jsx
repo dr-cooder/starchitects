@@ -106,15 +106,28 @@ const setAppState = {
       }}
     />);
   },
-  bornStar: (starData) => setScreen(<screens.bornStar
-    starData={starData}
-    onSetStarGlow={(value) => {
-      webSocket.send(makeWsMsg(wsHeaders.webAppToServer.setStarGlow, value));
-    }}
-    onSetStarSpinSpeed={(value) => {
-      webSocket.send(makeWsMsg(wsHeaders.webAppToServer.setStarSpinSpeed, value));
-    }}
-  />),
+  bornStar: (starData) => {
+    const bornStarScreenRef = createRef();
+    webSocket.addEventListener('message', (event) => {
+      const { header } = parseWsMsg(event.data);
+      if (header === wsHeaders.serverToWebApp.animationFinished) {
+        bornStarScreenRef.current.animationFinished();
+      }
+    });
+    return setScreen(<screens.bornStar
+      ref={bornStarScreenRef}
+      starData={starData}
+      onSparkle={() => {
+        webSocket.send(makeWsMsg(wsHeaders.webAppToServer.animSparkle));
+      }}
+      onTwirl={() => {
+        webSocket.send(makeWsMsg(wsHeaders.webAppToServer.animTwirl));
+      }}
+      onSupernova={() => {
+        webSocket.send(makeWsMsg(wsHeaders.webAppToServer.animSupernova));
+      }}
+    />);
+  },
   error: (message) => setScreen(<screens.error
     message={message}
     onLeave={setAppState.start}

@@ -45,7 +45,7 @@ class UnbornStarScreen extends Component {
             <button onClick={() => this.onSwipeStarUp({
               color: 0.0,
               size: 0.8,
-              shine: 0.5,
+              shade: 0.5,
               name: this.state.name,
             })}>&quot;Swipe up&quot;</button>
           </div>

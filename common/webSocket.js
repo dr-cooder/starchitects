@@ -13,20 +13,26 @@ const wsHeaders = {
   webAppToServer: {
     newName: 0,
     birthStar: 1,
-    setStarGlow: 2,
-    setStarSpinSpeed: 3,
+    animSparkle: 2,
+    animTwirl: 3,
+    animSupernova: 4,
   },
   serverToWebApp: {
     errorMsg: 0,
     newName: 1,
     joinSuccess: 2,
+    animationFinished: 3,
   },
   serverToRoom: {
     errorMsg: 0,
     allStars: 1,
     newStar: 2,
-    setStarGlow: 3,
-    setStarSpinSpeed: 4,
+    animSparkle: 3,
+    animTwirl: 4,
+    animSupernova: 5,
+  },
+  roomToServer: {
+    animationFinished: 0,
   },
 };
 

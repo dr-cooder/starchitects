@@ -1,51 +1,65 @@
 const React = require('react');
-const { useState } = require('react');
+const { Component } = require('react');
 const PropTypes = require('prop-types');
 const { BackgroundImage, ScalingSection } = require('../components');
 const { blobFilenames, blobs } = require('../preload.js');
 
-const defaultSpinSpeedValue = 0;
-const spinSpeedGranularity = 1000;
+class BornStarScreen extends Component {
+  constructor(props) {
+    super(props);
+    const {
+      starData,
+      onSparkle,
+      onTwirl,
+      onSupernova,
+    } = props;
 
-// TODO: "Hold to glow" button is not reliable
-const BornStarScreen = ({ starData, onSetStarGlow, onSetStarSpinSpeed }) => {
-  const [spinSpeedValue, setSpinSpeedValue] = useState(defaultSpinSpeedValue);
-  return (
+    this.state = {
+      animationInProgress: false,
+    };
+
+    const startAnimation = (callback) => () => {
+      this.setState({ animationInProgress: true });
+      callback();
+    };
+
+    this.starData = starData;
+    this.onSparkle = startAnimation(onSparkle);
+    this.onTwirl = startAnimation(onTwirl);
+    this.onSupernova = startAnimation(onSupernova);
+    this.animationFinished = () => {
+      this.setState({ animationInProgress: false });
+    };
+  }
+
+  render() {
+    return (
     <BackgroundImage
       src={blobs[blobFilenames.tempBG]}
       darkness={0.75}
     >
       <ScalingSection>
-        <p>{JSON.stringify(starData)}</p>
-        <button
-          onMouseDown={() => onSetStarGlow(true)}
-          onMouseUp={() => onSetStarGlow(false)}
-          onTouchStart={() => onSetStarGlow(true)}
-          onTouchEnd={() => onSetStarGlow(false)}
-        >
-          Hold to glow
+        <p>{JSON.stringify(this.starData)}</p>
+        <button onClick={this.onSparkle} disabled={this.state.animationInProgress}>
+          Sparkle
         </button>
-        <input
-          onChange={(event) => {
-            const value = event.target.value / spinSpeedGranularity;
-            setSpinSpeedValue(value);
-            onSetStarSpinSpeed(value);
-          }}
-          type="range"
-          min={0}
-          max={spinSpeedGranularity}
-          defaultValue={Math.floor(defaultSpinSpeedValue * spinSpeedGranularity)}
-        />
-        <p>{spinSpeedValue}</p>
+        <button onClick={this.onTwirl} disabled={this.state.animationInProgress}>
+          Twirl
+        </button>
+        <button onClick={this.onSupernova} disabled={this.state.animationInProgress}>
+          Supernova
+        </button>
       </ScalingSection>
     </BackgroundImage>
-  );
-};
+    );
+  }
+}
 
 BornStarScreen.propTypes = {
   starData: PropTypes.object,
-  onSetStarGlow: PropTypes.func,
-  onSetStarSpinSpeed: PropTypes.func,
+  onSparkle: PropTypes.func,
+  onTwirl: PropTypes.func,
+  onSupernova: PropTypes.func,
 };
 
 module.exports = BornStarScreen;
