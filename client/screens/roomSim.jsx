@@ -25,7 +25,7 @@ class Star extends Component {
 
     this.state = {
       currentAnimation: animateAppearing ? 'Appearing' : 'Idle',
-      inAnimation: animateAppearing,
+      inAnimation: false,
     };
 
     this.starData = starData;

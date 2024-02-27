@@ -1,5 +1,5 @@
-const textEncoder = new TextEncoder();
-const textDecoder = new TextDecoder();
+// const textEncoder = new TextEncoder();
+// const textDecoder = new TextDecoder();
 
 // https://stackoverflow.com/questions/19754922/why-wont-my-app-establish-websocket-connection-on-heroku
 const getWebSocketURL = () => window.origin.replace(/^http/, 'ws');
@@ -36,10 +36,10 @@ const wsHeaders = {
   },
 };
 
-const makeWsMsg = (header, data) => textEncoder.encode(JSON.stringify({ header, data }));
+const makeWsMsg = (header, data) => JSON.stringify({ header, data });
 
 // TODO: Catch parsing errors!
-const parseWsMsg = (arrayBuffer) => JSON.parse(textDecoder.decode(arrayBuffer));
+const parseWsMsg = (arrayBuffer) => JSON.parse(arrayBuffer);
 
 module.exports = {
   getWebSocketURL,
