@@ -13,7 +13,7 @@ const {
 
 // Set rejoin to truthy to affix stars to sessions/tabs rather than browsers via local storage
 // (optimal for debugging multiple client instances on one device)
-const rejoin = false;
+const rejoin = true;
 const webSocketURL = getWebSocketURL();
 const screenRef = createRef();
 let webSocket; // = new WebSocket(webSocketURL); // This is just here for autocomplete purposes
@@ -156,7 +156,9 @@ const init = () => {
                 hangUpWebSocket();
                 setAppState.start();
               } else if (header === wsHeaders.serverToWebApp.joinSuccess) {
-                if (data.born) {
+                // TODO: This assumes color is nullish if and only if the star is unborn;
+                // This may change
+                if (data.color != null) {
                   setAppState.bornStar(data);
                 } else {
                   setAppState.unbornStar(data);

@@ -3,6 +3,15 @@ const { Component } = require('react');
 const PropTypes = require('prop-types');
 const { BackgroundImage, ScalingSection } = require('../components');
 const { blobFilenames, blobs } = require('../preload.js');
+const { unitsHorizontalInner, unitsVerticalInner } = require('../scalingMeasurements.js');
+
+const buttonHeight = 40;
+const buttonSpacing = 24;
+
+const buttonTop = unitsVerticalInner - buttonHeight;
+const buttonWidth = (unitsHorizontalInner - buttonSpacing * 2) / 3;
+const middleButtonOffset = buttonWidth + buttonSpacing;
+const rightButtonOffset = middleButtonOffset * 2;
 
 class BornStarScreen extends Component {
   constructor(props) {
@@ -38,15 +47,53 @@ class BornStarScreen extends Component {
       src={blobs[blobFilenames.tempBG]}
       darkness={0.75}
     >
-      <ScalingSection>
+      <ScalingSection
+        heightUnits={buttonTop}
+        heightFreeSpace={1}
+      >
         <p>{JSON.stringify(this.starData)}</p>
-        <button onClick={this.onSparkle} disabled={this.state.animationInProgress}>
+      </ScalingSection>
+      <ScalingSection
+        topUnits={buttonTop}
+        topFreeSpace={1}
+        widthUnits={buttonWidth}
+        heightUnits={buttonHeight}
+      >
+        <button
+          className='outlined'
+          onClick={this.onSparkle}
+          disabled={this.state.animationInProgress}
+        >
           Sparkle
         </button>
-        <button onClick={this.onTwirl} disabled={this.state.animationInProgress}>
+      </ScalingSection>
+      <ScalingSection
+        leftUnits={middleButtonOffset}
+        topUnits={buttonTop}
+        topFreeSpace={1}
+        widthUnits={buttonWidth}
+        heightUnits={buttonHeight}
+      >
+        <button
+          className='outlined'
+          onClick={this.onTwirl}
+          disabled={this.state.animationInProgress}
+        >
           Twirl
         </button>
-        <button onClick={this.onSupernova} disabled={this.state.animationInProgress}>
+      </ScalingSection>
+      <ScalingSection
+        leftUnits={rightButtonOffset}
+        topUnits={buttonTop}
+        topFreeSpace={1}
+        widthUnits={buttonWidth}
+        heightUnits={buttonHeight}
+      >
+        <button
+          className='outlined'
+          onClick={this.onSupernova}
+          disabled={this.state.animationInProgress}
+        >
           Supernova
         </button>
       </ScalingSection>

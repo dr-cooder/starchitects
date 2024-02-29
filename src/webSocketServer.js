@@ -25,6 +25,8 @@ const applyBornStarBehavior = (id) => {
     const webAppToServerHeaders = wsHeaders.webAppToServer;
     const serverToRoomHeaders = wsHeaders.serverToRoom;
     switch (header) {
+      // TODO: If no room is connected for whatever reason, the server should
+      // send the "animation finished" message back itself after a timeout
       case webAppToServerHeaders.animSparkle:
         if (roomSocket) {
           roomSocket.send(makeWsMsg(
@@ -105,6 +107,8 @@ const joinAsRoom = (socket) => {
     });
     socket.send(makeWsMsg(
       wsHeaders.serverToRoom.allStars,
+      // TODO: This assumes color is nullish if and only if the star is unborn;
+      // This may change
       Object.values(stars).filter((e) => e.color != null),
     ));
     socket.on('message', (rawData) => {
@@ -132,7 +136,9 @@ const joinAsExistingStar = (socket, id) => {
       starSockets[id] = undefined;
       console.log(`Client of star with ID ${id} disconnected`);
     });
-    if (existingStar.color == null) { // If the star has not been customized, it is unborn
+    // TODO: This assumes color is nullish if and only if the star is unborn;
+    // This may change
+    if (existingStar.color == null) {
       applyUnbornStarBehavior(id);
     } else {
       applyBornStarBehavior(id);
