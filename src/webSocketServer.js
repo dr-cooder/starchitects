@@ -173,16 +173,16 @@ const startWebSocketServer = (server) => {
       const newClientHeaders = wsHeaders.newClientToServer;
       switch (header) {
         case newClientHeaders.joinAsRoom:
-          socket.removeEventListener('message', handleInitialMessage);
+          socket.removeListener('message', handleInitialMessage);
           joinAsRoom(socket);
           console.log('Room joined');
           break;
         case newClientHeaders.joinAsNewStar:
-          socket.removeEventListener('message', handleInitialMessage);
+          socket.removeListener('message', handleInitialMessage);
           joinAsNewStar(socket, data);
           break;
         case newClientHeaders.joinAsExistingStar:
-          socket.removeEventListener('message', handleInitialMessage);
+          socket.removeListener('message', handleInitialMessage);
           joinAsExistingStar(socket, data);
           console.log(`Client of star with ID ${data} rejoined`);
           break;
