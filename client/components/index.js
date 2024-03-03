@@ -3,3 +3,4 @@ module.exports.Background = require('./Background.jsx');
 module.exports.BackgroundImage = require('./BackgroundImage.jsx');
 module.exports.BackgroundVideo = require('./BackgroundVideo.jsx');
 module.exports.ScalingSection = require('./ScalingSection.jsx');
+module.exports.StarCanvas = require('./StarCanvas.jsx');

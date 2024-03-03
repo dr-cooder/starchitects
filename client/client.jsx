@@ -143,6 +143,8 @@ const init = () => {
     ref={screenRef}
     initialScreen={<screens.loading
       onLoad={() => {
+        // setAppState.unbornStar({ shape: 0 });
+        // return;
         const initialStarId = rejoin ? getStarId() : null;
         if (initialStarId !== null) {
           initializeWebSocket(

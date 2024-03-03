@@ -1,9 +1,9 @@
 const React = require('react');
 const { Component } = require('react');
 const PropTypes = require('prop-types');
-const { BackgroundImage, ScalingSection } = require('../components');
+const { BackgroundImage, ScalingSection, StarCanvas } = require('../components');
 const { blobFilenames, blobs } = require('../preload.js');
-const { unitsHorizontalInnerHalf, unitsVerticalInner } = require('../scalingMeasurements.js');
+const { unitsHorizontalInner, unitsHorizontalInnerHalf, unitsVerticalInner } = require('../scalingMeasurements.js');
 
 const buttonHeight = 40;
 const buttonSpacing = 24;
@@ -20,6 +20,7 @@ class UnbornStarScreen extends Component {
     this.state = {
       name: starData.name,
       waitingForNewName: false,
+      offset: 0,
     };
 
     this.starData = starData;
@@ -81,8 +82,26 @@ class UnbornStarScreen extends Component {
             })}
           >&quot;Swipe up&quot;</button>
         </ScalingSection>
+        <ScalingSection
+          heightUnits={unitsHorizontalInner}
+          topUnits={this.state.offset * (unitsVerticalInner - unitsHorizontalInner - buttonHeight)}
+          topFreeSpace={this.state.offset}
+        >
+          <StarCanvas initialStarData={this.starData}/>
+        </ScalingSection>
       </BackgroundImage>
     );
+  }
+
+  componentDidMount() {
+    const startTime = Date.now();
+    const foo = () => {
+      requestAnimationFrame(foo);
+      this.setState({
+        offset: (Math.cos(((Date.now() - startTime) / 1000) * (2 * Math.PI)) + 1) / 2,
+      });
+    };
+    foo();
   }
 }
 

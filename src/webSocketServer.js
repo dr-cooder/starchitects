@@ -24,32 +24,29 @@ const applyBornStarBehavior = (id) => {
     const { header/* , data */ } = parseWsMsg(rawData);
     const webAppToServerHeaders = wsHeaders.webAppToServer;
     const serverToRoomHeaders = wsHeaders.serverToRoom;
-    switch (header) {
-      // TODO: If no room is connected for whatever reason, the server should
-      // send the "animation finished" message back itself after a timeout
-      case webAppToServerHeaders.animSparkle:
-        if (roomSocket) {
-          roomSocket.send(makeWsMsg(
-            serverToRoomHeaders.animSparkle,
-            id,
+    const sendAnimMessage = (serverToRoomHeader, timeoutIfNoRoom) => {
+      if (roomSocket) {
+        roomSocket.send(makeWsMsg(
+          serverToRoomHeader,
+          id,
+        ));
+      } else {
+        setTimeout(() => {
+          socket.send(makeWsMsg(
+            wsHeaders.serverToWebApp.animationFinished,
           ));
-        }
+        }, timeoutIfNoRoom);
+      }
+    };
+    switch (header) {
+      case webAppToServerHeaders.animSparkle:
+        sendAnimMessage(serverToRoomHeaders.animSparkle, 1000);
         break;
       case webAppToServerHeaders.animTwirl:
-        if (roomSocket) {
-          roomSocket.send(makeWsMsg(
-            serverToRoomHeaders.animTwirl,
-            id,
-          ));
-        }
+        sendAnimMessage(serverToRoomHeaders.animTwirl, 2000);
         break;
       case webAppToServerHeaders.animSupernova:
-        if (roomSocket) {
-          roomSocket.send(makeWsMsg(
-            serverToRoomHeaders.animSupernova,
-            id,
-          ));
-        }
+        sendAnimMessage(serverToRoomHeaders.animSupernova, 5000);
         break;
       default:
         socket.send(makeWsMsg(wsHeaders.serverToWebApp.errorMsg, 'Unexpected star action header.'));
