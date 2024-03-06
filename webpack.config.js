@@ -1,7 +1,10 @@
 const path = require('path');
 
 module.exports = {
-  entry: './client/client.jsx',
+  entry: {
+    main: './client/client.jsx',
+    'composite-worker': './client/compositeWorker.js',
+  },
   module: {
     rules: [
       {
@@ -26,6 +29,6 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, 'hosted'),
-    filename: 'bundle.js',
+    filename: '[name].js',
   },
 };

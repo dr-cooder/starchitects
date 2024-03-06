@@ -4,11 +4,9 @@ const { createRoot } = require('react-dom/client');
 const { AnimatedChangingScreen } = require('./components');
 const screens = require('./screens');
 const { getStarId, setStarId, unsetStarId } = require('./localStorage.js');
+const compositeWorkerManager = require('./compositeWorkerManager.js');
 const {
-  getWebSocketURL,
-  wsHeaders,
-  makeWsMsg,
-  parseWsMsg,
+  getWebSocketURL, wsHeaders, makeWsMsg, parseWsMsg,
 } = require('../common/webSocket.js');
 
 // Set rejoin to truthy to affix stars to sessions/tabs rather than browsers via local storage
@@ -80,6 +78,7 @@ const setAppState = {
     }}
   />),
   unbornStar: (starData) => {
+    compositeWorkerManager.applyStarData(starData);
     const unbornStarScreenRef = createRef();
     return setScreen(<screens.unbornStar
       ref={unbornStarScreenRef}
@@ -107,6 +106,7 @@ const setAppState = {
     />);
   },
   bornStar: (starData) => {
+    compositeWorkerManager.applyStarData(starData);
     const bornStarScreenRef = createRef();
     webSocket.addEventListener('message', (event) => {
       const { header } = parseWsMsg(event.data);
@@ -128,10 +128,13 @@ const setAppState = {
       }}
     />);
   },
-  error: (message) => setScreen(<screens.error
-    message={message}
-    onLeave={setAppState.start}
-  />),
+  error: (message) => {
+    compositeWorkerManager.stopVid();
+    return setScreen(<screens.error
+      message={message}
+      onLeave={setAppState.start}
+    />);
+  },
   roomSim: () => setScreen(<screens.roomSim/>),
 };
 
@@ -143,6 +146,7 @@ const init = () => {
     ref={screenRef}
     initialScreen={<screens.loading
       onLoad={() => {
+        compositeWorkerManager.init();
         // setAppState.unbornStar({ shape: 0 });
         // return;
         const initialStarId = rejoin ? getStarId() : null;

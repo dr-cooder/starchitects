@@ -1,6 +1,11 @@
+// TODO: Build preload and main separately, and have the former load the latter as one of its blobs
+// (This means the loading screen can't use React)
+
 const blobFilenames = {
   placeholderVid: '/videos/placeholder.mp4',
-  tempBG: '/images/tempBG.jpg',
+  tempBG: '/images/temp-bg.jpg',
+  placeholderStarVid: '/videos/placeholder-star.mp4',
+  compositeWorker: '/composite-worker.js',
 };
 
 const imageFilenames = {};
@@ -78,6 +83,8 @@ const preload = (onProgress) => (preloading ? null : new Promise((resolve, rejec
 
 // TODO: Also ensure browser has canvas support (even though techincally a browser that
 // can't run React will almost certainly not be able to use canvas either?)
+// TODO: Ensure that, if the browser has canvas support, it can also render a video in canvas
+// (if it can't, use a still?)
 module.exports = {
   preload,
   blobFilenames,

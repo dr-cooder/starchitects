@@ -1,7 +1,7 @@
 const React = require('react');
 const { Component } = require('react');
 const PropTypes = require('prop-types');
-const { BackgroundImage, ScalingSection } = require('../components');
+const { BackgroundImage, ScalingSection, StarCanvas } = require('../components');
 const { blobFilenames, blobs } = require('../preload.js');
 const { unitsHorizontalInner, unitsVerticalInner } = require('../scalingMeasurements.js');
 
@@ -13,11 +13,15 @@ const buttonWidth = (unitsHorizontalInner - buttonSpacing * 2) / 3;
 const middleButtonOffset = buttonWidth + buttonSpacing;
 const rightButtonOffset = middleButtonOffset * 2;
 
+const nameplateHeight = 24;
+const canvasTop = (buttonTop - unitsHorizontalInner - nameplateHeight) / 2;
+const namePlateTop = canvasTop + unitsHorizontalInner;
+
 class BornStarScreen extends Component {
   constructor(props) {
     super(props);
     const {
-      starData,
+      starData: { name, size },
       onSparkle,
       onTwirl,
       onSupernova,
@@ -32,7 +36,8 @@ class BornStarScreen extends Component {
       callback();
     };
 
-    this.starData = starData;
+    this.name = name;
+    this.size = size;
     this.onSparkle = startAnimation(onSparkle);
     this.onTwirl = startAnimation(onTwirl);
     this.onSupernova = startAnimation(onSupernova);
@@ -48,10 +53,18 @@ class BornStarScreen extends Component {
       darkness={0.75}
     >
       <ScalingSection
-        heightUnits={buttonTop}
-        heightFreeSpace={1}
+        topUnits={canvasTop}
+        topFreeSpace={0.5}
+        heightUnits={unitsHorizontalInner}
       >
-        <p>{JSON.stringify(this.starData)}</p>
+        <StarCanvas initialSize={this.size}/>
+      </ScalingSection>
+      <ScalingSection
+        topUnits={namePlateTop}
+        topFreeSpace={0.5}
+        heightUnits={nameplateHeight}
+      >
+        <p>{this.name}</p>
       </ScalingSection>
       <ScalingSection
         topUnits={buttonTop}

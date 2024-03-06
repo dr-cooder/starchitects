@@ -1,6 +1,3 @@
-// const textEncoder = new TextEncoder();
-// const textDecoder = new TextDecoder();
-
 // https://stackoverflow.com/questions/19754922/why-wont-my-app-establish-websocket-connection-on-heroku
 const getWebSocketURL = () => window.origin.replace(/^http/, 'ws');
 

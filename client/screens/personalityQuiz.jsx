@@ -27,7 +27,7 @@ const PersonalityQuizScreen = ({ questions, onSubmit }) => (
       heightUnits={questionHeight}
     >
       <div className={'questionBlock outlined outlinedWithBottomNeighbor'}>
-        {questions}
+        <div>{questions}</div>
       </div>
     </ScalingSection>
     <ScalingSection
@@ -36,7 +36,7 @@ const PersonalityQuizScreen = ({ questions, onSubmit }) => (
       widthUnits={unitsHorizontalInnerHalf}
       heightUnits={answerButtonHeight}
     >
-      <button className={'outlined outlinedWithTopNeighbor outlinedWithRightNeighbor'} onClick={() => onSubmit({
+      <button className={'outlined quizButton outlinedWithTopNeighbor outlinedWithRightNeighbor'} onClick={() => onSubmit({
         sampleQuestion: 'Sample Answer',
       })}>Submit</button>
     </ScalingSection>
@@ -47,7 +47,7 @@ const PersonalityQuizScreen = ({ questions, onSubmit }) => (
       widthUnits={unitsHorizontalInnerHalf}
       heightUnits={answerButtonHeight}
     >
-      <button className={'outlined outlinedWithTopNeighbor outlinedWithLeftNeighbor'}>Don&apos;t submit</button>
+      <button className={'outlined quizButton outlinedWithTopNeighbor outlinedWithLeftNeighbor'}>Don&apos;t submit</button>
     </ScalingSection>
   </BackgroundVideo>
 );

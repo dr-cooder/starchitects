@@ -1,40 +1,62 @@
 const React = require('react');
 const { Component, createRef } = require('react');
 const PropTypes = require('prop-types');
-const { images, imageFilenames } = require('../preload.js');
+const {
+  starCanvasWidth,
+  starCanvasHeight,
+  starCanvasWidthHalf,
+  starCanvasHeightHalf,
+  starMinWidth,
+  starMinHeight,
+  starMinX,
+  starMinY,
+  starMaxWidth,
+  starMaxHeight,
+  starMaxX,
+  starMaxY,
+} = require('../../common/compositing.js');
+const { lerp } = require('../../common/helpers.js');
+const compositeWorkerManager = require('../compositeWorkerManager.js');
 
 class StarCanvas extends Component {
-  static canvasWidth = 512;
-
-  static canvasHeight = 512;
-
   constructor(props) {
     super(props);
 
-    const {
-      shape,
-      color,
-      size,
-      shade,
-    } = props.initialStarData;
-    this.shape = shape;
     this.state = {
-      color,
-      size,
-      shade,
+      size: props.initialSize ?? 0,
     };
 
     this.canvasRef = createRef();
+    // TODO: The Star canvas should be able to set the customization parameters
+    // on its own via its on touch events
+    this.setSize = (newSize) => this.setState({ size: newSize });
+    // This method should remain, though
+    this.getCustomization = () => ({
+      color: compositeWorkerManager.getColor(),
+      size: this.state.size,
+      shade: compositeWorkerManager.getShade(),
+    });
   }
 
   componentDidMount() {
-    const { canvasWidth, canvasHeight } = StarCanvas;
-    const canvasWidthHalf = canvasWidth / 2;
-    const canvasHeightHalf = canvasHeight / 2;
-
     const canvasEl = this.canvasRef.current;
-    // Checks for the ability to use canvas are to be done during the initial load
+    // Checks for the ability to use canvas (and video within canvas)
+    // are to be done during the initial load
     const ctx = canvasEl.getContext('2d');
+
+    const mainLoop = () => {
+      requestAnimationFrame(() => mainLoop());
+      const { size } = this.state;
+      ctx.clearRect(0, 0, starCanvasWidth, starCanvasHeight);
+      ctx.drawImage(
+        compositeWorkerManager.compositeCanvas,
+        lerp(starMinX, starMaxX, size),
+        lerp(starMinY, starMaxY, size),
+        lerp(starMinWidth, starMaxWidth, size),
+        lerp(starMinHeight, starMaxHeight, size),
+      );
+    };
+    mainLoop();
 
     // TODO: Implement this pseudocode (all these events should be on the entire document)
     // (THESE ASSUME THE CANVAS IS NOT MOVING RELATIVE TO THE DOCUMENT DURING THE SLIDER SECTIONS)
@@ -79,26 +101,12 @@ class StarCanvas extends Component {
       }
 
       mouse.x = (rawX - canvasEl.offsetLeft)
-        * (canvasWidth / canvasEl.offsetWidth) - canvasWidthHalf;
+        * (starCanvasWidth / canvasEl.offsetWidth) - starCanvasWidthHalf;
       mouse.y = (rawY - canvasEl.offsetTop)
-        * (canvasHeight / canvasEl.offsetHeight) - canvasHeightHalf;
+        * (starCanvasHeight / canvasEl.offsetHeight) - starCanvasHeightHalf;
 
       return mouse;
     };
-
-    const loop = () => {
-      requestAnimationFrame(loop);
-
-      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-      ctx.font = '80px Comic Sans MS';
-      ctx.fillStyle = 'red';
-      ctx.fillText(`Shape ID: ${this.shape}`, 10, 100);
-      ctx.beginPath();
-      ctx.arc(canvasWidthHalf, canvasHeightHalf, 100, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.closePath();
-    };
-    loop();
   }
 
   render() {
@@ -106,15 +114,15 @@ class StarCanvas extends Component {
       <canvas
         ref={this.canvasRef}
         className='starCanvas'
-        width={StarCanvas.canvasWidth}
-        height={StarCanvas.canvasHeight}
+        width={starCanvasWidth}
+        height={starCanvasHeight}
       />
     );
   }
 }
 
 StarCanvas.propTypes = {
-  initialStarData: PropTypes.object,
+  initialSize: PropTypes.number,
 };
 
 module.exports = StarCanvas;
