@@ -5,12 +5,11 @@ const {
   parseWsMsg,
 } = require('../common/webSocket.js');
 
-const { starPrefix, starSuffix } = require("../common/starNames.js");
+const { starPrefix, starSuffix } = require('../common/starNames.js');
 
 let nextStarId = 0;
 const getNextStarId = () => nextStarId++;
 
-// TODO: We obviosuly shouldn't name every star "Starry"
 const generateName = () => `${starPrefix[Math.floor(Math.random() * starPrefix.length)]}-${starSuffix[Math.floor(Math.random() * starSuffix.length)]}`;
 
 const stars = {};
