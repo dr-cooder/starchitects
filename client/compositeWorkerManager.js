@@ -5,10 +5,9 @@ const {
   vidWidth,
   vidHeight,
   vidFrameDurationMs,
-  albedoBounds,
-  shadingBounds,
-  specularBounds,
-  grayscalesBounds,
+  blackBounds,
+  whiteBounds,
+  alphaBounds,
 } = require('../common/compositing.js');
 const { blobs, blobFilenames } = require('./preload.js');
 
@@ -43,10 +42,9 @@ let noActiveVid = true;
 const compositeParams = {
   color: 0,
   shade: 0,
-  albedoBytes: new Uint8ClampedArray(bytesPerVidPart),
-  shadingBytes: new Uint8ClampedArray(bytesPerVidPart),
-  specularBytes: new Uint8ClampedArray(bytesPerVidPart),
-  grayscalesBytes: new Uint8ClampedArray(bytesPerVidPart),
+  blackBytes: new Uint8ClampedArray(bytesPerVidPart),
+  whiteBytes: new Uint8ClampedArray(bytesPerVidPart),
+  alphaBytes: new Uint8ClampedArray(bytesPerVidPart),
 };
 
 const tryComposite = () => {
@@ -66,10 +64,9 @@ const tryCompositeNextVideoFrame = () => {
   vidCtx.drawImage(vid, 0, 0);
 
   Object.assign(compositeParams, {
-    albedoBytes: vidCtx.getImageData(...albedoBounds).data,
-    shadingBytes: vidCtx.getImageData(...shadingBounds).data,
-    specularBytes: vidCtx.getImageData(...specularBounds).data,
-    grayscalesBytes: vidCtx.getImageData(...grayscalesBounds).data,
+    blackBytes: vidCtx.getImageData(...blackBounds).data,
+    whiteBytes: vidCtx.getImageData(...whiteBounds).data,
+    alphaBytes: vidCtx.getImageData(...alphaBounds).data,
   });
   tryComposite();
 };
@@ -109,7 +106,7 @@ const applyStarData = (starData) => {
 };
 
 const init = () => {
-  console.log('Initializing composite worker manager');
+  // console.log('Initializing composite worker manager');
   document.body.appendChild(vid);
   compositeWorker = new Worker(blobs[blobFilenames.compositeWorker]);
   compositeWorker.onmessage = ({ data }) => {

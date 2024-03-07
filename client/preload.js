@@ -1,5 +1,5 @@
 // TODO: Build preload and main separately, and have the former load the latter as one of its blobs
-// (This means the loading screen can't use React)
+// (This means the loading screen can't use React, but all it really needs is scalingMeasurements)
 
 const blobFilenames = {
   placeholderVid: '/videos/placeholder.mp4',

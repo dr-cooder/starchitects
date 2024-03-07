@@ -1,18 +1,24 @@
 const {
-  maskOffset,
-  changeableValueMapOffset,
-  changeableMaskOffset,
   alphaOffset,
   bytesPerPixel,
-  byteMax,
   vidPartWidth,
   vidPartHeight,
   bytesPerVidPart,
-  saturationRadius,
-  valueRadius,
-  valueRange,
 } = require('../common/compositing.js');
-const { lerp, hueToRGB } = require('../common/helpers.js');
+const { lerp, hueToRGB, applySaturationValue } = require('../common/helpers.js');
+
+const saturationCenter = 0.75;
+const saturationRadius = 0.25;
+const valueCenter = 0.75;
+const valueRadius = 0.25;
+
+// Assumes sin/cos take in values of range 0...2pi and returns a list of RGB channels of range 0...1
+const colorShadeToRGB = (color, shade) => {
+  const shadeRadians = shade * 2 * Math.PI;
+  const saturation = saturationCenter + saturationRadius * Math.cos(shadeRadians);
+  const value = valueCenter + valueRadius * Math.sin(shadeRadians);
+  return hueToRGB(color).map((channel) => applySaturationValue(channel, saturation, value));
+};
 
 const compositedImageData = new ImageData(vidPartWidth, vidPartHeight);
 const compositedBytes = compositedImageData.data;
@@ -21,41 +27,27 @@ onmessage = ({
   data: {
     color,
     shade,
-    albedoBytes,
-    shadingBytes,
-    specularBytes,
-    grayscalesBytes,
+    blackBytes,
+    whiteBytes,
+    alphaBytes,
   },
 }) => {
-  const shadeRadians = shade * 2 * Math.PI;
-  const desaturation = saturationRadius * (1 - Math.cos(shadeRadians));
-  const hueSaturation = hueToRGB(color).map((c) => c + desaturation * (1 - c));
-
-  // "change" image is really a greyscale "value map", with black being the
-  // lowest in the range of possible values, and white being the highest.
-  // Sine (Y) determines where that range starts
-  const valueAdditionByte = (valueRadius * Math.sin(shadeRadians) + valueRadius) * byteMax;
+  const finalColor = colorShadeToRGB(color, shade);
 
   for (let pixelOffset = 0; pixelOffset < bytesPerVidPart; pixelOffset += bytesPerPixel) {
-    const changeableValueMapByte = grayscalesBytes[pixelOffset + changeableValueMapOffset];
-    const changeableMask = grayscalesBytes[pixelOffset + changeableMaskOffset] / byteMax;
-
     for (let channelOffset = 0; channelOffset < alphaOffset; channelOffset++) {
-      const pixelColorChannelOffset = pixelOffset + channelOffset;
-      compositedBytes[pixelColorChannelOffset] = lerp(
-        albedoBytes[pixelColorChannelOffset],
-        (valueAdditionByte + valueRange * changeableValueMapByte)
-        * hueSaturation[channelOffset],
-        changeableMask,
-      )
-        * (shadingBytes[pixelColorChannelOffset] / byteMax)
-        + specularBytes[pixelColorChannelOffset];
+      const pixelChannelOffset = pixelOffset + channelOffset;
+      compositedBytes[pixelChannelOffset] = lerp(
+        blackBytes[pixelChannelOffset],
+        whiteBytes[pixelChannelOffset],
+        finalColor[channelOffset],
+      );
     }
 
-    compositedBytes[pixelOffset + alphaOffset] = grayscalesBytes[pixelOffset + maskOffset];
+    compositedBytes[pixelOffset + alphaOffset] = alphaBytes[pixelOffset];
   }
 
   postMessage(compositedImageData);
 };
 
-console.log('Composite worker ready!');
+// console.log('Composite worker ready!');

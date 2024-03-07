@@ -15,6 +15,8 @@ const hueToRGB = (hue) => {
   ].map(clamp01);
 };
 
+const applySaturationValue = (channel, saturation, value) => lerp(1, channel, saturation) * value;
+
 const vectorLengthNoSqrt = (vector) => vector.map((c) => c * c).reduce((a, b) => a + b);
 
 module.exports = {
@@ -23,5 +25,6 @@ module.exports = {
   lerp,
   clamp01,
   hueToRGB,
+  applySaturationValue,
   vectorLengthNoSqrt,
 };

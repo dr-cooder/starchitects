@@ -1,25 +1,16 @@
-const maskOffset = 0;
-const changeableValueMapOffset = 1;
-const changeableMaskOffset = 2;
 const alphaOffset = 3;
 const bytesPerPixel = 4;
-const byteMax = 255;
 
 const vidPartWidth = 360;
 const vidPartHeight = 360;
-const vidWidth = vidPartWidth * 2;
-const vidHeight = vidPartHeight * 2;
+const vidWidth = vidPartWidth * 3;
+const vidHeight = vidPartHeight;
 const bytesPerVidPart = vidPartWidth * vidPartHeight * bytesPerPixel;
 const vidFrameDurationMs = 1000 / 30;
 
-const albedoBounds = [0, 0, vidPartWidth, vidPartHeight];
-const shadingBounds = [vidPartWidth, 0, vidPartWidth, vidPartHeight];
-const specularBounds = [0, vidPartHeight, vidPartWidth, vidPartHeight];
-const grayscalesBounds = [vidPartWidth, vidPartHeight, vidPartWidth, vidPartHeight];
-
-const saturationRadius = 0.25;
-const valueRadius = 0.125;
-const valueRange = 1 - 2 * valueRadius;
+const blackBounds = [0, 0, vidPartWidth, vidPartHeight];
+const whiteBounds = [vidPartWidth, 0, vidPartWidth, vidPartHeight];
+const alphaBounds = [vidPartWidth * 2, 0, vidPartWidth, vidPartHeight];
 
 const starCanvasWidth = 360;
 const starCanvasHeight = 360;
@@ -37,25 +28,17 @@ const starMaxX = (starCanvasWidth - starMaxWidth) / 2;
 const starMaxY = (starCanvasHeight - starMaxHeight) / 2;
 
 module.exports = {
-  maskOffset,
-  changeableValueMapOffset,
-  changeableMaskOffset,
   alphaOffset,
   bytesPerPixel,
-  byteMax,
   vidPartWidth,
   vidPartHeight,
   vidWidth,
   vidHeight,
   bytesPerVidPart,
   vidFrameDurationMs,
-  albedoBounds,
-  shadingBounds,
-  specularBounds,
-  grayscalesBounds,
-  saturationRadius,
-  valueRadius,
-  valueRange,
+  blackBounds,
+  whiteBounds,
+  alphaBounds,
   starCanvasWidth,
   starCanvasHeight,
   starCanvasWidthHalf,
