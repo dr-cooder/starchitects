@@ -9,7 +9,7 @@ const bytesPerVidPart = vidPartWidth * vidPartHeight * bytesPerPixel;
 const vidFrameDurationMs = 1000 / 30;
 
 const blackBounds = [0, 0, vidPartWidth, vidPartHeight];
-const whiteBounds = [vidPartWidth, 0, vidPartWidth, vidPartHeight];
+const bwDiffBounds = [vidPartWidth, 0, vidPartWidth, vidPartHeight];
 const alphaBounds = [vidPartWidth * 2, 0, vidPartWidth, vidPartHeight];
 
 const starCanvasWidth = 360;
@@ -37,7 +37,7 @@ module.exports = {
   bytesPerVidPart,
   vidFrameDurationMs,
   blackBounds,
-  whiteBounds,
+  bwDiffBounds,
   alphaBounds,
   starCanvasWidth,
   starCanvasHeight,

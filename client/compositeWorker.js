@@ -5,7 +5,7 @@ const {
   vidPartHeight,
   bytesPerVidPart,
 } = require('../common/compositing.js');
-const { lerp, hueToRGB, applySaturationValue } = require('../common/helpers.js');
+const { hueToRGB, applySaturationValue } = require('../common/helpers.js');
 
 const saturationCenter = 0.75;
 const saturationRadius = 0.25;
@@ -28,20 +28,17 @@ onmessage = ({
     color,
     shade,
     blackBytes,
-    whiteBytes,
+    bwDiffBytes,
     alphaBytes,
   },
 }) => {
-  const finalColor = colorShadeToRGB(color, shade);
+  const rgb = colorShadeToRGB(color, shade);
 
   for (let pixelOffset = 0; pixelOffset < bytesPerVidPart; pixelOffset += bytesPerPixel) {
     for (let channelOffset = 0; channelOffset < alphaOffset; channelOffset++) {
       const pixelChannelOffset = pixelOffset + channelOffset;
-      compositedBytes[pixelChannelOffset] = lerp(
-        blackBytes[pixelChannelOffset],
-        whiteBytes[pixelChannelOffset],
-        finalColor[channelOffset],
-      );
+      compositedBytes[pixelChannelOffset] = blackBytes[pixelChannelOffset]
+        + bwDiffBytes[pixelChannelOffset] * rgb[channelOffset];
     }
 
     compositedBytes[pixelOffset + alphaOffset] = alphaBytes[pixelOffset];

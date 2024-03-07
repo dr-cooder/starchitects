@@ -6,7 +6,7 @@ const {
   vidHeight,
   vidFrameDurationMs,
   blackBounds,
-  whiteBounds,
+  bwDiffBounds,
   alphaBounds,
 } = require('../common/compositing.js');
 const { blobs, blobFilenames } = require('./preload.js');
@@ -43,7 +43,7 @@ const compositeParams = {
   color: 0,
   shade: 0,
   blackBytes: new Uint8ClampedArray(bytesPerVidPart),
-  whiteBytes: new Uint8ClampedArray(bytesPerVidPart),
+  bwDiffBytes: new Uint8ClampedArray(bytesPerVidPart),
   alphaBytes: new Uint8ClampedArray(bytesPerVidPart),
 };
 
@@ -65,7 +65,7 @@ const tryCompositeNextVideoFrame = () => {
 
   Object.assign(compositeParams, {
     blackBytes: vidCtx.getImageData(...blackBounds).data,
-    whiteBytes: vidCtx.getImageData(...whiteBounds).data,
+    bwDiffBytes: vidCtx.getImageData(...bwDiffBounds).data,
     alphaBytes: vidCtx.getImageData(...alphaBounds).data,
   });
   tryComposite();
