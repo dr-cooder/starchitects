@@ -26,13 +26,16 @@ if (process.env.NODE_ENV === 'production') {
         ],
         styleSrc: [
           "'self'",
-          'https://cdn.jsdelivr.net/',
+          "'unsafe-inline'",
         ],
         imgSrc: [
           "'self'",
           'blob:',
         ],
-        connectSrc: ["'self'"],
+        connectSrc: [
+          "'self'",
+          'https://cdn.jsdelivr.net/',
+        ],
         frameSrc: ["'self'"],
       },
     },
