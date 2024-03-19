@@ -23,10 +23,12 @@ if (process.env.NODE_ENV === 'production') {
         scriptSrc: [
           "'self'",
           "'unsafe-inline'",
+          'blob:',
         ],
         styleSrc: [
           "'self'",
           "'unsafe-inline'",
+          'blob:',
         ],
         imgSrc: [
           "'self'",
@@ -37,6 +39,10 @@ if (process.env.NODE_ENV === 'production') {
           'https://cdn.jsdelivr.net/',
         ],
         frameSrc: ["'self'"],
+        fontSrc: [
+          "'self'",
+          'blob:',
+        ],
       },
     },
   }));
