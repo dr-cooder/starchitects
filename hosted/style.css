@@ -15,6 +15,9 @@ body {
   color: var(--color-bright);
   background-color: var(--color-midnight);
   user-select: none;
+  /* html and body rules above this line are technically overridden by inline styling for before this file is preloaded */
+  font-family: Geist, sans-serif;
+  font-weight: 400;
 }
 
 p {
@@ -23,7 +26,7 @@ p {
 }
 
 .header {
-  font-weight: bold;
+  font-weight: 500;
   font-size: 1.5em;
   margin-bottom: 0;
 }
@@ -38,23 +41,35 @@ p {
 }
 
 button {
-  font-weight: bold;
+  font-weight: 700;
   outline: none;
   border: none;
   background-color: var(--color-midnight);
   color: var(--color-bright);
 }
 
-button.quizButton {
+button.quizButton1, button.quizButton2 {
   background-color: transparent;
+}
+
+button.quizButton1 {
+  color: var(--color-shine);
+}
+
+button.quizButton2 {
+  color: var(--color-radiance);
 }
 
 button:disabled {
   opacity: 0.25;
 }
 
-.background, .foreground {
+.backgroundDark, .backgroundContainer, .foreground, .scalingSection, .loadingStar, .loadingProgress {
+  /* object-fit: cover; */
   position: absolute;
+}
+
+.backgroundDark, .foreground {
   width: 100%;
   height: 100%;
   left: 0;
@@ -62,7 +77,13 @@ button:disabled {
 }
 
 .background {
-  object-fit: cover;
+  position: relative;
+  width: inherit;
+  height: inherit;
+}
+
+.backgroundDark {
+  background-color: var(--color-midnight);
 }
 
 .outlined {
@@ -94,13 +115,14 @@ button, .outlined {
 }
 
 .emphasized {
-  font-weight: bold;
+  font-weight: 700;
   color: var(--color-shine);
 }
 
 .header .emphasized {
-  font-weight: normal;
-  color: var(--color-radiance)
+  font-weight: 400;
+  font-family: Migra, serif;
+  color: var(--color-radiance);
 }
 
 .centeredText {
@@ -108,6 +130,7 @@ button, .outlined {
 }
 
 .questionBlock {
+  font-weight: 500;
   padding: 1em 2em;
   display: flex;
   align-items: center;

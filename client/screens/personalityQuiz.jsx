@@ -1,6 +1,6 @@
 const React = require('react');
 const PropTypes = require('prop-types');
-const { unitsHorizontalInnerHalf, unitsVerticalInner } = require('../scalingMeasurements.js');
+const { unitsHorizontalInnerHalf, unitsVerticalInner } = require('../measurements.js');
 const { BackgroundVideo, ScalingSection } = require('../components');
 const { blobFilenames, blobs } = require('../preload.js');
 
@@ -36,7 +36,7 @@ const PersonalityQuizScreen = ({ questions, onSubmit }) => (
       widthUnits={unitsHorizontalInnerHalf}
       heightUnits={answerButtonHeight}
     >
-      <button className={'outlined quizButton outlinedWithTopNeighbor outlinedWithRightNeighbor'} onClick={() => onSubmit({
+      <button className={'outlined quizButton1 outlinedWithTopNeighbor outlinedWithRightNeighbor'} onClick={() => onSubmit({
         sampleQuestion: 'Sample Answer',
       })}>Submit</button>
     </ScalingSection>
@@ -47,7 +47,7 @@ const PersonalityQuizScreen = ({ questions, onSubmit }) => (
       widthUnits={unitsHorizontalInnerHalf}
       heightUnits={answerButtonHeight}
     >
-      <button className={'outlined quizButton outlinedWithTopNeighbor outlinedWithLeftNeighbor'}>Don&apos;t submit</button>
+      <button className={'outlined quizButton2 outlinedWithTopNeighbor outlinedWithLeftNeighbor'}>Don&apos;t submit</button>
     </ScalingSection>
   </BackgroundVideo>
 );

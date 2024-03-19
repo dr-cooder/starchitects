@@ -4,7 +4,7 @@ const PropTypes = require('prop-types');
 const { BackgroundImage, ScalingSection, StarCanvas } = require('../components');
 const compositeWorkerManager = require('../compositeWorkerManager.js');
 const { blobFilenames, blobs } = require('../preload.js');
-const { unitsHorizontalInner, unitsVerticalInner } = require('../scalingMeasurements.js');
+const { unitsHorizontalInner, unitsVerticalInner } = require('../measurements.js');
 
 const swipeUpAnimDuration = 1500;
 

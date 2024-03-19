@@ -2,6 +2,7 @@ const path = require('path');
 
 module.exports = {
   entry: {
+    preload: './client/loadingScreen.js',
     main: './client/client.jsx',
     'composite-worker': './client/compositeWorker.js',
   },

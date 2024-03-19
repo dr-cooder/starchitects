@@ -16,7 +16,7 @@ const stars = {};
 const starSockets = {};
 let roomSocket;
 
-// TODO: JSON format validating, alongside parse error handling
+// TODO: JSON format validating, alongside handling of errors met while parsing
 const applyBornStarBehavior = (id) => {
   const socket = starSockets[id];
   // const star = stars[id];

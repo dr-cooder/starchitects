@@ -3,7 +3,7 @@ const { Component } = require('react');
 const PropTypes = require('prop-types');
 const { BackgroundImage, ScalingSection, StarCanvas } = require('../components');
 const { blobFilenames, blobs } = require('../preload.js');
-const { unitsHorizontalInner, unitsVerticalInner } = require('../scalingMeasurements.js');
+const { unitsHorizontalInner, unitsVerticalInner } = require('../measurements.js');
 
 const buttonHeight = 40;
 const buttonSpacing = 24;

@@ -19,6 +19,18 @@ const applySaturationValue = (channel, saturation, value) => lerp(1, channel, sa
 
 const vectorLengthNoSqrt = (vector) => vector.map((c) => c * c).reduce((a, b) => a + b);
 
+const dictToElement = (tagName, dict) => {
+  const element = document.createElement(tagName);
+  const entries = Object.entries(dict);
+  for (let i = 0; i < entries.length; i++) {
+    const [key, value] = entries[i];
+    if (value != null) {
+      element.setAttribute(key, value);
+    }
+  }
+  return element;
+};
+
 module.exports = {
   px,
   percent,
@@ -27,4 +39,5 @@ module.exports = {
   hueToRGB,
   applySaturationValue,
   vectorLengthNoSqrt,
+  dictToElement,
 };

@@ -2,10 +2,12 @@ const path = require('path');
 const express = require('express');
 const compression = require('compression');
 const helmet = require('helmet');
+const favicon = require('serve-favicon');
 const { startWebSocketServer } = require('./webSocketServer.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 const staticPath = 'hosted';
+const faviconPath = 'client/favicon.png';
 
 const app = express();
 // app.disable('etag');
@@ -37,6 +39,7 @@ if (process.env.NODE_ENV === 'production') {
   }));
 }
 app.use('/', express.static(path.resolve(staticPath)));
+app.use(favicon(path.resolve(faviconPath)));
 // https://stackoverflow.com/questions/6528876/how-to-redirect-404-errors-to-a-page-in-expressjs
 app.get('*', (req, res) => {
   res.status(404);

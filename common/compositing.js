@@ -14,8 +14,6 @@ const alphaBounds = [vidPartWidth * 2, 0, vidPartWidth, vidPartHeight];
 
 const starCanvasWidth = 360;
 const starCanvasHeight = 360;
-const starCanvasWidthHalf = starCanvasWidth / 2;
-const starCanvasHeightHalf = starCanvasHeight / 2;
 
 const starMinWidth = 240;
 const starMinHeight = 240;
@@ -41,8 +39,6 @@ module.exports = {
   alphaBounds,
   starCanvasWidth,
   starCanvasHeight,
-  starCanvasWidthHalf,
-  starCanvasHeightHalf,
   starMinWidth,
   starMinHeight,
   starMinX,

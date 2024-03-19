@@ -2,7 +2,7 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const { BackgroundImage, ScalingSection } = require('../components');
 const { blobFilenames, blobs } = require('../preload.js');
-const { unitsVerticalInner } = require('../scalingMeasurements.js');
+const { unitsVerticalInner } = require('../measurements.js');
 
 const textHeight = 100;
 const buttonHeight = 40;

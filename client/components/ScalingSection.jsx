@@ -4,8 +4,8 @@ const {
   unitsHorizontalInner,
   unitsVerticalInner,
   unitsPerEm,
-  useGridMeasurements,
-} = require('../scalingMeasurements.js');
+} = require('../measurements.js');
+const { useGridMeasurements } = require('../measurementsReact.js');
 const { px } = require('../../common/helpers.js');
 
 const ScalingSection = ({
@@ -24,13 +24,12 @@ const ScalingSection = ({
     verticalOffset,
   } = useGridMeasurements();
   return (
-    <div style={{
+    <div className='scalingSection' style={{
       fontSize: px(pixelsPerUnit * unitsPerEm),
       left: px(horizontalOffset + pixelsPerUnit * leftUnits),
       top: px(verticalOffset + pixelsPerUnit * topUnits + verticalFreeSpace * topFreeSpace),
       width: px(pixelsPerUnit * widthUnits),
       height: px(pixelsPerUnit * heightUnits + verticalFreeSpace * heightFreeSpace),
-      position: 'absolute',
     }}>
       {children}
     </div>
