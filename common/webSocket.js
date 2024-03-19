@@ -1,6 +1,8 @@
 // https://stackoverflow.com/questions/19754922/why-wont-my-app-establish-websocket-connection-on-heroku
 const getWebSocketURL = () => window.origin.replace(/^http/, 'ws');
 
+// TODO: (IMPORTANT!) Have server send an empty message to all clients
+// at least every 55 seconds to avoid disconnecting
 const wsHeaders = {
   newClientToServer: {
     joinAsRoom: 0,

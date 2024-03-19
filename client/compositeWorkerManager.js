@@ -79,7 +79,7 @@ const setVidSrc = (src) => {
 
 const stopVid = () => {
   noActiveVid = true;
-  vid.src = null;
+  vid.removeAttribute('src');
 };
 
 const getColor = () => compositeParams.color;
