@@ -5,7 +5,7 @@ const { unitsBackgroundWidth, unitsBackgroundHeight } = require('../measurements
 const { usePixelsPerUnit } = require('../measurementsReact.js');
 
 const Background = ({
-  background, blur, darkness, children,
+  background, blur, brightness = 1, children,
 }) => {
   const { width, height, pixelsPerUnit } = usePixelsPerUnit();
   const backgroundWidth = pixelsPerUnit * unitsBackgroundWidth;
@@ -19,7 +19,7 @@ const Background = ({
         width: backgroundWidth,
         height: backgroundHeight,
         filter: blur && `blur(${px(pixelsPerUnit * blur)})`,
-        opacity: darkness,
+        opacity: brightness,
       }}>
         {background}
       </div>
@@ -33,7 +33,7 @@ const Background = ({
 Background.propTypes = {
   background: PropTypes.node,
   blur: PropTypes.number,
-  darkness: PropTypes.number,
+  brightness: PropTypes.number,
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node.isRequired),
     PropTypes.node,

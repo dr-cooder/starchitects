@@ -18,10 +18,13 @@ const screenRef = createRef();
 let webSocket; // = new WebSocket(webSocketURL); // This is just here for autocomplete purposes
 let connectionLost;
 
+// Ignores pings
 const uponNextMessage = (callback) => {
   const selfRemovingFirstResponseCallback = (firstMessageEvent) => {
-    webSocket.removeEventListener('message', selfRemovingFirstResponseCallback);
-    callback(firstMessageEvent);
+    if (firstMessageEvent.data.header !== wsHeaders.serverToWebApp.ping) {
+      webSocket.removeEventListener('message', selfRemovingFirstResponseCallback);
+      callback(firstMessageEvent);
+    }
   };
   webSocket.addEventListener('message', selfRemovingFirstResponseCallback);
 };
@@ -93,6 +96,8 @@ const setAppState = {
             hangUpWebSocket();
           } else if (header === wsHeaders.serverToWebApp.newName) {
             unbornStarScreenRef.current.applyNewName(data);
+          } else {
+            unbornStarScreenRef.current.applyNewName();
           }
         });
       }}

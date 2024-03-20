@@ -49,7 +49,7 @@ const scriptFilenames = scripts.map(getFilename);
 
 const blobFilenames = {
   placeholderVid: '/videos/placeholder.mp4',
-  tempBG: '/images/background-ref.png', // '/images/temp-bg.jpg',
+  tempBG: '/images/background.png', // '/images/temp-bg.jpg',
   placeholderStarVid: '/videos/placeholder-star.mp4',
   compositeWorker: '/composite-worker.js',
 };

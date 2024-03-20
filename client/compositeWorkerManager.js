@@ -73,6 +73,7 @@ const tryCompositeNextVideoFrame = () => {
 
 const setVidSrc = (src) => {
   vid.src = src;
+  vid.play();
   noActiveVid = false;
   tryCompositeNextVideoFrame();
 };

@@ -13,7 +13,6 @@ const answerButtonTop = questionTop + questionHeight;
 const PersonalityQuizScreen = ({ questions, onSubmit }) => (
   <BackgroundVideo
     blur={25}
-    darkness={0.75}
     sources={[
       {
         src: blobs[blobFilenames.placeholderVid],

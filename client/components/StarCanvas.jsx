@@ -4,16 +4,16 @@ const PropTypes = require('prop-types');
 const {
   starCanvasWidth,
   starCanvasHeight,
-  starMinWidth,
-  starMinHeight,
-  starMinX,
-  starMinY,
-  starMaxWidth,
-  starMaxHeight,
-  starMaxX,
-  starMaxY,
+  starMinWidthPercent,
+  starMinHeightPercent,
+  starMinLeftPercent,
+  starMinTopPercent,
+  starMaxWidthPercent,
+  starMaxHeightPercent,
+  starMaxLeftPercent,
+  starMaxTopPercent,
 } = require('../../common/compositing.js');
-const { lerp } = require('../../common/helpers.js');
+const { lerp, percent } = require('../../common/helpers.js');
 const compositeWorkerManager = require('../compositeWorkerManager.js');
 
 class StarCanvas extends Component {
@@ -41,26 +41,32 @@ class StarCanvas extends Component {
 
     const mainLoop = () => {
       requestAnimationFrame(() => mainLoop());
-      const { size } = this.state;
       ctx.clearRect(0, 0, starCanvasWidth, starCanvasHeight);
       ctx.drawImage(
         compositeWorkerManager.compositeCanvas,
-        lerp(starMinX, starMaxX, size),
-        lerp(starMinY, starMaxY, size),
-        lerp(starMinWidth, starMaxWidth, size),
-        lerp(starMinHeight, starMaxHeight, size),
+        0,
+        0,
+        starCanvasWidth,
+        starCanvasHeight,
       );
     };
     mainLoop();
   }
 
   render() {
+    const { size } = this.state;
     return (
       <canvas
         ref={this.canvasRef}
         className='starCanvas'
         width={starCanvasWidth}
         height={starCanvasHeight}
+        style={{
+          left: percent(lerp(starMinLeftPercent, starMaxLeftPercent, size)),
+          top: percent(lerp(starMinTopPercent, starMaxTopPercent, size)),
+          width: percent(lerp(starMinWidthPercent, starMaxWidthPercent, size)),
+          height: percent(lerp(starMinHeightPercent, starMaxHeightPercent, size)),
+        }}
       />
     );
   }

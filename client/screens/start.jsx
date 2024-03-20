@@ -13,7 +13,6 @@ const buttonTop = unitsVerticalInner - buttonHeight;
 const StartScreen = ({ onCreateStar, onSimulateRoom }) => (
   <BackgroundImage
     src={blobs[blobFilenames.tempBG]}
-    darkness={0.75}
   >
     <ScalingSection
       topUnits={textTop}
@@ -21,7 +20,7 @@ const StartScreen = ({ onCreateStar, onSimulateRoom }) => (
       heightUnits={textHeight}
     >
       <p className='header'>Show us <span className='emphasized'>your</span> shine!</p>
-      <p>Every atom that makes up your body was created inside from a star before Earth
+      <p>Every atom that makes up your body was created from a star before Earth
         was even born. We are all made up of <span className='emphasized'>stardust</span>.</p>
       <p>But we want to know what makes <span className='emphasized'>you</span> shine.
         To do that, let&apos;s get to know you.</p>

@@ -1,10 +1,14 @@
 const React = require('react');
 const { Component, createRef } = require('react');
 const PropTypes = require('prop-types');
-const { BackgroundImage, ScalingSection, StarCanvas } = require('../components');
+const {
+  BackgroundImage, RadialSlider, ScalingSection, StarCanvas,
+} = require('../components');
 const compositeWorkerManager = require('../compositeWorkerManager.js');
 const { blobFilenames, blobs } = require('../preload.js');
-const { unitsHorizontalInner, unitsVerticalInner } = require('../measurements.js');
+const {
+  unitsPaddingHorizontal, unitsHorizontalOuter, unitsHorizontalInner, unitsVerticalInner,
+} = require('../measurements.js');
 
 const swipeUpAnimDuration = 1500;
 
@@ -36,7 +40,7 @@ class UnbornStarScreen extends Component {
       onNewName();
     };
     this.applyNewName = (newName) => {
-      this.setState({ name: newName, waitingForNewName: false });
+      this.setState({ ...(newName != null && { name: newName }), waitingForNewName: false });
     };
     this.startSwipeUpAnim = () => {
       if (this.state.swipingUp) return;
@@ -64,27 +68,23 @@ class UnbornStarScreen extends Component {
     return (
       <BackgroundImage
         src={blobs[blobFilenames.tempBG]}
-        darkness={0.75}
       >
         <ScalingSection
-          heightUnits={unitsHorizontalInner}
           topUnits={
             this.state.swipeUpAnimProgress * this.state.swipeUpAnimProgress * -unitsVerticalInner
           }
+          topFreeSpace={0.5}
+          heightUnits={unitsHorizontalInner}
         >
-          <div
-            onMouseDown={this.startSwipeUpAnim}
-            onTouchStart={this.startSwipeUpAnim}
-          >
-            <StarCanvas initialSize={this.initialSize} ref={this.starCanvasRef}/>
-          </div>
+          <StarCanvas initialSize={this.initialSize} ref={this.starCanvasRef}/>
         </ScalingSection>
         <ScalingSection
           topUnits={unitsHorizontalInner}
+          topFreeSpace={0.5}
           heightUnits={slidersHeight}
-          heightFreeSpace={1}
+          heightFreeSpace={0.5}
         >
-          <p>Here is your star! (Swipe up when you are done customizing)</p>
+          <p>Here is your star! (Swipe it up when you are done customizing it)</p>
           <p>{this.state.name}</p>
           <p>
             Color: <input type='range' defaultValue={0} max={sliderGranularity} onChange={this.setStarCanvasColor} disabled={this.state.swipingUp}/><br/>
@@ -95,6 +95,20 @@ class UnbornStarScreen extends Component {
             disabled={this.state.waitingForNewName || this.state.swipingUp}
             onClick={this.onNewName}
           >New name</button>
+        </ScalingSection>
+        <ScalingSection
+          leftUnits={-unitsPaddingHorizontal}
+          topUnits={-unitsPaddingHorizontal}
+          topFreeSpace={0.5}
+          widthUnits={unitsHorizontalOuter}
+          heightUnits={unitsHorizontalOuter}
+        >
+          <div
+            onMouseDown={this.startSwipeUpAnim}
+            onTouchStart={this.startSwipeUpAnim}
+          >
+            <RadialSlider clamp={true} initialValue="-0.1"/>
+          </div>
         </ScalingSection>
       </BackgroundImage>
     );

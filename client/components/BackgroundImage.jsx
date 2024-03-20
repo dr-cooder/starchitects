@@ -3,7 +3,7 @@ const PropTypes = require('prop-types');
 const { Background } = require('.');
 
 const BackgroundImage = ({
-  alt, blur, darkness, src, children,
+  alt, blur, brightness, src, children,
 }) => (
     <Background
       background={
@@ -14,7 +14,7 @@ const BackgroundImage = ({
         />
       }
       blur={blur}
-      darkness={darkness}
+      brightness={brightness}
     >
       {children}
     </Background>
@@ -23,7 +23,7 @@ const BackgroundImage = ({
 BackgroundImage.propTypes = {
   alt: PropTypes.string,
   blur: PropTypes.number,
-  darkness: PropTypes.number,
+  brightness: PropTypes.number,
   src: PropTypes.string,
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node.isRequired),

@@ -64,7 +64,7 @@ button:disabled {
   opacity: 0.25;
 }
 
-.backgroundDark, .backgroundContainer, .foreground, .scalingSection, .loadingStar, .loadingProgress {
+.backgroundDark, .backgroundContainer, .foreground, .scalingSection, .loadingStar, .loadingProgress, .starCanvas {
   /* object-fit: cover; */
   position: absolute;
 }
@@ -143,10 +143,12 @@ button, .outlined {
   font-size: 1.5em;
 }
 
+/*
 .starCanvas {
   width: 100%;
   height: 100%;
 }
+*/
 
 /* Some browsers may not be able to copy image data from a video if it isn't actively being rendered */
 .hiddenVideo {
@@ -154,4 +156,21 @@ button, .outlined {
   width: 0;
   height: 0;
   visibility: hidden;
+}
+
+#radial-slider-circle {
+  stroke: var(--color-bright);
+}
+
+#radial-slider-amount-color {
+  background: conic-gradient(from 0deg, var(--color-shine) 0%, var(--color-radiance) 100%);
+}
+
+#radial-slider-controller-outer {
+  stroke: var(--color-bright);
+  fill: var(--color-midnight);
+}
+
+#radial-slider-controller-inner {
+  fill: var(--color-bright);
 }

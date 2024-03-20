@@ -4,7 +4,7 @@ const PropTypes = require('prop-types');
 const { Background } = require('.');
 
 const BackgroundVideo = ({
-  blur, darkness, poster, sources, children,
+  blur, brightness, poster, sources, children,
 }) => {
   // Some browsers are very stubborn about autoplay,
   // hence this otherwise redundant failsafe
@@ -29,7 +29,7 @@ const BackgroundVideo = ({
         </video>
       }
       blur={blur}
-      darkness={darkness}
+      brightness={brightness}
     >
       {children}
     </Background>
@@ -38,7 +38,7 @@ const BackgroundVideo = ({
 
 BackgroundVideo.propTypes = {
   blur: PropTypes.number,
-  darkness: PropTypes.number,
+  brightness: PropTypes.number,
   poster: PropTypes.string,
   sources: PropTypes.arrayOf(PropTypes.object.isRequired).isRequired,
   children: PropTypes.oneOfType([

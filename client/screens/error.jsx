@@ -13,7 +13,6 @@ const buttonTop = textTop + textHeight;
 const ErrorScreen = ({ message, onLeave }) => (
   <BackgroundImage
     src={blobs[blobFilenames.tempBG]}
-    darkness={0.75}
   >
     <ScalingSection
       topUnits={textTop}

@@ -1,6 +1,6 @@
 const px = (pixels) => `${pixels}px`;
 
-const percent = (numberOutOfHundred) => `${parseInt(numberOutOfHundred, 10)}%`;
+const percent = (numberOutOfHundred, floor = false) => `${floor ? parseInt(numberOutOfHundred, 10) : parseFloat(numberOutOfHundred)}%`;
 
 const lerp = (a, b, t) => a + (b - a) * t;
 

@@ -7,6 +7,8 @@ const {
 
 const { starPrefix, starSuffix } = require('../common/starNames.js');
 
+const pingFrequency = 5000;
+
 let nextStarId = 0;
 const getNextStarId = () => nextStarId++;
 
@@ -20,7 +22,7 @@ let roomSocket;
 const applyBornStarBehavior = (id) => {
   const socket = starSockets[id];
   // const star = stars[id];
-  socket.removeAllListeners('message');
+  // socket.removeAllListeners('message');
   socket.on('message', (rawData) => {
     const { header/* , data */ } = parseWsMsg(rawData);
     const webAppToServerHeaders = wsHeaders.webAppToServer;
@@ -58,8 +60,7 @@ const applyBornStarBehavior = (id) => {
 const applyUnbornStarBehavior = (id) => {
   const socket = starSockets[id];
   const star = stars[id];
-  socket.removeAllListeners('message');
-  socket.on('message', (rawData) => {
+  const unbornListener = (rawData) => {
     const { header, data } = parseWsMsg(rawData);
     if (header === wsHeaders.webAppToServer.newName) {
       const newName = generateName();
@@ -87,11 +88,13 @@ const applyUnbornStarBehavior = (id) => {
           star,
         ));
       }
+      socket.removeListener('message', unbornListener);
       applyBornStarBehavior(id);
     } else {
       socket.send(makeWsMsg(wsHeaders.serverToWebApp.errorMsg, 'Expected "birth star" header.'));
     }
-  });
+  };
+  socket.on('message', unbornListener);
 };
 
 const joinAsRoom = (socket) => {
@@ -113,7 +116,7 @@ const joinAsRoom = (socket) => {
       const { header, data } = parseWsMsg(rawData);
       if (header === wsHeaders.roomToServer.animationFinished) {
         const starSocket = starSockets[data];
-        if (starSocket !== undefined) {
+        if (starSocket) {
           starSocket.send(makeWsMsg(wsHeaders.serverToWebApp.animationFinished));
         }
       }
@@ -123,9 +126,9 @@ const joinAsRoom = (socket) => {
 
 const joinAsExistingStar = (socket, id) => {
   const existingStar = stars[id];
-  if (existingStar === undefined || existingStar.dead) {
+  if (!existingStar || existingStar.dead) {
     socket.send(makeWsMsg(wsHeaders.serverToWebApp.errorMsg, `No star with ID ${id} exists.`));
-  } else if (starSockets[id] !== undefined) {
+  } else if (starSockets[id]) {
     socket.send(makeWsMsg(wsHeaders.serverToWebApp.errorMsg, `The star with ID ${id} is already under the control of another web app instance.`));
   } else {
     starSockets[id] = socket;
@@ -162,6 +165,21 @@ const joinAsNewStar = (socket/* , quizAnswers */) => {
   console.log(`Client of new star with ID ${id} joined`);
 };
 
+// Circumvention of Heroku automatically closing any web socket
+// that has seen no activity for 55 seconds
+const pingAllSockets = () => {
+  const webAppPingMsg = makeWsMsg(wsHeaders.serverToWebApp.ping);
+  Object.values(starSockets).forEach((socket) => {
+    if (socket) {
+      socket.send(webAppPingMsg);
+    }
+  });
+  if (roomSocket) {
+    roomSocket.send(makeWsMsg(wsHeaders.serverToRoom.ping));
+  }
+  setTimeout(pingAllSockets, pingFrequency);
+};
+
 const startWebSocketServer = (server) => {
   const socketServer = new WebSocketServer({ server });
   socketServer.on('connection', (socket) => {
@@ -191,6 +209,7 @@ const startWebSocketServer = (server) => {
     };
     socket.on('message', handleInitialMessage);
   });
+  pingAllSockets();
 };
 
 module.exports = { startWebSocketServer };

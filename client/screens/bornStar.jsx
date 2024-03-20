@@ -50,7 +50,6 @@ class BornStarScreen extends Component {
     return (
     <BackgroundImage
       src={blobs[blobFilenames.tempBG]}
-      darkness={0.75}
     >
       <ScalingSection
         topUnits={canvasTop}

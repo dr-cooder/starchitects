@@ -7,6 +7,7 @@ const unitsBackgroundWidth = 784;
 const unitsBackgroundHeight = 980;
 const unitsPerEm = 16;
 
+const unitsHorizontalOuterHalf = unitsHorizontalOuter / 2;
 const unitsHorizontalInner = unitsHorizontalOuter - 2 * unitsPaddingHorizontal;
 const unitsHorizontalInnerHalf = unitsHorizontalInner / 2;
 const unitsVerticalMinInner = unitsVerticalMinOuter - 2 * unitsPaddingVertical;
@@ -69,6 +70,8 @@ const getGridMeasurements = () => {
 };
 
 module.exports = {
+  unitsHorizontalOuter,
+  unitsHorizontalOuterHalf,
   unitsHorizontalInner,
   unitsHorizontalInnerHalf,
   unitsVerticalInner: unitsVerticalMinInner,

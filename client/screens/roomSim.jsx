@@ -141,7 +141,6 @@ const RoomSimScreen = () => {
   return (
     <BackgroundImage
       src={blobs[blobFilenames.tempBG]}
-      darkness={0.75}
     >
       <ScalingSection>
         <div>{latestLog}</div>

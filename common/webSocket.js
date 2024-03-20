@@ -21,6 +21,7 @@ const wsHeaders = {
     newName: 1,
     joinSuccess: 2,
     animationFinished: 3,
+    ping: 4,
   },
   serverToRoom: {
     errorMsg: 0,
@@ -29,6 +30,7 @@ const wsHeaders = {
     animSparkle: 3,
     animTwirl: 4,
     animSupernova: 5,
+    ping: 6,
   },
   roomToServer: {
     animationFinished: 0,

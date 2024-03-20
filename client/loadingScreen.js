@@ -116,7 +116,7 @@ window.onload = () => {
   let loadNotFailedYet = true;
   playLoadingStarLoadingAnim();
   preload((progress) => {
-    if (loadNotFailedYet && progress != null) updateProgress(percent(progress));
+    if (loadNotFailedYet && progress != null) updateProgress(percent(progress, true));
   }).then((allBlobs) => {
     brightenLoadingStar();
     updateProgress(percent(100));

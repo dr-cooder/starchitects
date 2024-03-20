@@ -12,18 +12,18 @@ const blackBounds = [0, 0, vidPartWidth, vidPartHeight];
 const bwDiffBounds = [vidPartWidth, 0, vidPartWidth, vidPartHeight];
 const alphaBounds = [vidPartWidth * 2, 0, vidPartWidth, vidPartHeight];
 
-const starCanvasWidth = 360;
-const starCanvasHeight = 360;
+const starCanvasWidth = vidPartWidth;
+const starCanvasHeight = vidPartHeight;
 
-const starMinWidth = 240;
-const starMinHeight = 240;
-const starMinX = (starCanvasWidth - starMinWidth) / 2;
-const starMinY = (starCanvasHeight - starMinHeight) / 2;
+const starMinWidthPercent = 60;
+const starMinHeightPercent = 60;
+const starMinLeftPercent = (100 - starMinWidthPercent) / 2;
+const starMinTopPercent = (100 - starMinHeightPercent) / 2;
 
-const starMaxWidth = 320;
-const starMaxHeight = 320;
-const starMaxX = (starCanvasWidth - starMaxWidth) / 2;
-const starMaxY = (starCanvasHeight - starMaxHeight) / 2;
+const starMaxWidthPercent = 80;
+const starMaxHeightPercent = 80;
+const starMaxLeftPercent = (100 - starMaxWidthPercent) / 2;
+const starMaxTopPercent = (100 - starMaxHeightPercent) / 2;
 
 module.exports = {
   alphaOffset,
@@ -39,12 +39,12 @@ module.exports = {
   alphaBounds,
   starCanvasWidth,
   starCanvasHeight,
-  starMinWidth,
-  starMinHeight,
-  starMinX,
-  starMinY,
-  starMaxWidth,
-  starMaxHeight,
-  starMaxX,
-  starMaxY,
+  starMinWidthPercent,
+  starMinHeightPercent,
+  starMinLeftPercent,
+  starMinTopPercent,
+  starMaxWidthPercent,
+  starMaxHeightPercent,
+  starMaxLeftPercent,
+  starMaxTopPercent,
 };

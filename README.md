@@ -13,6 +13,8 @@ Take a personality quiz to form your personalized star, then find it in the gala
 - https://stackoverflow.com/questions/14218607/javascript-loading-progress-of-an-image
 - https://stackoverflow.com/questions/19754922/why-wont-my-app-establish-websocket-connection-on-heroku
 - https://stackoverflow.com/questions/42472726/websockets-express-js-and-can-t-establish-a-connection-to-the-server
+- https://stackoverflow.com/questions/5736398/how-to-calculate-the-svg-path-for-an-arc-of-a-circle
+- https://css-tricks.com/my-struggle-to-use-and-animate-a-conic-gradient-in-svg/
 ### External Components
 - Bootstrap
 - React
