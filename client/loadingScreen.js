@@ -31,7 +31,6 @@ const loadingStarHeightHalfWithMargin = loadingStarHeightHalf + loadingStarBotto
 const loadingProgressTopUnits = unitsVerticalInnerHalf + loadingStarHeightHalfWithMargin;
 const loadingProgressHeightUnits = unitsVerticalInnerHalf - loadingStarHeightHalfWithMargin;
 
-// TODO: Have main script remove these elements once the root has faded in fully
 let loadingStar;
 let loadingStarCenter;
 const loadingStarRects = [];
@@ -133,4 +132,4 @@ window.onload = () => {
 // TODO: Ensure browser has canvas support (even though techincally a browser that
 // can't run React will almost certainly not be able to use canvas either?)
 // TODO: Ensure that, if the browser has canvas support, it can also render a video in canvas
-// (if it can't, use a still?)
+// (if it can't, use a still?) (THIS IS A KNOWN ISSUE WITH FIREFOX ANDROID: https://bugzilla.mozilla.org/show_bug.cgi?id=1526207)

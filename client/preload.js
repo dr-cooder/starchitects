@@ -34,6 +34,9 @@ const styles = [
   {
     filename: '/style.css',
   },
+  {
+    filename: '/animations.css',
+  },
 ];
 
 const scripts = [
@@ -41,6 +44,26 @@ const scripts = [
     filename: '/main.js',
   },
 ];
+
+/*
+const videos = {
+  placeholderVid: {
+    poster: {
+      filename: '/videos/placeholder.jpg',
+    },
+    sources: [
+      {
+        type: 'video/webm',
+        filename: '/videos/placeholder.webm',
+      },
+      {
+        type: 'video/mp4',
+        filename: '/videos/placeholder.mp4',
+      },
+    ]
+  },
+};
+*/
 
 const getFilename = (item) => item.filename;
 const fontFilenames = fonts.map(getFilename);
@@ -52,6 +75,7 @@ const blobFilenames = {
   tempBG: '/images/background.png', // '/images/temp-bg.jpg',
   placeholderStarVid: '/videos/placeholder-star.mp4',
   compositeWorker: '/composite-worker.js',
+  logo: '/images/logo.svg',
 };
 // TODO: This doesn't seem necessary for this app? Canvases will only use
 // primitive shapes and composited image data from a video element

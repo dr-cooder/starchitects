@@ -1,16 +1,11 @@
 const React = require('react');
 const { Component, createRef } = require('react');
 const PropTypes = require('prop-types');
-const {
-  BackgroundImage, RadialSlider, ScalingSection, StarCanvas,
-} = require('../components');
+const { RadialColorPicker, ScalingSection, StarCanvas } = require('../components');
 const compositeWorkerManager = require('../compositeWorkerManager.js');
-const { blobFilenames, blobs } = require('../preload.js');
 const {
   unitsPaddingHorizontal, unitsHorizontalOuter, unitsHorizontalInner, unitsVerticalInner,
 } = require('../measurements.js');
-
-const swipeUpAnimDuration = 1500;
 
 const slidersHeight = unitsVerticalInner - unitsHorizontalInner;
 const sliderGranularity = 1000;
@@ -19,64 +14,53 @@ const translateSliderValue = (e) => e.target.value / sliderGranularity;
 class UnbornStarScreen extends Component {
   constructor(props) {
     super(props);
-    const { starData: { name, size }, onNewName, onSwipeStarUp } = props;
+    const {
+      starData: {
+        name,
+        starColor,
+        starShade,
+        dustColor,
+        dustShade,
+      },
+      onNewNameRequest,
+      onSwipeStarUp,
+    } = props;
+
+    this.initialStarColor = starColor;
+    this.initialStarShade = starShade;
+    this.initialDustColor = dustColor;
+    this.initialDustShade = dustShade;
 
     this.state = {
       name,
+      starColor,
+      starShade,
+      dustColor,
+      dustShade,
       waitingForNewName: false,
-      swipingUp: false,
-      swipeUpAnimProgress: 0,
     };
 
-    this.initialSize = size;
     this.starCanvasRef = createRef();
-    this.setStarCanvasColor = (e) => compositeWorkerManager.setColor(translateSliderValue(e));
-    this.setStarCanvasSize = (e) => this
-      .starCanvasRef.current.setSize(translateSliderValue(e));
-    this.setStarCanvasShade = (e) => compositeWorkerManager.setShade(translateSliderValue(e));
+    this.setDustColor = (e) => this.setState({ dustColor: translateSliderValue(e) });
+    this.setDustShade = (e) => this.setState({ dustShade: translateSliderValue(e) });
     this.onSwipeStarUp = onSwipeStarUp;
-    this.onNewName = () => {
+    this.onNewNameRequest = () => {
       this.setState({ waitingForNewName: true });
-      onNewName();
+      onNewNameRequest();
     };
     this.applyNewName = (newName) => {
       this.setState({ ...(newName != null && { name: newName }), waitingForNewName: false });
-    };
-    this.startSwipeUpAnim = () => {
-      if (this.state.swipingUp) return;
-      this.setState({ swipingUp: true });
-      const swipeUpAnimStartTime = Date.now();
-      const updateSwipeUpAnimProgress = () => {
-        const swipeUpAnimProgress = (Date.now()
-          - swipeUpAnimStartTime) / swipeUpAnimDuration;
-        if (swipeUpAnimProgress < 1) {
-          requestAnimationFrame(updateSwipeUpAnimProgress);
-          this.setState({ swipeUpAnimProgress });
-        } else {
-          this.setState({ swipeUpAnimProgress: 1 });
-          this.onSwipeStarUp(Object.assign(
-            this.starCanvasRef.current.getCustomization(),
-            { name: this.state.name },
-          ));
-        }
-      };
-      updateSwipeUpAnimProgress();
     };
   }
 
   render() {
     return (
-      <BackgroundImage
-        src={blobs[blobFilenames.tempBG]}
-      >
+      <>
         <ScalingSection
-          topUnits={
-            this.state.swipeUpAnimProgress * this.state.swipeUpAnimProgress * -unitsVerticalInner
-          }
           topFreeSpace={0.5}
           heightUnits={unitsHorizontalInner}
         >
-          <StarCanvas initialSize={this.initialSize} ref={this.starCanvasRef}/>
+          <StarCanvas ref={this.starCanvasRef}/>
         </ScalingSection>
         <ScalingSection
           topUnits={unitsHorizontalInner}
@@ -87,14 +71,32 @@ class UnbornStarScreen extends Component {
           <p>Here is your star! (Swipe it up when you are done customizing it)</p>
           <p>{this.state.name}</p>
           <p>
-            Color: <input type='range' defaultValue={0} max={sliderGranularity} onChange={this.setStarCanvasColor} disabled={this.state.swipingUp}/><br/>
-            Size: <input type='range' defaultValue={0} max={sliderGranularity} onChange={this.setStarCanvasSize} disabled={this.state.swipingUp}/><br/>
-            Shade: <input type='range' defaultValue={0} max={sliderGranularity} onChange={this.setStarCanvasShade} disabled={this.state.swipingUp}/>
+            Stardust Color: <input type='range' defaultValue={this.initialDustColor * sliderGranularity} max={sliderGranularity} onChange={this.setDustColor}/><br/>
+            Stardust Shade: <input type='range' defaultValue={this.initialDustShade * sliderGranularity} max={sliderGranularity} onChange={this.setDustShade}/>
           </p>
           <button
-            disabled={this.state.waitingForNewName || this.state.swipingUp}
-            onClick={this.onNewName}
+            disabled={this.state.waitingForNewName}
+            onClick={this.onNewNameRequest}
           >New name</button>
+          <button
+            disabled={this.state.waitingForNewName}
+            onClick={() => {
+              const {
+                // name,
+                starColor,
+                starShade,
+                dustColor,
+                dustShade,
+              } = this.state;
+              this.onSwipeStarUp({
+                // name,
+                starColor,
+                starShade,
+                dustColor,
+                dustShade,
+              });
+            }}
+          >&quot;Swipe up&quot;</button>
         </ScalingSection>
         <ScalingSection
           leftUnits={-unitsPaddingHorizontal}
@@ -107,17 +109,27 @@ class UnbornStarScreen extends Component {
             onMouseDown={this.startSwipeUpAnim}
             onTouchStart={this.startSwipeUpAnim}
           >
-            <RadialSlider clamp={true} initialValue="-0.1"/>
+            <RadialColorPicker
+              initialColorValue={this.initialStarColor}
+              initialShadeValue={this.initialStarShade}
+              onChange={({ rgb, color, shade }) => {
+                this.setState({
+                  starColor: color,
+                  starShade: shade,
+                });
+                compositeWorkerManager.setStarRGB(rgb);
+              }}
+            />
           </div>
         </ScalingSection>
-      </BackgroundImage>
+      </>
     );
   }
 }
 
 UnbornStarScreen.propTypes = {
   starData: PropTypes.object,
-  onNewName: PropTypes.func,
+  onNewNameRequest: PropTypes.func,
   onSwipeStarUp: PropTypes.func,
 };
 

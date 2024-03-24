@@ -1,8 +1,7 @@
 const React = require('react');
 const { Component } = require('react');
 const PropTypes = require('prop-types');
-const { BackgroundImage, ScalingSection, StarCanvas } = require('../components');
-const { blobFilenames, blobs } = require('../preload.js');
+const { ScalingSection, StarCanvas } = require('../components');
 const { unitsHorizontalInner, unitsVerticalInner } = require('../measurements.js');
 
 const buttonHeight = 40;
@@ -48,68 +47,66 @@ class BornStarScreen extends Component {
 
   render() {
     return (
-    <BackgroundImage
-      src={blobs[blobFilenames.tempBG]}
-    >
-      <ScalingSection
-        topUnits={canvasTop}
-        topFreeSpace={0.5}
-        heightUnits={unitsHorizontalInner}
-      >
-        <StarCanvas initialSize={this.size}/>
-      </ScalingSection>
-      <ScalingSection
-        topUnits={namePlateTop}
-        topFreeSpace={0.5}
-        heightUnits={nameplateHeight}
-      >
-        <p>{this.name}</p>
-      </ScalingSection>
-      <ScalingSection
-        topUnits={buttonTop}
-        topFreeSpace={1}
-        widthUnits={buttonWidth}
-        heightUnits={buttonHeight}
-      >
-        <button
-          className='outlined'
-          onClick={this.onSparkle}
-          disabled={this.state.animationInProgress}
+      <>
+        <ScalingSection
+          topUnits={canvasTop}
+          topFreeSpace={0.5}
+          heightUnits={unitsHorizontalInner}
         >
-          Sparkle
-        </button>
-      </ScalingSection>
-      <ScalingSection
-        leftUnits={middleButtonOffset}
-        topUnits={buttonTop}
-        topFreeSpace={1}
-        widthUnits={buttonWidth}
-        heightUnits={buttonHeight}
-      >
-        <button
-          className='outlined'
-          onClick={this.onTwirl}
-          disabled={this.state.animationInProgress}
+          <StarCanvas initialSize={this.size}/>
+        </ScalingSection>
+        <ScalingSection
+          topUnits={namePlateTop}
+          topFreeSpace={0.5}
+          heightUnits={nameplateHeight}
         >
-          Twirl
-        </button>
-      </ScalingSection>
-      <ScalingSection
-        leftUnits={rightButtonOffset}
-        topUnits={buttonTop}
-        topFreeSpace={1}
-        widthUnits={buttonWidth}
-        heightUnits={buttonHeight}
-      >
-        <button
-          className='outlined'
-          onClick={this.onSupernova}
-          disabled={this.state.animationInProgress}
+          <p>{this.name}</p>
+        </ScalingSection>
+        <ScalingSection
+          topUnits={buttonTop}
+          topFreeSpace={1}
+          widthUnits={buttonWidth}
+          heightUnits={buttonHeight}
         >
-          Supernova
-        </button>
-      </ScalingSection>
-    </BackgroundImage>
+          <button
+            className='outlined'
+            onClick={this.onSparkle}
+            disabled={this.state.animationInProgress}
+          >
+            Sparkle
+          </button>
+        </ScalingSection>
+        <ScalingSection
+          leftUnits={middleButtonOffset}
+          topUnits={buttonTop}
+          topFreeSpace={1}
+          widthUnits={buttonWidth}
+          heightUnits={buttonHeight}
+        >
+          <button
+            className='outlined'
+            onClick={this.onTwirl}
+            disabled={this.state.animationInProgress}
+          >
+            Twirl
+          </button>
+        </ScalingSection>
+        <ScalingSection
+          leftUnits={rightButtonOffset}
+          topUnits={buttonTop}
+          topFreeSpace={1}
+          widthUnits={buttonWidth}
+          heightUnits={buttonHeight}
+        >
+          <button
+            className='outlined'
+            onClick={this.onSupernova}
+            disabled={this.state.animationInProgress}
+          >
+            Supernova
+          </button>
+        </ScalingSection>
+      </>
     );
   }
 }

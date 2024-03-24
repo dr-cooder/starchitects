@@ -4,13 +4,13 @@ const {
   makeWsMsg,
   parseWsMsg,
 } = require('../common/webSocket.js');
-
 const { starPrefix, starSuffix } = require('../common/starNames.js');
+const { starIsBorn } = require('../common/helpers.js');
 
 const pingFrequency = 5000;
 
-let nextStarId = 0;
-const getNextStarId = () => nextStarId++;
+// let nextStarId = 0;
+const getNextStarId = Date.now; // () => nextStarId++;
 
 const generateName = () => `${starPrefix[Math.floor(Math.random() * starPrefix.length)]}-${starSuffix[Math.floor(Math.random() * starSuffix.length)]}`;
 
@@ -70,17 +70,23 @@ const applyUnbornStarBehavior = (id) => {
         newName,
       ));
     } else if (header === wsHeaders.webAppToServer.birthStar) {
+      // TODO: send these whenever the respective customization screen is left
       const {
-        color,
-        size,
-        shade,
-        name,
+        starColor,
+        starShade,
+        dustColor,
+        dustShade,
+        // dustType,
+        // name,
       } = data;
       Object.assign(star, {
-        color,
-        size,
-        shade,
-        name,
+        starColor,
+        starShade,
+        dustColor,
+        dustShade,
+        // dustType,
+        // name,
+        birthDate: Date.now(),
       });
       if (roomSocket) {
         roomSocket.send(makeWsMsg(
@@ -108,9 +114,7 @@ const joinAsRoom = (socket) => {
     });
     socket.send(makeWsMsg(
       wsHeaders.serverToRoom.allStars,
-      // TODO: This assumes color is nullish if and only if the star is unborn;
-      // This may change
-      Object.values(stars).filter((e) => e.color != null),
+      Object.values(stars).filter(starIsBorn),
     ));
     socket.on('message', (rawData) => {
       const { header, data } = parseWsMsg(rawData);
@@ -121,6 +125,7 @@ const joinAsRoom = (socket) => {
         }
       }
     });
+    console.log('Room joined');
   }
 };
 
@@ -137,13 +142,12 @@ const joinAsExistingStar = (socket, id) => {
       starSockets[id] = undefined;
       console.log(`Client of star with ID ${id} disconnected`);
     });
-    // TODO: This assumes color is nullish if and only if the star is unborn;
-    // This may change
-    if (existingStar.color == null) {
-      applyUnbornStarBehavior(id);
-    } else {
+    if (starIsBorn(existingStar)) {
       applyBornStarBehavior(id);
+    } else {
+      applyUnbornStarBehavior(id);
     }
+    console.log(`Client of star with ID ${id} rejoined`);
   }
 };
 
@@ -155,10 +159,16 @@ const joinAsNewStar = (socket/* , quizAnswers */) => {
   const newStar = {
     name: generateName(), // String
     id, // Nonnegative int
-    shape: 0, // This will be a "Shape ID", a 0-based int (we can agree upon these later)
-    // position: [0, 0, 0], // [x, y, z] // DISUSED; UNREAL APP WILL DETERMINE THIS STATEFULLY
+    shape: 0, // "Shape ID" - int ranging from 0 to 7 inclusive
+    // (see "Objects" section of "Show your shine" FigJam)
+    starColor: Math.random(),
+    starShade: Math.random(),
+    dustColor: Math.random(),
+    dustShade: Math.random(),
+    dustType: 0, // "Dust Type ID" - nonnegative int like shape,
+    // but otherwise not fully decided upon as per my current knowledge
     // TO BE INITIALIZED AFTER BIRTH AND SENT TO ROOM ALONGSIDE OTHER PARAMETERS:
-    // color, size, shade (floats ranging from 0 to 1)
+    // birthDate (Unix timestamp (miliseconds))
   };
   stars[id] = newStar;
   joinAsExistingStar(socket, id);
@@ -191,7 +201,6 @@ const startWebSocketServer = (server) => {
         case newClientHeaders.joinAsRoom:
           socket.removeListener('message', handleInitialMessage);
           joinAsRoom(socket);
-          console.log('Room joined');
           break;
         case newClientHeaders.joinAsNewStar:
           socket.removeListener('message', handleInitialMessage);
@@ -200,7 +209,6 @@ const startWebSocketServer = (server) => {
         case newClientHeaders.joinAsExistingStar:
           socket.removeListener('message', handleInitialMessage);
           joinAsExistingStar(socket, data);
-          console.log(`Client of star with ID ${data} rejoined`);
           break;
         default:
           // Send error but don't disconnect (leave that up to the client)

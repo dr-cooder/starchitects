@@ -1,7 +1,6 @@
 const React = require('react');
 const PropTypes = require('prop-types');
-const { BackgroundImage, ScalingSection } = require('../components');
-const { blobFilenames, blobs } = require('../preload.js');
+const { ScalingSection } = require('../components');
 const { unitsVerticalInner } = require('../measurements.js');
 
 const textHeight = 100;
@@ -11,9 +10,7 @@ const textTop = (unitsVerticalInner - textHeight - buttonHeight) / 2;
 const buttonTop = textTop + textHeight;
 
 const ErrorScreen = ({ message, onLeave }) => (
-  <BackgroundImage
-    src={blobs[blobFilenames.tempBG]}
-  >
+  <>
     <ScalingSection
       topUnits={textTop}
       topFreeSpace={0.5}
@@ -28,7 +25,7 @@ const ErrorScreen = ({ message, onLeave }) => (
     >
       <button className='outlined' onClick={onLeave}>Back</button>
     </ScalingSection>
-  </BackgroundImage>
+  </>
 );
 
 ErrorScreen.propTypes = {

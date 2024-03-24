@@ -1,14 +1,20 @@
 const React = require('react');
-const { createRef, useEffect } = require('react');
+const { createRef } = require('react');
 const { createRoot } = require('react-dom/client');
-const { AnimatedChangingScreen } = require('./components');
+const { ChangingScreen, BackgroundImage } = require('./components');
 const screens = require('./screens');
-const { allBlobsFromDoc, assignToBlobsImages } = require('./preload.js');
+const {
+  blobFilenames, blobs, allBlobsFromDoc, assignToBlobsImages,
+} = require('./preload.js');
 const { getStarId, setStarId /* , unsetStarId */ } = require('./localStorage.js');
 const compositeWorkerManager = require('./compositeWorkerManager.js');
 const {
   getWebSocketURL, wsHeaders, makeWsMsg, parseWsMsg,
 } = require('../common/webSocket.js');
+const { preventChildrenFromCalling, starIsBorn } = require('../common/helpers.js');
+
+assignToBlobsImages(allBlobsFromDoc());
+compositeWorkerManager.init();
 
 // Set rejoin to truthy to affix stars to sessions/tabs rather than browsers via local storage
 // (optimal for debugging multiple client instances on one device)
@@ -57,7 +63,40 @@ const setScreen = (screen) => {
 
 // Self-referencing set of app states and their behaviors
 const setAppState = {
-  start: () => setScreen(<screens.start
+  title: () => setScreen(<screens.title
+    onAnimationEnd={() => {
+      // setAppState.unbornStar({ shape: 0 });
+      // return;
+      const initialStarId = rejoin ? getStarId() : null;
+      if (initialStarId !== null) {
+        initializeWebSocket(
+          wsHeaders.newClientToServer.joinAsExistingStar,
+          initialStarId,
+          (joinResult) => {
+            const { header, data } = parseWsMsg(joinResult.data);
+            if (header === wsHeaders.serverToWebApp.errorMsg) {
+              // Automatically joining with the stored star ID failed; start as normal
+              // unsetStarId();
+              console.warn(`FAILED TO RECONNECT AS STAR OF ID ${initialStarId}: ${data}`);
+              hangUpWebSocket();
+              setAppState.onboarding();
+            } else if (header === wsHeaders.serverToWebApp.joinSuccess) {
+              if (starIsBorn(data)) {
+                compositeWorkerManager.applyStarData(data);
+                setAppState.bornStar(data);
+              } else {
+                compositeWorkerManager.applyStarData(data);
+                setAppState.unbornStar(data);
+              }
+            }
+          },
+        );
+      } else {
+        setAppState.onboarding();
+      }
+    }}
+  ></screens.title>),
+  onboarding: () => setScreen(<screens.onboarding
     onCreateStar={setAppState.personalityQuiz}
     onSimulateRoom={setAppState.roomSim} // TODO: remove this once Unreal app has this functionality
   />),
@@ -76,18 +115,18 @@ const setAppState = {
           } else if (header === wsHeaders.serverToWebApp.joinSuccess) {
             setStarId(data.id);
             setAppState.unbornStar(data);
+            compositeWorkerManager.applyStarData(data);
           }
         },
       );
     }}
   />),
   unbornStar: (starData) => {
-    compositeWorkerManager.applyStarData(starData);
     const unbornStarScreenRef = createRef();
     return setScreen(<screens.unbornStar
       ref={unbornStarScreenRef}
       starData={starData}
-      onNewName={() => {
+      onNewNameRequest={() => {
         webSocket.send(makeWsMsg(wsHeaders.webAppToServer.newName));
         uponNextMessage((event) => {
           const { header, data } = parseWsMsg(event.data);
@@ -112,7 +151,6 @@ const setAppState = {
     />);
   },
   bornStar: (starData) => {
-    compositeWorkerManager.applyStarData(starData);
     const bornStarScreenRef = createRef();
     webSocket.addEventListener('message', (event) => {
       const { header } = parseWsMsg(event.data);
@@ -138,7 +176,7 @@ const setAppState = {
     compositeWorkerManager.stopVid();
     return setScreen(<screens.error
       message={message}
-      onLeave={setAppState.start}
+      onLeave={setAppState.title}
     />);
   },
   roomSim: () => setScreen(<screens.roomSim/>),
@@ -146,43 +184,17 @@ const setAppState = {
 
 connectionLost = () => setAppState.error('Connection lost.');
 
-const App = () => {
-  useEffect(() => {
-    assignToBlobsImages(allBlobsFromDoc());
-    compositeWorkerManager.init();
-    // setAppState.unbornStar({ shape: 0 });
-    // return;
-    const initialStarId = rejoin ? getStarId() : null;
-    if (initialStarId !== null) {
-      initializeWebSocket(
-        wsHeaders.newClientToServer.joinAsExistingStar,
-        initialStarId,
-        (joinResult) => {
-          const { header, data } = parseWsMsg(joinResult.data);
-          if (header === wsHeaders.serverToWebApp.errorMsg) {
-            // Automatically joining with the stored star ID failed; start as normal
-            // unsetStarId();
-            console.warn(`FAILED TO RECONNECT AS STAR OF ID ${initialStarId}: ${data}`);
-            hangUpWebSocket();
-            setAppState.start();
-          } else if (header === wsHeaders.serverToWebApp.joinSuccess) {
-            // TODO: This assumes color is nullish if and only if the star is unborn;
-            // This may change
-            if (data.color != null) {
-              setAppState.bornStar(data);
-            } else {
-              setAppState.unbornStar(data);
-            }
-          }
-        },
-      );
-    } else {
-      setAppState.start();
-    }
-  });
-
-  return <AnimatedChangingScreen ref={screenRef}/>;
-};
+const App = () => (
+  <div className='appFadeIn' onAnimationEnd={preventChildrenFromCalling(() => {
+    document.querySelector('#loadingStar').remove();
+    document.querySelector('#loadingProgress').remove();
+    setAppState.title();
+  })}>
+    <BackgroundImage src={blobs[blobFilenames.tempBG]}>
+      <ChangingScreen ref={screenRef}/>
+    </BackgroundImage>
+  </div>
+);
 
 // window.onload not necessary - event will have already passed during preload script
 createRoot(document.querySelector('#root')).render(<App />);

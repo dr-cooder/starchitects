@@ -9,6 +9,7 @@ const {
   bwDiffBounds,
   alphaBounds,
 } = require('../common/compositing.js');
+const { colorShadeToRGB } = require('../common/helpers.js');
 const { blobs, blobFilenames } = require('./preload.js');
 
 let compositeWorker;
@@ -40,8 +41,7 @@ const compositeCtx = compositeCanvas.getContext('2d');
 let noActiveVid = true;
 
 const compositeParams = {
-  color: 0,
-  shade: 0,
+  rgb: [1, 0, 0],
   blackBytes: new Uint8ClampedArray(bytesPerVidPart),
   bwDiffBytes: new Uint8ClampedArray(bytesPerVidPart),
   alphaBytes: new Uint8ClampedArray(bytesPerVidPart),
@@ -73,7 +73,6 @@ const tryCompositeNextVideoFrame = () => {
 
 const setVidSrc = (src) => {
   vid.src = src;
-  vid.play();
   noActiveVid = false;
   tryCompositeNextVideoFrame();
 };
@@ -83,27 +82,17 @@ const stopVid = () => {
   vid.removeAttribute('src');
 };
 
-const getColor = () => compositeParams.color;
-
-const setColor = (color) => {
-  compositeParams.color = color ?? 0;
-  tryComposite();
-};
-
-const getShade = () => compositeParams.shade;
-
-const setShade = (shade) => {
-  compositeParams.shade = shade ?? 0;
+const setStarRGB = (rgb) => {
+  compositeParams.rgb = rgb;
   tryComposite();
 };
 
 const applyStarData = (starData) => {
-  const { color, shade } = starData;
-  // TODO: starData.shape should map to the blob URL
-  // of the corresponding video once they are all present
+  const { starColor, starShade } = starData;
+  // TODO: starShape and dustType should map to the blob URL
+  // of the corresponding video
   setVidSrc(blobs[blobFilenames.placeholderStarVid]);
-  setColor(color);
-  setShade(shade);
+  setStarRGB(colorShadeToRGB(starColor, starShade));
 };
 
 const init = () => {
@@ -119,5 +108,5 @@ const init = () => {
 };
 
 module.exports = {
-  init, setVidSrc, stopVid, compositeCanvas, getColor, setColor, getShade, setShade, applyStarData,
+  init, setVidSrc, stopVid, compositeCanvas, setStarRGB, applyStarData,
 };

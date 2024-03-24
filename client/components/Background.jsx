@@ -1,6 +1,6 @@
 const React = require('react');
 const PropTypes = require('prop-types');
-const { px } = require('../../common/helpers');
+const { blurPx } = require('../../common/helpers');
 const { unitsBackgroundWidth, unitsBackgroundHeight } = require('../measurements.js');
 const { usePixelsPerUnit } = require('../measurementsReact.js');
 
@@ -18,7 +18,7 @@ const Background = ({
         top: (height - backgroundHeight) / 2,
         width: backgroundWidth,
         height: backgroundHeight,
-        filter: blur && `blur(${px(pixelsPerUnit * blur)})`,
+        filter: blur && blurPx(pixelsPerUnit * blur),
         opacity: brightness,
       }}>
         {background}

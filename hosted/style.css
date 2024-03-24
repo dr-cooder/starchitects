@@ -25,19 +25,37 @@ p {
   line-height: 1.5em;
 }
 
-.header {
+.header, .theArchitectsPresent {
   font-weight: 500;
-  font-size: 1.5em;
+  line-height: normal;
   margin-bottom: 0;
 }
 
-.header::after {
+.header {
+  font-size: 1.5em;
+}
+
+.theArchitectsPresent::after, .showUsYourShine::after {
   display: block;
   content: '';
+  height: auto;
+  overflow: hidden;
+  box-sizing: content-box;
+  outline: var(--color-bright) solid 0.0625em;
+  margin-left: 0.03125em;
+  margin-right: 0.03125em;
+  padding: 0 0.0625em;
+}
+
+.theArchitectsPresent::after {
+  margin-top: 0.25em;
+  margin-bottom: 0.5em;
+}
+
+.showUsYourShine::after {
   font-size: calc(2em / 3);
-  margin: 0.5em 0;
-  height: 0.125em;
-  background-color: var(--color-bright);
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
 }
 
 button {
@@ -64,7 +82,7 @@ button:disabled {
   opacity: 0.25;
 }
 
-.backgroundDark, .backgroundContainer, .foreground, .scalingSection, .loadingStar, .loadingProgress, .starCanvas {
+.backgroundDark, .backgroundContainer, .foreground, .scalingSection, .loadingStar, .loadingProgress {
   /* object-fit: cover; */
   position: absolute;
 }
@@ -143,12 +161,10 @@ button, .outlined {
   font-size: 1.5em;
 }
 
-/*
 .starCanvas {
   width: 100%;
   height: 100%;
 }
-*/
 
 /* Some browsers may not be able to copy image data from a video if it isn't actively being rendered */
 .hiddenVideo {
@@ -158,19 +174,11 @@ button, .outlined {
   visibility: hidden;
 }
 
-#radial-slider-circle {
-  stroke: var(--color-bright);
-}
-
-#radial-slider-amount-color {
-  background: conic-gradient(from 0deg, var(--color-shine) 0%, var(--color-radiance) 100%);
-}
-
-#radial-slider-controller-outer {
+.radial-slider-controller-outer {
   stroke: var(--color-bright);
   fill: var(--color-midnight);
 }
 
-#radial-slider-controller-inner {
+.radial-slider-controller-inner {
   fill: var(--color-bright);
 }
