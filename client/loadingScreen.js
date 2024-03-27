@@ -129,7 +129,8 @@ window.onload = () => {
   });
 };
 
-// TODO: Ensure browser has canvas support (even though techincally a browser that
-// can't run React will almost certainly not be able to use canvas either?)
-// TODO: Ensure that, if the browser has canvas support, it can also render a video in canvas
-// (if it can't, use a still?) (THIS IS A KNOWN ISSUE WITH FIREFOX ANDROID: https://bugzilla.mozilla.org/show_bug.cgi?id=1526207)
+// TODO: Ensure browser has support for the following:
+// - CSS Animations (Opera Mini: https://caniuse.com/css-animation)
+// - Canvas
+// - Rendering videos with Canvas (Firefox Android: https://bugzilla.mozilla.org/show_bug.cgi?id=1526207))
+// - Video autoplay (Vivaldi Android: https://www.androidpolice.com/vivaldis-latest-update-blocks-pesky-auto-playing-videos/)

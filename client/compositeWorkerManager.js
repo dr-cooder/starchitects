@@ -10,103 +10,119 @@ const {
   alphaBounds,
 } = require('../common/compositing.js');
 const { colorShadeToRGB } = require('../common/helpers.js');
-const { blobs, blobFilenames } = require('./preload.js');
-
-let compositeWorker;
+const { videos, misc, videoToEl } = require('./preload.js');
 
 const compositeWorkerStates = {
   idle: 0,
   compositing: 1,
   queued: 2,
 };
-let compositeWorkerState = compositeWorkerStates.idle;
 
-const vid = document.createElement('video');
-vid.className = 'hiddenVideo';
-vid.muted = true;
-vid.loop = true;
-vid.autoplay = true;
-vid.oncanplaythrough = vid.play;
+// TODO: Repeat everything below for stardust
 
-const vidCanvas = document.createElement('canvas');
-vidCanvas.width = vidWidth;
-vidCanvas.height = vidHeight;
-const vidCtx = vidCanvas.getContext('2d');
+let starCompositeWorker;
+let starCompositeWorkerState = compositeWorkerStates.idle;
+let starVideoEl;
 
-const compositeCanvas = document.createElement('canvas');
-compositeCanvas.width = vidPartWidth;
-compositeCanvas.height = vidPartHeight;
-const compositeCtx = compositeCanvas.getContext('2d');
+const starVideoCanvas = document.createElement('canvas');
+starVideoCanvas.width = vidWidth;
+starVideoCanvas.height = vidHeight;
+const starVideoCtx = starVideoCanvas.getContext('2d');
 
-let noActiveVid = true;
+const starCompositeCanvas = document.createElement('canvas');
+starCompositeCanvas.width = vidPartWidth;
+starCompositeCanvas.height = vidPartHeight;
+const starCompositeCtx = starCompositeCanvas.getContext('2d');
 
-const compositeParams = {
+let noActiveStarVideo = true;
+
+const starCompositeParams = {
   rgb: [1, 0, 0],
   blackBytes: new Uint8ClampedArray(bytesPerVidPart),
   bwDiffBytes: new Uint8ClampedArray(bytesPerVidPart),
   alphaBytes: new Uint8ClampedArray(bytesPerVidPart),
 };
 
-const tryComposite = () => {
-  if (compositeWorkerState === compositeWorkerStates.idle) {
-    compositeWorkerState = compositeWorkerStates.compositing;
-    compositeWorker.postMessage(compositeParams);
+const tryCompositeStar = () => {
+  if (starCompositeWorkerState === compositeWorkerStates.idle) {
+    starCompositeWorkerState = compositeWorkerStates.compositing;
+    starCompositeWorker.postMessage(starCompositeParams);
   } else {
-    compositeWorkerState = compositeWorkerStates.queued;
+    starCompositeWorkerState = compositeWorkerStates.queued;
   }
 };
 
-const tryCompositeNextVideoFrame = () => {
-  if (noActiveVid) return;
+const tryCompositeNextStarVideoFrame = () => {
+  if (noActiveStarVideo) return;
 
-  setTimeout(() => tryCompositeNextVideoFrame(), vidFrameDurationMs);
+  setTimeout(() => tryCompositeNextStarVideoFrame(), vidFrameDurationMs);
 
-  vidCtx.drawImage(vid, 0, 0);
+  starVideoCtx.drawImage(starVideoEl, 0, 0);
 
-  Object.assign(compositeParams, {
-    blackBytes: vidCtx.getImageData(...blackBounds).data,
-    bwDiffBytes: vidCtx.getImageData(...bwDiffBounds).data,
-    alphaBytes: vidCtx.getImageData(...alphaBounds).data,
+  Object.assign(starCompositeParams, {
+    blackBytes: starVideoCtx.getImageData(...blackBounds).data,
+    bwDiffBytes: starVideoCtx.getImageData(...bwDiffBounds).data,
+    alphaBytes: starVideoCtx.getImageData(...alphaBounds).data,
   });
-  tryComposite();
+  tryCompositeStar();
 };
 
-const setVidSrc = (src) => {
-  vid.src = src;
-  noActiveVid = false;
-  tryCompositeNextVideoFrame();
+// const setVidSrc = (src) => {
+//   starVideoEl.src = src;
+//   noActiveStarVideo = false;
+//   tryCompositeNextStarVideoFrame();
+// };
+
+const stopCompositingStar = () => {
+  noActiveStarVideo = true;
+  starVideoEl.removeAttribute('src');
 };
 
-const stopVid = () => {
-  noActiveVid = true;
-  vid.removeAttribute('src');
+const setStarRgbWithoutComposite = (rgb) => {
+  starCompositeParams.rgb = rgb;
 };
 
 const setStarRGB = (rgb) => {
-  compositeParams.rgb = rgb;
-  tryComposite();
+  setStarRgbWithoutComposite(rgb);
+  tryCompositeStar();
 };
 
 const applyStarData = (starData) => {
   const { starColor, starShade } = starData;
   // TODO: starShape and dustType should map to the blob URL
   // of the corresponding video
-  setVidSrc(blobs[blobFilenames.placeholderStarVid]);
-  setStarRGB(colorShadeToRGB(starColor, starShade));
+  // setVidSrc(blobs[blobFilenames.placeholderStarVid]);
+  return new Promise((resolve, reject) => {
+    videoToEl({
+      video: videos.placeholderStarVid,
+      className: 'hiddenVideo',
+    }).then((newStarVideoEl) => {
+      noActiveStarVideo = false;
+      starVideoEl = newStarVideoEl;
+      document.body.appendChild(starVideoEl);
+      setStarRgbWithoutComposite(colorShadeToRGB(starColor, starShade));
+      tryCompositeNextStarVideoFrame();
+      resolve();
+    }).catch(reject);
+  });
 };
 
 const init = () => {
   // console.log('Initializing composite worker manager');
-  document.body.appendChild(vid);
-  compositeWorker = new Worker(blobs[blobFilenames.compositeWorker]);
-  compositeWorker.onmessage = ({ data }) => {
-    compositeCtx.putImageData(data, 0, 0);
-    const compositeWorkerWasQueued = compositeWorkerState === compositeWorkerStates.queued;
-    compositeWorkerState = 0;
-    if (compositeWorkerWasQueued) tryComposite();
+  // document.body.appendChild(starVideoEl);
+  starCompositeWorker = new Worker(misc.compositeWorker.blob);
+  starCompositeWorker.onmessage = ({ data }) => {
+    starCompositeCtx.putImageData(data, 0, 0);
+    const compositeWorkerWasQueued = starCompositeWorkerState === compositeWorkerStates.queued;
+    starCompositeWorkerState = 0;
+    if (compositeWorkerWasQueued) tryCompositeStar();
   };
 };
 
 module.exports = {
-  init, setVidSrc, stopVid, compositeCanvas, setStarRGB, applyStarData,
+  init,
+  stopCompositing: stopCompositingStar,
+  starCompositeCanvas,
+  setStarRGB,
+  applyStarData,
 };

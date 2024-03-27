@@ -30,25 +30,13 @@ const colorToRGB = (hue) => {
   ].map(clamp01);
 };
 
-const saturationCenter = 0.75;
-const saturationRadius = 0.25;
-const valueCenter = 0.75;
-const valueRadius = 0.25;
-const shadeToSaturationValue = (shade) => {
-  const shadeRadians = num01ToRadianRange(shade);
-  return {
-    saturation: saturationCenter + saturationRadius * Math.cos(shadeRadians),
-    value: valueCenter + valueRadius * Math.sin(shadeRadians),
-  };
-};
-
-const applySaturationValue = (rgb, { saturation, value }) => rgb.map(
-  (channel) => lerp(1, channel, saturation) * value,
+const applyShadeToRGB = (rgb, shade) => rgb.map(
+  (channel) => lerp(channel, shade, 0.35),
 );
 
 // Assumes sin/cos take in values of range 0...2pi and returns a list of RGB channels of range 0...1
 const colorShadeToRGB = (color, shade) => (
-  applySaturationValue(colorToRGB(color), shadeToSaturationValue(shade))
+  applyShadeToRGB(colorToRGB(color), shade)
 );
 
 const vectorLengthNoSqrt = (vector) => vector.map((c) => c * c).reduce((a, b) => a + b);
@@ -93,8 +81,7 @@ module.exports = {
   num01ToByteRange,
   rgb01ToByteRange,
   colorToRGB,
-  shadeToSaturationValue,
-  applySaturationValue,
+  applyShadeToRGB,
   colorShadeToRGB,
   vectorLengthNoSqrt,
   dictToElement,

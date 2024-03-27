@@ -94,7 +94,7 @@ button:disabled {
   top: 0;
 }
 
-.background {
+.changingVideo, .background {
   position: relative;
   width: inherit;
   height: inherit;
@@ -166,7 +166,7 @@ button, .outlined {
   height: 100%;
 }
 
-/* Some browsers may not be able to copy image data from a video if it isn't actively being rendered */
+/* Some browsers may not be able to copy image data from a video if it isn't actively being rendered in the DOM */
 .hiddenVideo {
   position: fixed;
   width: 0;

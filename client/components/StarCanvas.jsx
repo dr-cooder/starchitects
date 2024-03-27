@@ -18,7 +18,7 @@ class StarCanvas extends Component {
       requestAnimationFrame(() => mainLoop());
       ctx.clearRect(0, 0, starCanvasWidth, starCanvasHeight);
       ctx.drawImage(
-        compositeWorkerManager.compositeCanvas,
+        compositeWorkerManager.starCompositeCanvas,
         0,
         0,
         starCanvasWidth,

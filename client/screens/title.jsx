@@ -3,7 +3,7 @@ const PropTypes = require('prop-types');
 const { ScalingSection } = require('../components/index.js');
 const { unitsVerticalInner } = require('../measurements.js');
 const { preventChildrenFromCalling } = require('../../common/helpers.js');
-const { blobFilenames, blobs } = require('../preload.js');
+const { misc } = require('../preload.js');
 
 const titleHeight = 84;
 const titleTop = (unitsVerticalInner - titleHeight) / 2;
@@ -16,7 +16,7 @@ const TitleScreen = ({ onAnimationEnd }) => (
       heightUnits={titleHeight}
     >
       <p className='theArchitectsPresent'>The Architects Present</p>
-      <img className='titleLogo' src={blobs[blobFilenames.logo]}/>
+      <img className='titleLogo' src={misc.logo.blob}/>
     </ScalingSection>
   </div>
 );

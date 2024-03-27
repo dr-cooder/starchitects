@@ -1,25 +1,29 @@
 const React = require('react');
+const { createRef, useEffect } = require('react');
 const PropTypes = require('prop-types');
-const { blurPx } = require('../../common/helpers');
-const { unitsBackgroundWidth, unitsBackgroundHeight } = require('../measurements.js');
+const { unitsBackgroundWidth, unitsBackgroundHeight, unitsPerEm } = require('../measurements.js');
 const { usePixelsPerUnit } = require('../measurementsReact.js');
+const { px } = require('../../common/helpers.js');
 
 const Background = ({
-  background, blur, brightness = 1, children,
+  background, children,
 }) => {
+  const containerRef = createRef();
   const { width, height, pixelsPerUnit } = usePixelsPerUnit();
   const backgroundWidth = pixelsPerUnit * unitsBackgroundWidth;
   const backgroundHeight = pixelsPerUnit * unitsBackgroundHeight;
+  useEffect(() => {
+    containerRef.current.setAttribute('inert', '');
+  }, []);
   return (
     <>
       <div className='backgroundDark'></div>
-      <div className='backgroundContainer' style={{
-        left: (width - backgroundWidth) / 2,
-        top: (height - backgroundHeight) / 2,
-        width: backgroundWidth,
-        height: backgroundHeight,
-        filter: blur && blurPx(pixelsPerUnit * blur),
-        opacity: brightness,
+      <div className='backgroundContainer' ref={containerRef} style={{
+        fontSize: px(pixelsPerUnit * unitsPerEm),
+        left: px((width - backgroundWidth) / 2),
+        top: px((height - backgroundHeight) / 2),
+        width: px(backgroundWidth),
+        height: px(backgroundHeight),
       }}>
         {background}
       </div>
@@ -32,8 +36,6 @@ const Background = ({
 
 Background.propTypes = {
   background: PropTypes.node,
-  blur: PropTypes.number,
-  brightness: PropTypes.number,
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node.isRequired),
     PropTypes.node,

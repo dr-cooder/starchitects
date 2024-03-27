@@ -3,8 +3,9 @@ const { useEffect, createRef } = require('react');
 const PropTypes = require('prop-types');
 const { Background } = require('.');
 
+// TODO: This is likely obsolete
 const BackgroundVideo = ({
-  blur, brightness, poster, sources, children,
+  poster, sources, children,
 }) => {
   // Some browsers are very stubborn about autoplay,
   // hence this otherwise redundant failsafe
@@ -28,8 +29,6 @@ const BackgroundVideo = ({
           ))}
         </video>
       }
-      blur={blur}
-      brightness={brightness}
     >
       {children}
     </Background>
@@ -37,8 +36,6 @@ const BackgroundVideo = ({
 };
 
 BackgroundVideo.propTypes = {
-  blur: PropTypes.number,
-  brightness: PropTypes.number,
   poster: PropTypes.string,
   sources: PropTypes.arrayOf(PropTypes.object.isRequired).isRequired,
   children: PropTypes.oneOfType([

@@ -14,6 +14,23 @@
   animation-duration: 4s;
 }
 
+.quizFadeIn {
+  animation-name: simpleFadeIn;
+  animation-duration: 0.5s;
+}
+
+.quizBackgroundNextStart {
+  animation-name: quizBackgroundNextStart;
+  animation-duration: 0.5s;
+}
+
+.quizBackgroundLoop {
+  animation-name: quizBackgroundLoop;
+  animation-duration: 0.5s;
+  filter: blur(1em);
+  opacity: 0.25;
+}
+
 @keyframes simpleFadeIn {
   from {opacity: 0;}
 }
@@ -22,24 +39,24 @@
   from {
     opacity: 0;
     transform: translate(0, 2em);
-    filter: blur(0);
+    filter: none;
   }
 
   12.5% {
     opacity: 1;
-    transform: translate(0, 0);
-    filter: blur(0);
+    transform: none;
+    filter: none;
   }
 
   80% {
     opacity: 1;
-    transform: translate(0, 0);
-    filter: blur(0);
+    transform: none;
+    filter: none;
   }
 
   to {
     opacity: 0;
-    transform: translate(0, 0);
+    transform: none;
     filter: blur(0.5em);
   }
 }
@@ -57,11 +74,35 @@
 
   37.5% {
     opacity: 1;
-    transform: scale(1, 1);
+    transform: none;
   }
 
   to {
     opacity: 1;
-    transform: scale(1, 1);
+    transform: none;
+  }
+}
+
+@keyframes quizBackgroundNextStart {
+  from {
+    filter: blur(1em);
+    opacity: 0.25;
+  }
+
+  to {
+    filter: none;
+    opacity: 1;
+  }
+}
+
+@keyframes quizBackgroundLoop {
+  from {
+    filter: none;
+    opacity: 1;
+  }
+
+  to {
+    filter: blur(1em);
+    opacity: 0.25;
   }
 }

@@ -15,8 +15,7 @@ const {
   num01ToDegreeRange,
   rgb01ToByteRange,
   colorToRGB,
-  shadeToSaturationValue,
-  applySaturationValue,
+  applyShadeToRGB,
   colorShadeToRGB,
   vectorLengthNoSqrt,
   commaJoin,
@@ -43,28 +42,21 @@ const arcEndXMax = unitsHorizontalOuterHalf + arcEndDx;
 const arcEndYMax = unitsHorizontalOuterHalf + arcEndDy;
 
 const gradientStopInfosFunctionGenerator = (isShade) => {
-  const granularity = isShade ? 8 : 6;
+  const granularity = isShade ? 1 : 6;
   const angleStart = (isShade ? 0 : 180) + arcSemiCircleOffsetDegrees;
-  const rgbSaturationValueFunctionGenerator = isShade
-    ? (t) => {
-      const saturationValue = shadeToSaturationValue(t);
-      return (rgb) => [rgb, saturationValue];
-    }
+  const rgbShadeFunctionGenerator = isShade
+    ? (t) => (rgb) => [rgb, t]
     : (t) => {
-      const rgb = colorToRGB(1 - t);
+      const rgb = colorToRGB(t);
       return (saturationValue) => [rgb, saturationValue];
     };
-  const cssColorFunctions = [];
-  for (let i = 0; i < granularity; i++) {
-    const rgbSaturationValueFunction = rgbSaturationValueFunctionGenerator(i / granularity);
-    cssColorFunctions[i] = (cssColorInput) => {
-      const [rgb, saturationValue] = rgbSaturationValueFunction(cssColorInput);
-      return `rgb(${commaJoin(rgb01ToByteRange(applySaturationValue(rgb, saturationValue)))})`;
-    };
-  }
   const infoFunctions = [];
   for (let i = 0; i <= granularity; i++) {
-    const cssColorFunction = cssColorFunctions[i % granularity];
+    const rgbShadeFunction = rgbShadeFunctionGenerator(1 - i / granularity);
+    const cssColorFunction = (cssColorInput) => {
+      const [rgb, shade] = rgbShadeFunction(cssColorInput);
+      return `rgb(${commaJoin(rgb01ToByteRange(applyShadeToRGB(rgb, shade)))})`;
+    };
     const angles = `${!isShade && i === 0 ? '180deg ' : ''}${angleStart + arcAngleDegrees * (i / granularity)}deg${isShade && i === granularity ? ' 180deg' : ''}`;
     infoFunctions[i] = (cssColorInput) => `${cssColorFunction(cssColorInput)} ${angles}`;
   }
@@ -96,13 +88,12 @@ const svgSpaceCenterToPointer = ({ pointer, svgBoxStart, svgBoxLength }) => (
 
 const valueToControllerPosition = ({ value, isShade }) => {
   const radians = (2 * Math.PI) * (arcAngleRatio * value + arcSemiCircleOffsetRatio);
-  const unitX = (isShade ? 1 : -1) * Math.sin(radians);
-  const unitY = -Math.cos(radians);
-  const dyDx = unitY / unitX;
+  const sign = (isShade ? 1 : -1);
+  const unitX = sign * Math.sin(radians);
+  const unitY = sign * Math.cos(radians);
   return {
     x: unitsHorizontalOuterHalf + unitsHorizontalInnerHalf * unitX,
     y: unitsHorizontalOuterHalf + unitsHorizontalInnerHalf * unitY,
-    dyDx,
   };
 };
 
@@ -167,12 +158,11 @@ const tryNewControllerMover = ({
   });
   const svgSpaceCenterToPointerXSign = Math.sign(svgSpaceCenterToPointerX);
   const isShade = svgSpaceCenterToPointerXSign !== -1;
-  const svgSpaceCenterToPointerXAbs = svgSpaceCenterToPointerX * svgSpaceCenterToPointerXSign;
   let result = null;
   if (isShade ? shadeAllowed : colorAllowed) {
     const value = arcSpacePointerToValue({
-      x: svgSpaceCenterToPointerXAbs,
-      y: svgSpaceCenterToPointerY,
+      x: svgSpaceCenterToPointerX * svgSpaceCenterToPointerXSign,
+      y: -svgSpaceCenterToPointerY * svgSpaceCenterToPointerXSign,
       testContact: true,
     });
     if (value !== null) {
@@ -446,7 +436,7 @@ class RadialColorPicker extends Component {
           if (shadeMoverTypeMatchesExpected) {
             newShadeValue = arcSpacePointerToValue({
               x: svgSpaceCenterToPointerX,
-              y: svgSpaceCenterToPointerY,
+              y: -svgSpaceCenterToPointerY,
               testContact: false,
             });
             const { x, y } = valueToControllerPosition({
@@ -505,7 +495,7 @@ class RadialColorPicker extends Component {
                   svgBoxStart: svgX,
                   svgBoxLength: svgWidth,
                 }),
-                y: svgSpaceCenterToPointer({
+                y: -svgSpaceCenterToPointer({
                   pointer: pointerY,
                   svgBoxStart: svgY,
                   svgBoxLength: svgHeight,
@@ -657,7 +647,6 @@ class RadialColorPicker extends Component {
       shadeY,
     } = this.state;
     const rgb = colorToRGB(colorValue);
-    const saturationValue = shadeToSaturationValue(shadeValue);
 
     // https://stackoverflow.com/questions/5736398/how-to-calculate-the-svg-path-for-an-arc-of-a-circle
     // https://css-tricks.com/my-struggle-to-use-and-animate-a-conic-gradient-in-svg/
@@ -679,7 +668,7 @@ class RadialColorPicker extends Component {
           <div style={{
             width: '100%',
             height: '100%',
-            background: `conic-gradient(from 0deg, ${shadeGradientStopInfos(rgb)}, ${colorGradientStopInfos(saturationValue)})`,
+            background: `conic-gradient(from 0deg, ${shadeGradientStopInfos(rgb)}, ${colorGradientStopInfos(shadeValue)})`,
           }} xmlns='http://www.w3.org/1999/xhtml'/>
         </foreignObject>
         <Controller filterId='colorFilter' x={colorX} y={colorY} />

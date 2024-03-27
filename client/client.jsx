@@ -1,11 +1,9 @@
 const React = require('react');
 const { createRef } = require('react');
 const { createRoot } = require('react-dom/client');
-const { ChangingScreen, BackgroundImage } = require('./components');
+const { ChangingScreen, Background } = require('./components');
 const screens = require('./screens');
-const {
-  blobFilenames, blobs, allBlobsFromDoc, assignToBlobsImages,
-} = require('./preload.js');
+const { allBlobsFromDoc, assignBlobsToVideosMisc, misc } = require('./preload.js');
 const { getStarId, setStarId /* , unsetStarId */ } = require('./localStorage.js');
 const compositeWorkerManager = require('./compositeWorkerManager.js');
 const {
@@ -13,7 +11,7 @@ const {
 } = require('../common/webSocket.js');
 const { preventChildrenFromCalling, starIsBorn } = require('../common/helpers.js');
 
-assignToBlobsImages(allBlobsFromDoc());
+assignBlobsToVideosMisc(allBlobsFromDoc());
 compositeWorkerManager.init();
 
 // Set rejoin to truthy to affix stars to sessions/tabs rather than browsers via local storage
@@ -82,11 +80,13 @@ const setAppState = {
               setAppState.onboarding();
             } else if (header === wsHeaders.serverToWebApp.joinSuccess) {
               if (starIsBorn(data)) {
-                compositeWorkerManager.applyStarData(data);
-                setAppState.bornStar(data);
+                compositeWorkerManager.applyStarData(data).then(() => {
+                  setAppState.bornStar(data);
+                });
               } else {
-                compositeWorkerManager.applyStarData(data);
-                setAppState.unbornStar(data);
+                compositeWorkerManager.applyStarData(data).then(() => {
+                  setAppState.unbornStar(data);
+                });
               }
             }
           },
@@ -114,8 +114,9 @@ const setAppState = {
             hangUpWebSocket();
           } else if (header === wsHeaders.serverToWebApp.joinSuccess) {
             setStarId(data.id);
-            setAppState.unbornStar(data);
-            compositeWorkerManager.applyStarData(data);
+            compositeWorkerManager.applyStarData(data).then(() => {
+              setAppState.unbornStar(data);
+            });
           }
         },
       );
@@ -173,7 +174,7 @@ const setAppState = {
     />);
   },
   error: (message) => {
-    compositeWorkerManager.stopVid();
+    compositeWorkerManager.stopCompositing();
     return setScreen(<screens.error
       message={message}
       onLeave={setAppState.title}
@@ -190,9 +191,11 @@ const App = () => (
     document.querySelector('#loadingProgress').remove();
     setAppState.title();
   })}>
-    <BackgroundImage src={blobs[blobFilenames.tempBG]}>
+    <Background background={
+      <img className='background' src={misc.backgroundImg.blob}/>
+    }>
       <ChangingScreen ref={screenRef}/>
-    </BackgroundImage>
+    </Background>
   </div>
 );
 

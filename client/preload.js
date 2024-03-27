@@ -45,47 +45,56 @@ const scripts = [
   },
 ];
 
-/*
+// TODO: Consider not preloading video, and instead firing on 'canplay'?
 const videos = {
-  placeholderVid: {
-    poster: {
-      filename: '/videos/placeholder.jpg',
+  placeholderStarVid: [
+    {
+      type: 'video/mp4',
+      filename: '/videos/composite/star/placeholder.mp4',
     },
-    sources: [
-      {
-        type: 'video/webm',
-        filename: '/videos/placeholder.webm',
-      },
-      {
-        type: 'video/mp4',
-        filename: '/videos/placeholder.mp4',
-      },
-    ]
+  ],
+  quizBgTestStart: [
+    {
+      type: 'video/webm',
+      filename: '/videos/background/quiz/test-start.webm',
+    },
+    {
+      type: 'video/mp4',
+      filename: '/videos/background/quiz/test-start.mp4',
+    },
+  ],
+  quizBgTestLoop: [
+    {
+      type: 'video/webm',
+      filename: '/videos/background/quiz/test-loop.webm',
+    },
+    {
+      type: 'video/mp4',
+      filename: '/videos/background/quiz/test-loop.mp4',
+    },
+  ],
+};
+
+const misc = {
+  backgroundImg: {
+    filename: '/images/background.png',
+  },
+  compositeWorker: {
+    filename: '/composite-worker.js',
+  },
+  logo: {
+    filename: '/images/logo.svg',
   },
 };
-*/
 
 const getFilename = (item) => item.filename;
 const fontFilenames = fonts.map(getFilename);
 const styleFilenames = styles.map(getFilename);
 const scriptFilenames = scripts.map(getFilename);
-
-const blobFilenames = {
-  placeholderVid: '/videos/placeholder.mp4',
-  tempBG: '/images/background.png', // '/images/temp-bg.jpg',
-  placeholderStarVid: '/videos/placeholder-star.mp4',
-  compositeWorker: '/composite-worker.js',
-  logo: '/images/logo.svg',
-};
-// TODO: This doesn't seem necessary for this app? Canvases will only use
-// primitive shapes and composited image data from a video element
-const imageFilenames = {};
-
-const blobFilenameValues = Object.values(blobFilenames);
-const imageFilenameValues = Object.values(imageFilenames);
-
-const blobs = {};
-const images = {};
+const videosFlat = Object.values(videos).flat();
+const videoFilenames = videosFlat.map(getFilename);
+const miscValues = Object.values(misc);
+const miscFilenames = miscValues.map(getFilename);
 
 // ~~~ MOVING DATA BETWEEN DOCUMENT AND STATE ~~~
 
@@ -139,16 +148,37 @@ const fontsStylesScriptsToHead = () => {
   }
 };
 
-const assignToBlobsImages = (allBlobs) => {
-  Object.assign(blobs, ...blobFilenameValues.map((filename) => ({
-    [filename]: allBlobs[filename],
-  })));
-  Object.assign(images, ...imageFilenameValues.map((filename) => {
-    const img = new Image();
-    img.src = allBlobs[filename];
-    return { [filename]: img };
-  }));
+const assignBlobsToVideosMisc = (allBlobs) => {
+  assignBlobs(allBlobs, videosFlat);
+  assignBlobs(allBlobs, miscValues);
 };
+
+// Doing this without React is necessary to create the video node without appending it to the DOM,
+// such that it may load and then call 'canplaythrough' before it is shown
+const videoToEl = ({ video, className, onEnd }) => new Promise((resolve, reject) => {
+  // TODO: Variable checking here
+  const videoEl = document.createElement('video');
+  videoEl.className = className;
+  // videoEl.autoplay = true;
+  videoEl.muted = true; // Necessary for autoplay policy
+  const loop = onEnd == null;
+  videoEl.loop = loop;
+  for (let i = 0; i < video.length; i++) {
+    const source = video[i];
+    const sourceEl = document.createElement('source');
+    sourceEl.type = source.type;
+    sourceEl.src = source.blob;
+    videoEl.appendChild(sourceEl);
+  }
+  videoEl.addEventListener('canplaythrough', () => {
+    videoEl.play();
+    resolve(videoEl);
+  });
+  if (!loop) {
+    videoEl.addEventListener('ended', onEnd);
+  }
+  videoEl.addEventListener('error', reject);
+});
 
 // ~~~ LOAD BEHAVIOR ~~~
 
@@ -191,8 +221,8 @@ const preload = (onProgress) => (preloading ? null : new Promise((resolve, rejec
     ...fontFilenames,
     ...styleFilenames,
     ...scriptFilenames,
-    ...blobFilenameValues,
-    ...imageFilenameValues,
+    ...videoFilenames,
+    ...miscFilenames,
   ])];
   const progresses = Object.assign({}, ...allFilenames.map((filename) => ({ [filename]: {} })));
   Promise.all(allFilenames.map((filename) => loadBlob({
@@ -218,11 +248,10 @@ module.exports = {
   preload,
   allBlobsToDoc,
   allBlobsFromDoc,
-  blobFilenames,
-  imageFilenames,
-  blobs,
-  images,
   assignBlobSrcsToFontsStylesScripts,
   fontsStylesScriptsToHead,
-  assignToBlobsImages,
+  assignBlobsToVideosMisc,
+  videoToEl,
+  videos,
+  misc,
 };
