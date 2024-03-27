@@ -34,7 +34,6 @@ const applyShadeToRGB = (rgb, shade) => rgb.map(
   (channel) => lerp(channel, shade, 0.35),
 );
 
-// Assumes sin/cos take in values of range 0...2pi and returns a list of RGB channels of range 0...1
 const colorShadeToRGB = (color, shade) => (
   applyShadeToRGB(colorToRGB(color), shade)
 );
