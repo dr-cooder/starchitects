@@ -1,6 +1,3 @@
-// https://stackoverflow.com/questions/19754922/why-wont-my-app-establish-websocket-connection-on-heroku
-const getWebSocketURL = () => window.origin.replace(/^http/, 'ws');
-
 const wsHeaders = {
   newClientToServer: {
     joinAsRoom: 0,
@@ -41,7 +38,6 @@ const makeWsMsg = (header, data) => JSON.stringify({ header, data });
 const parseWsMsg = (arrayBuffer) => JSON.parse(arrayBuffer);
 
 module.exports = {
-  getWebSocketURL,
   wsHeaders,
   makeWsMsg,
   parseWsMsg,

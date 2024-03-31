@@ -6,15 +6,9 @@ const {
   useState,
 } = require('react');
 const PropTypes = require('prop-types');
-const {
-  getWebSocketURL,
-  wsHeaders,
-  makeWsMsg,
-  parseWsMsg,
-} = require('../../common/webSocket.js');
+const { webSocketURL } = require('../clientWebSocket.js');
+const { wsHeaders, makeWsMsg, parseWsMsg } = require('../../common/webSocket.js');
 const { ScalingSection } = require('../components');
-
-const webSocketURL = getWebSocketURL();
 
 // This Star class would be somewhat analogous to the Star blueprint
 class Star extends Component {

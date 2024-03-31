@@ -45,34 +45,39 @@ const scripts = [
   },
 ];
 
-// TODO: Consider not preloading video, and instead firing on 'canplay'?
 const videos = {
-  placeholderStarVid: [
-    {
-      type: 'video/mp4',
-      filename: '/videos/composite/star/placeholder.mp4',
-    },
-  ],
-  quizBgTestStart: [
-    {
-      type: 'video/webm',
-      filename: '/videos/background/quiz/test-start.webm',
-    },
-    {
-      type: 'video/mp4',
-      filename: '/videos/background/quiz/test-start.mp4',
-    },
-  ],
-  quizBgTestLoop: [
-    {
-      type: 'video/webm',
-      filename: '/videos/background/quiz/test-loop.webm',
-    },
-    {
-      type: 'video/mp4',
-      filename: '/videos/background/quiz/test-loop.mp4',
-    },
-  ],
+  placeholderStarVid: {
+    sources: [
+      {
+        type: 'video/mp4',
+        filename: '/videos/composite/star/placeholder.mp4',
+      },
+    ],
+  },
+  quizBgTestStart: {
+    sources: [
+      {
+        type: 'video/webm',
+        filename: '/videos/background/quiz/test-start.webm',
+      },
+      {
+        type: 'video/mp4',
+        filename: '/videos/background/quiz/test-start.mp4',
+      },
+    ],
+  },
+  quizBgTestLoop: {
+    sources: [
+      {
+        type: 'video/webm',
+        filename: '/videos/background/quiz/test-loop.webm',
+      },
+      {
+        type: 'video/mp4',
+        filename: '/videos/background/quiz/test-loop.mp4',
+      },
+    ],
+  },
 };
 
 const misc = {
@@ -91,8 +96,9 @@ const getFilename = (item) => item.filename;
 const fontFilenames = fonts.map(getFilename);
 const styleFilenames = styles.map(getFilename);
 const scriptFilenames = scripts.map(getFilename);
-const videosFlat = Object.values(videos).flat();
-const videoFilenames = videosFlat.map(getFilename);
+const videoValues = Object.values(videos);
+const videoSourcesFlat = videoValues.map((video) => video.sources).flat();
+const videoSourceFilenames = videoSourcesFlat.map(getFilename);
 const miscValues = Object.values(misc);
 const miscFilenames = miscValues.map(getFilename);
 
@@ -149,36 +155,57 @@ const fontsStylesScriptsToHead = () => {
 };
 
 const assignBlobsToVideosMisc = (allBlobs) => {
-  assignBlobs(allBlobs, videosFlat);
+  assignBlobs(allBlobs, videoSourcesFlat);
   assignBlobs(allBlobs, miscValues);
 };
 
-// Doing this without React is necessary to create the video node without appending it to the DOM,
-// such that it may load and then call 'canplaythrough' before it is shown
-const videoToEl = ({ video, className, onEnd }) => new Promise((resolve, reject) => {
-  // TODO: Variable checking here
-  const videoEl = document.createElement('video');
-  videoEl.className = className;
-  // videoEl.autoplay = true;
-  videoEl.muted = true; // Necessary for autoplay policy
-  const loop = onEnd == null;
-  videoEl.loop = loop;
-  for (let i = 0; i < video.length; i++) {
-    const source = video[i];
-    const sourceEl = document.createElement('source');
-    sourceEl.type = source.type;
-    sourceEl.src = source.blob;
-    videoEl.appendChild(sourceEl);
+// In-DOM 'bench' exists so that all videos exist in the DOM from the get-go
+// and still do so one "removed", a further anti-flicker measure
+let mediaBench;
+
+// No video (or canvas image) will ever need to be in more than one place at any given point
+// during the runtime of this app, so avoid the memory impact and individual load lag of a new
+// video element every time that video is called for, and instead give each a designated,
+// reusable DOM node
+const createImageVideoEls = () => {
+  mediaBench = document.createElement('div');
+  document.body.appendChild(mediaBench);
+  for (let i = 0; i < videoValues.length; i++) {
+    const video = videoValues[i];
+    const { sources } = video;
+    const videoEl = document.createElement('video');
+    videoEl.muted = true;
+    videoEl.className = 'hiddenVideo';
+    for (let j = 0; j < sources.length; j++) {
+      const source = sources[j];
+      const sourceEl = document.createElement('source');
+      sourceEl.type = source.type;
+      sourceEl.src = source.blob;
+      videoEl.appendChild(sourceEl);
+    }
+    video.el = videoEl;
+    mediaBench.appendChild(videoEl);
   }
-  videoEl.addEventListener('canplaythrough', () => {
-    videoEl.play();
-    resolve(videoEl);
-  });
-  if (!loop) {
-    videoEl.addEventListener('ended', onEnd);
-  }
-  videoEl.addEventListener('error', reject);
-});
+};
+
+const prepareVideo = (props) => {
+  const { el, className, onEnd } = props;
+  el.className = className;
+  el.onended = onEnd;
+  el.loop = !onEnd;
+  // el.currentTime = 0;
+  el.play();
+  return el;
+};
+
+const removeAndRewindVideo = (props) => {
+  const { el } = props;
+  el.className = 'hiddenVideo';
+  // el.remove();
+  mediaBench.appendChild(el);
+  el.pause();
+  el.currentTime = 0;
+};
 
 // ~~~ LOAD BEHAVIOR ~~~
 
@@ -221,7 +248,7 @@ const preload = (onProgress) => (preloading ? null : new Promise((resolve, rejec
     ...fontFilenames,
     ...styleFilenames,
     ...scriptFilenames,
-    ...videoFilenames,
+    ...videoSourceFilenames,
     ...miscFilenames,
   ])];
   const progresses = Object.assign({}, ...allFilenames.map((filename) => ({ [filename]: {} })));
@@ -251,7 +278,9 @@ module.exports = {
   assignBlobSrcsToFontsStylesScripts,
   fontsStylesScriptsToHead,
   assignBlobsToVideosMisc,
-  videoToEl,
+  createImageVideoEls,
+  prepareVideo,
+  removeAndRewindVideo,
   videos,
   misc,
 };

@@ -2,7 +2,7 @@ const React = require('react');
 const { createRef, useEffect } = require('react');
 const PropTypes = require('prop-types');
 const { unitsHorizontalInnerHalf, unitsVerticalInner } = require('../measurements.js');
-const { Background, ChangingVideo, ScalingSection } = require('../components');
+const { Background, ScalingSection, VideoSequence } = require('../components');
 const { videos } = require('../preload.js');
 
 const questionHeight = 116;
@@ -13,29 +13,38 @@ const answerButtonTop = questionTop + questionHeight;
 
 const PersonalityQuizScreen = ({ questions, onSubmit }) => {
   const backgroundVideoRef = createRef();
+  const nextBackground = () => backgroundVideoRef.current.next();
   const questionsParentRef = createRef();
-  useEffect(() => {
-    backgroundVideoRef.current.changeVideo({
-      video: videos.quizBgTestStart,
-      className: 'background',
-      // className: 'quizBackgroundNextStart',
-      onEnd: () => {
-        backgroundVideoRef.current.changeVideo({
-          video: videos.quizBgTestLoop,
-          className: 'background quizBackgroundLoop',
-        }).then(() => {
-          console.log('video 2');
-          setTimeout(() => {
-            questionsParentRef.current.style.visibility = 'visible';
-          }, 500);
-        });
-      },
-    }).then(() => console.log('video 1'));
-  }, []);
+  useEffect(nextBackground, []);
   return (
     <div className='quizFadeIn'>
       <Background
-        background={<ChangingVideo ref={backgroundVideoRef}/>}
+        background={<VideoSequence
+          ref={backgroundVideoRef}
+          videos={[
+            {
+              el: videos.quizBgTestStart.el,
+              className: 'background',
+              onEnd: () => {
+                nextBackground();
+                setTimeout(() => {
+                  questionsParentRef.current.style.visibility = 'visible';
+                }, 500);
+              },
+            },
+            {
+              el: videos.quizBgTestLoop.el,
+              className: 'background quizBackgroundLoop',
+            },
+            {
+              el: videos.quizBgTestLoop.el,
+              className: 'background quizBackgroundNextStart',
+              onEnd: () => onSubmit({
+                sampleQuestion: 'Sample Answer',
+              }),
+            },
+          ]}
+        />}
       >
         <div ref={questionsParentRef} style={{ visibility: 'hidden' }}>
           <ScalingSection
@@ -53,9 +62,10 @@ const PersonalityQuizScreen = ({ questions, onSubmit }) => {
             widthUnits={unitsHorizontalInnerHalf}
             heightUnits={answerButtonHeight}
           >
-            <button className={'outlined quizButton1 outlinedWithTopNeighbor outlinedWithRightNeighbor'} onClick={() => onSubmit({
-              sampleQuestion: 'Sample Answer',
-            })}>Submit</button>
+            <button className={'outlined quizButton1 outlinedWithTopNeighbor outlinedWithRightNeighbor'} onClick={() => {
+              questionsParentRef.current.style.visibility = 'hidden';
+              backgroundVideoRef.current.next();
+            }}>Submit</button>
           </ScalingSection>
           <ScalingSection
             leftUnits={unitsHorizontalInnerHalf}

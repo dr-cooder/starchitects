@@ -1,3 +1,37 @@
+// https://www.geeksforgeeks.org/implementation-queue-javascript/
+class Queue {
+  constructor() {
+    this.empty();
+  }
+
+  enqueue(item) {
+    this.items[this.backIndex] = item;
+    this.backIndex++;
+    this.isNotEmpty = true;
+  }
+
+  dequeue() {
+    if (this.isNotEmpty) {
+      const { frontIndex } = this;
+      const item = this.items[frontIndex];
+      delete this.items[frontIndex];
+      this.frontIndex++;
+      if (this.frontIndex === this.backIndex) {
+        this.isNotEmpty = false;
+      }
+      return item;
+    }
+    throw new RangeError();
+  }
+
+  empty() {
+    this.items = {};
+    this.frontIndex = 0;
+    this.backIndex = 0;
+    this.isNotEmpty = false;
+  }
+}
+
 const px = (pixels) => `${pixels}px`;
 
 const blurPx = (radiusPixels) => `blur(${px(radiusPixels)})`;
@@ -68,6 +102,7 @@ const preventChildrenFromCalling = (callback) => (event) => {
 const starIsBorn = ({ birthDate }) => birthDate != null;
 
 module.exports = {
+  Queue,
   px,
   blurPx,
   percent,

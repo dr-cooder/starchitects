@@ -131,6 +131,13 @@ window.onload = () => {
 
 // TODO: Ensure browser has support for the following:
 // - CSS Animations (Opera Mini: https://caniuse.com/css-animation)
+//   - Refuse to start - "Please try a different web browser!"
 // - Canvas
+//   - Refuse to start
 // - Rendering videos with Canvas (Firefox Android: https://bugzilla.mozilla.org/show_bug.cgi?id=1526207))
+//   - Instead of checking, we could just draw a static image to the canvas
+//     before starting the video draw loop, as a failsafe
 // - Video autoplay (Vivaldi Android: https://www.androidpolice.com/vivaldis-latest-update-blocks-pesky-auto-playing-videos/)
+//   - This is a problem for video backgrounds and may not be easy to check - instead,
+//     check if the video is running after a second or so, and if not,
+//     manually call onEnd after a timeout

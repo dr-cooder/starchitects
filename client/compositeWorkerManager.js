@@ -10,7 +10,9 @@ const {
   alphaBounds,
 } = require('../common/compositing.js');
 const { colorShadeToRGB } = require('../common/helpers.js');
-const { videos, misc, videoToEl } = require('./preload.js');
+const {
+  videos, misc, prepareVideo, removeAndRewindVideo,
+} = require('./preload.js');
 
 const compositeWorkerStates = {
   idle: 0,
@@ -75,7 +77,7 @@ const tryCompositeNextStarVideoFrame = () => {
 
 const stopCompositingStar = () => {
   noActiveStarVideo = true;
-  starVideoEl.removeAttribute('src');
+  removeAndRewindVideo({ el: starVideoEl });
 };
 
 const setStarRgbWithoutComposite = (rgb) => {
@@ -92,19 +94,14 @@ const applyStarData = (starData) => {
   // TODO: starShape and dustType should map to the blob URL
   // of the corresponding video
   // setVidSrc(blobs[blobFilenames.placeholderStarVid]);
-  return new Promise((resolve, reject) => {
-    videoToEl({
-      video: videos.placeholderStarVid,
-      className: 'hiddenVideo',
-    }).then((newStarVideoEl) => {
-      noActiveStarVideo = false;
-      starVideoEl = newStarVideoEl;
-      document.body.appendChild(starVideoEl);
-      setStarRgbWithoutComposite(colorShadeToRGB(starColor, starShade));
-      tryCompositeNextStarVideoFrame();
-      resolve();
-    }).catch(reject);
+  starVideoEl = prepareVideo({
+    el: videos.placeholderStarVid.el,
+    className: 'hiddenVideo',
   });
+  document.body.appendChild(starVideoEl);
+  noActiveStarVideo = false;
+  setStarRgbWithoutComposite(colorShadeToRGB(starColor, starShade));
+  tryCompositeNextStarVideoFrame();
 };
 
 const init = () => {

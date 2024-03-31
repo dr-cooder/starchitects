@@ -3,6 +3,7 @@ const { Component, createRef } = require('react');
 const PropTypes = require('prop-types');
 const { videoToEl } = require('../preload.js');
 
+// TODO: This is likely obsolete
 class ChangingVideo extends Component {
   constructor(props) {
     super(props);
@@ -29,7 +30,7 @@ class ChangingVideo extends Component {
   }
 
   render() {
-    return <div className='changingVideo' ref={this.divRef}></div>;
+    return <div className='videoSequence' ref={this.divRef}></div>;
   }
 }
 

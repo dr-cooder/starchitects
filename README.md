@@ -15,6 +15,7 @@ Take a personality quiz to form your personalized star, then find it in the gala
 - https://stackoverflow.com/questions/42472726/websockets-express-js-and-can-t-establish-a-connection-to-the-server
 - https://stackoverflow.com/questions/5736398/how-to-calculate-the-svg-path-for-an-arc-of-a-circle
 - https://css-tricks.com/my-struggle-to-use-and-animate-a-conic-gradient-in-svg/
+- https://www.geeksforgeeks.org/implementation-queue-javascript/
 ### External Components
 - Bootstrap
 - React

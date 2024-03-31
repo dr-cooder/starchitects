@@ -66,6 +66,11 @@ button {
   color: var(--color-bright);
 }
 
+button.pressed {
+  background-color: var(--color-bright);
+  color: var(--color-midnight);
+}
+
 button.quizButton1, button.quizButton2 {
   background-color: transparent;
 }
@@ -94,7 +99,7 @@ button:disabled {
   top: 0;
 }
 
-.changingVideo, .background {
+.videoSequence, .background {
   position: relative;
   width: inherit;
   height: inherit;
