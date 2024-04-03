@@ -6,6 +6,7 @@ const {
 } = require('../common/webSocket.js');
 const { starPrefix, starSuffix } = require('../common/starNames.js');
 const { starIsBorn } = require('../common/helpers.js');
+const { starModel } = require('./starModel.js');
 
 const pingFrequency = 5000;
 
