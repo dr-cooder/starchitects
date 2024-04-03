@@ -158,7 +158,7 @@ const fontsStylesScriptsToHead = () => {
 };
 
 const assignBlobsToVideosMisc = (allBlobs) => {
-  assignBlobs(allBlobs, videoSourcesFlat);
+  // assignBlobs(allBlobs, videoSourcesFlat);
   assignBlobs(allBlobs, miscValues);
 };
 
@@ -178,17 +178,22 @@ const createImageVideoEls = () => {
     const { sources } = video;
     const videoEl = document.createElement('video');
     videoEl.muted = true;
-    videoEl.playsInline = true;
+    videoEl.crossOrigin = 'anonymous';
+    videoEl.setAttribute('webkit-playsinline', 'webkit-playsinline');
+    videoEl.setAttribute('playsinline', 'playsinline');
+    videoEl.setAttribute('preload', 'auto');
     videoEl.className = 'hiddenVideo';
     for (let j = 0; j < sources.length; j++) {
       const source = sources[j];
       const sourceEl = document.createElement('source');
       sourceEl.type = source.type;
-      sourceEl.src = source.blob;
+      sourceEl.src = source.filename;
       videoEl.appendChild(sourceEl);
     }
     video.el = videoEl;
     mediaBench.appendChild(videoEl);
+    // videoEl.play();
+    // videoEl.pause();
   }
 };
 
@@ -198,7 +203,6 @@ const prepareVideo = (props) => {
   el.onended = onEnd;
   el.loop = !onEnd;
   // el.currentTime = 0;
-  el.remove(); // Safari fix
   el.play();
   return el;
 };
@@ -253,7 +257,7 @@ const preload = (onProgress) => (preloading ? null : new Promise((resolve, rejec
     ...fontFilenames,
     ...styleFilenames,
     ...scriptFilenames,
-    ...videoSourceFilenames,
+    // ...videoSourceFilenames, // Apparently Safari doesn't like videos with blob sources
     ...miscFilenames,
   ])];
   const progresses = Object.assign({}, ...allFilenames.map((filename) => ({ [filename]: {} })));
