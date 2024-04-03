@@ -30,12 +30,13 @@ const starVideoCanvas = document.createElement('canvas');
 starVideoCanvas.width = vidWidth;
 starVideoCanvas.height = vidHeight;
 const starVideoCtx = starVideoCanvas.getContext('2d');
-// document.body.appendChild(starVideoCanvas);
+document.body.appendChild(starVideoCanvas);
 
 const starCompositeCanvas = document.createElement('canvas');
 starCompositeCanvas.width = vidPartWidth;
 starCompositeCanvas.height = vidPartHeight;
 const starCompositeCtx = starCompositeCanvas.getContext('2d');
+document.body.appendChild(starCompositeCanvas);
 
 let noActiveStarVideo = true;
 
