@@ -1,5 +1,5 @@
 const React = require('react');
-const { createRef, useState } = require('react');
+const { useState } = require('react');
 const PropTypes = require('prop-types');
 const { Inert, ScalingSection } = require('../components/index.js');
 const { unitsVerticalInner } = require('../measurements.js');
@@ -11,31 +11,45 @@ const buttonHeight = 40;
 const textTop = (unitsVerticalInner - textHeight - buttonHeight) / 2;
 const buttonTop = unitsVerticalInner - buttonHeight;
 
-const animationStates = {
-  goingIn: 0,
-  idle: 1,
-  goingOut: 2,
+const animationClassNames = {
+  goingIn: {
+    text: 'onboardingTextIn',
+    button: 'outlined onboardingButtonIn',
+  },
+  idle: {
+    text: 'onboardingTextIn',
+    button: 'outlined onboardingButtonIn',
+  },
+  goingOut: {
+    text: 'onboardingTextOut',
+    button: 'outlined pressed onboardingButtonOut',
+  },
 };
 
 const OnboardingScreen = ({ onCreateStar, onSimulateRoom }) => {
-  const { goingIn, idle, goingOut } = animationStates;
-  const textRef = createRef();
-  const buttonRef = createRef();
-  const [animationState, setAnimationState] = useState(goingIn);
+  const { goingIn, idle, goingOut } = animationClassNames;
+  const [animationClassName, setAnimationClassName] = useState(goingIn);
+  const {
+    text: textClassName,
+    button: buttonClassName,
+  } = animationClassName;
   return (
-    <Inert inert={animationState !== idle}>
+    <Inert inert={animationClassName !== idle}>
       <ScalingSection
         topUnits={textTop}
         topFreeSpace={0.5}
         heightUnits={textHeight}
       >
-        <div ref={textRef} className='onboardingTextIn' onAnimationEnd={preventChildrenFromCalling(() => {
-          if (animationState === goingIn) {
-            setAnimationState(idle);
-          } else {
-            onCreateStar();
-          }
-        })}>
+        <div
+          className={textClassName}
+          onAnimationEnd={preventChildrenFromCalling(() => {
+            if (animationClassName === goingIn) {
+              setAnimationClassName(idle);
+            } else {
+              onCreateStar();
+            }
+          })}
+        >
           <p className='header showUsYourShine'>Show us <span className='emphasized'>your</span> shine!</p>
           <p>Every atom that makes up your body was created from a star before Earth
             was even born. We are all made up of <span className='emphasized'>stardust</span>.</p>
@@ -48,11 +62,14 @@ const OnboardingScreen = ({ onCreateStar, onSimulateRoom }) => {
         topFreeSpace={1}
         heightUnits={buttonHeight}
       >
-        <button ref={buttonRef} className='outlined onboardingButtonIn' onClick={() => {
-          textRef.current.className = 'onboardingTextOut';
-          buttonRef.current.className = 'outlined pressed onboardingButtonOut';
-          setAnimationState(goingOut);
-        }}>Begin Survey</button>
+        <button
+          className={buttonClassName}
+          onClick={() => {
+            setAnimationClassName(goingOut);
+          }}
+        >
+          Begin Survey
+        </button>
       </ScalingSection>
       <ScalingSection
         heightUnits={buttonHeight}

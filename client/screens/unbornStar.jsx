@@ -6,6 +6,7 @@ const compositeWorkerManager = require('../compositeWorkerManager.js');
 const {
   unitsPaddingHorizontal, unitsHorizontalOuter, unitsHorizontalInner, unitsVerticalInner,
 } = require('../measurements.js');
+const { colorShadeToRGB } = require('../../common/helpers.js');
 
 const slidersHeight = unitsVerticalInner - unitsHorizontalInner;
 const sliderGranularity = 1000;
@@ -41,8 +42,16 @@ class UnbornStarScreen extends Component {
     };
 
     this.starCanvasRef = createRef();
-    this.setDustColor = (e) => this.setState({ dustColor: translateSliderValue(e) });
-    this.setDustShade = (e) => this.setState({ dustShade: translateSliderValue(e) });
+    this.setDustColor = (e) => {
+      const newDustColor = translateSliderValue(e);
+      compositeWorkerManager.setDustRGB(colorShadeToRGB(newDustColor, this.state.dustShade));
+      this.setState({ dustColor: newDustColor });
+    };
+    this.setDustShade = (e) => {
+      const newDustShade = translateSliderValue(e);
+      compositeWorkerManager.setDustRGB(colorShadeToRGB(this.state.dustColor, newDustShade));
+      this.setState({ dustShade: newDustShade });
+    };
     this.onSwipeStarUp = onSwipeStarUp;
     this.onNewNameRequest = () => {
       this.setState({ waitingForNewName: true });

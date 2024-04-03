@@ -50,7 +50,7 @@ const videos = {
     sources: [
       {
         type: 'video/mp4',
-        filename: '/videos/composite/star/placeholder.mp4',
+        filename: '/videos/composite/placeholder.mp4',
       },
     ],
   },
@@ -89,6 +89,9 @@ const misc = {
   },
   logo: {
     filename: '/images/logo.svg',
+  },
+  progressStar: {
+    filename: '/images/progress-star.svg',
   },
 };
 
@@ -175,6 +178,7 @@ const createImageVideoEls = () => {
     const { sources } = video;
     const videoEl = document.createElement('video');
     videoEl.muted = true;
+    videoEl.playsInline = true;
     videoEl.className = 'hiddenVideo';
     for (let j = 0; j < sources.length; j++) {
       const source = sources[j];

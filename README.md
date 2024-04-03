@@ -16,6 +16,7 @@ Take a personality quiz to form your personalized star, then find it in the gala
 - https://stackoverflow.com/questions/5736398/how-to-calculate-the-svg-path-for-an-arc-of-a-circle
 - https://css-tricks.com/my-struggle-to-use-and-animate-a-conic-gradient-in-svg/
 - https://www.geeksforgeeks.org/implementation-queue-javascript/
+- https://stackoverflow.com/questions/66952087/how-to-create-a-gradient-progress-bar-with-a-fixed-gradient
 ### External Components
 - Bootstrap
 - React

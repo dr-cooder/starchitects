@@ -5,8 +5,10 @@ const {
   vidWidth,
   vidHeight,
   vidFrameDurationMs,
-  blackBounds,
-  bwDiffBounds,
+  basisBounds,
+  starDiffBounds,
+  dustDiffBounds,
+  starTimesDustDiffBounds,
   alphaBounds,
 } = require('../common/compositing.js');
 const { colorShadeToRGB } = require('../common/helpers.js');
@@ -20,8 +22,6 @@ const compositeWorkerStates = {
   queued: 2,
 };
 
-// TODO: Repeat everything below for stardust
-
 let starCompositeWorker;
 let starCompositeWorkerState = compositeWorkerStates.idle;
 let starVideoEl;
@@ -30,6 +30,7 @@ const starVideoCanvas = document.createElement('canvas');
 starVideoCanvas.width = vidWidth;
 starVideoCanvas.height = vidHeight;
 const starVideoCtx = starVideoCanvas.getContext('2d');
+// document.body.appendChild(starVideoCanvas);
 
 const starCompositeCanvas = document.createElement('canvas');
 starCompositeCanvas.width = vidPartWidth;
@@ -39,9 +40,12 @@ const starCompositeCtx = starCompositeCanvas.getContext('2d');
 let noActiveStarVideo = true;
 
 const starCompositeParams = {
-  rgb: [1, 0, 0],
-  blackBytes: new Uint8ClampedArray(bytesPerVidPart),
-  bwDiffBytes: new Uint8ClampedArray(bytesPerVidPart),
+  starRGB: [1, 0, 0],
+  dustRGB: [0, 1, 0],
+  basisBytes: new Uint8ClampedArray(bytesPerVidPart),
+  starDiffBytes: new Uint8ClampedArray(bytesPerVidPart),
+  dustDiffBytes: new Uint8ClampedArray(bytesPerVidPart),
+  starTimesDustDiffBytes: new Uint8ClampedArray(bytesPerVidPart),
   alphaBytes: new Uint8ClampedArray(bytesPerVidPart),
 };
 
@@ -61,9 +65,12 @@ const tryCompositeNextStarVideoFrame = () => {
 
   starVideoCtx.drawImage(starVideoEl, 0, 0);
 
+  starVideoCtx.getImageData(...basisBounds);
   Object.assign(starCompositeParams, {
-    blackBytes: starVideoCtx.getImageData(...blackBounds).data,
-    bwDiffBytes: starVideoCtx.getImageData(...bwDiffBounds).data,
+    basisBytes: starVideoCtx.getImageData(...basisBounds).data,
+    starDiffBytes: starVideoCtx.getImageData(...starDiffBounds).data,
+    dustDiffBytes: starVideoCtx.getImageData(...dustDiffBounds).data,
+    starTimesDustDiffBytes: starVideoCtx.getImageData(...starTimesDustDiffBounds).data,
     alphaBytes: starVideoCtx.getImageData(...alphaBounds).data,
   });
   tryCompositeStar();
@@ -81,7 +88,11 @@ const stopCompositingStar = () => {
 };
 
 const setStarRgbWithoutComposite = (rgb) => {
-  starCompositeParams.rgb = rgb;
+  starCompositeParams.starRGB = rgb;
+};
+
+const setDustRgbWithoutComposite = (rgb) => {
+  starCompositeParams.dustRGB = rgb;
 };
 
 const setStarRGB = (rgb) => {
@@ -89,8 +100,15 @@ const setStarRGB = (rgb) => {
   tryCompositeStar();
 };
 
+const setDustRGB = (rgb) => {
+  setDustRgbWithoutComposite(rgb);
+  tryCompositeStar();
+};
+
 const applyStarData = (starData) => {
-  const { starColor, starShade } = starData;
+  const {
+    starColor, starShade, dustColor, dustShade,
+  } = starData;
   // TODO: starShape and dustType should map to the blob URL
   // of the corresponding video
   // setVidSrc(blobs[blobFilenames.placeholderStarVid]);
@@ -98,17 +116,24 @@ const applyStarData = (starData) => {
     el: videos.placeholderStarVid.el,
     className: 'hiddenVideo',
   });
-  document.body.appendChild(starVideoEl);
+  // document.body.appendChild(starVideoEl);
   noActiveStarVideo = false;
   setStarRgbWithoutComposite(colorShadeToRGB(starColor, starShade));
+  setDustRgbWithoutComposite(colorShadeToRGB(dustColor, dustShade));
   tryCompositeNextStarVideoFrame();
 };
 
+let lastFinishedTime = Date.now();
+let compositeFPS = '0fps';
+const getCompositeFPS = () => compositeFPS;
 const init = () => {
   // console.log('Initializing composite worker manager');
   // document.body.appendChild(starVideoEl);
   starCompositeWorker = new Worker(misc.compositeWorker.blob);
   starCompositeWorker.onmessage = ({ data }) => {
+    const currentFinishedTime = Date.now();
+    compositeFPS = `${Math.floor(1000 / (currentFinishedTime - lastFinishedTime))}fps`;
+    lastFinishedTime = currentFinishedTime;
     starCompositeCtx.putImageData(data, 0, 0);
     const compositeWorkerWasQueued = starCompositeWorkerState === compositeWorkerStates.queued;
     starCompositeWorkerState = 0;
@@ -116,10 +141,13 @@ const init = () => {
   };
 };
 
+// TODO: Setter for particle type (will impact video's negative Y draw offset on canvas)
 module.exports = {
   init,
   stopCompositing: stopCompositingStar,
   starCompositeCanvas,
   setStarRGB,
+  setDustRGB,
   applyStarData,
+  getCompositeFPS,
 };

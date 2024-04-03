@@ -53,6 +53,36 @@
   opacity: 0.25;
 }
 
+.quizProgressPercent {
+  transition: width 1s;
+}
+
+.quizNotStartedYet {
+  visibility: hidden;
+}
+
+.quizProgressIn {
+  animation-name: simpleFadeIn;
+  animation-duration: 1s;
+}
+
+.questionBlockIn {
+  animation-name: questionBlockIn;
+  animation-duration: 1s;
+}
+
+.quizProgressOut {
+  animation-name: quizProgressOut;
+  animation-duration: 2s;
+  opacity: 0;
+}
+
+.questionBlockOut {
+  animation-name: questionBlockOut;
+  animation-duration: 2s;
+  opacity: 0;
+}
+
 @keyframes simpleFadeIn {
   from {opacity: 0;}
 }
@@ -191,5 +221,51 @@
   to {
     filter: blur(1em);
     opacity: 0.25;
+  }
+}
+
+@keyframes questionBlockIn {
+  from {
+    opacity: 0;
+    transform: translate(0, -5em);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes quizProgressOut {
+  from {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes questionBlockOut {
+  from {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  50% {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  to {
+    opacity: 0;
+    transform: translate(0, 5em);
+    filter: blur(0.25em);
   }
 }

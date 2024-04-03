@@ -16,7 +16,7 @@ const TitleScreen = ({ onAnimationEnd }) => (
       heightUnits={titleHeight}
     >
       <p className='theArchitectsPresent'>The Architects Present</p>
-      <img className='titleLogo' src={misc.logo.blob}/>
+      <img src={misc.logo.blob} alt='Starchitects' className='titleLogo'/>
     </ScalingSection>
   </div>
 );

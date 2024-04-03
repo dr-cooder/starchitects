@@ -14,6 +14,8 @@ class StarCanvas extends Component {
   componentDidMount() {
     const canvasEl = this.canvasRef.current;
     const ctx = canvasEl.getContext('2d');
+    ctx.font = '30px Arial';
+    ctx.fillStyle = 'red';
     const mainLoop = () => {
       requestAnimationFrame(() => mainLoop());
       ctx.clearRect(0, 0, starCanvasWidth, starCanvasHeight);
@@ -24,6 +26,7 @@ class StarCanvas extends Component {
         starCanvasWidth,
         starCanvasHeight,
       );
+      ctx.fillText(compositeWorkerManager.getCompositeFPS(), 10, 50);
     };
     mainLoop();
   }

@@ -65,7 +65,6 @@ const setAppState = {
     onSimulateRoom={setAppState.roomSim} // TODO: remove this once Unreal app has this functionality
   />),
   personalityQuiz: () => setScreen(<screens.personalityQuiz
-    questions='(Pretend there are questions here)'
     onSubmit={(quizAnswers) => {
       setScreen();
       webSocket.send(makeWsMsg(
@@ -145,6 +144,7 @@ const App = () => (
     document.querySelector('#loadingStar').remove();
     document.querySelector('#loadingProgress').remove();
     setAppState.title();
+    // setAppState.personalityQuiz();
   })}>
     <Background background={
       <img className='background' src={misc.backgroundImg.blob}/>
