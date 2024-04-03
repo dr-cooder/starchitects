@@ -117,7 +117,7 @@ const applyStarData = (starData) => {
     el: videos.placeholderStarVid.el,
     className: 'hiddenVideo',
   });
-  // document.body.appendChild(starVideoEl);
+  document.body.appendChild(starVideoEl);
   noActiveStarVideo = false;
   setStarRgbWithoutComposite(colorShadeToRGB(starColor, starShade));
   setDustRgbWithoutComposite(colorShadeToRGB(dustColor, dustShade));

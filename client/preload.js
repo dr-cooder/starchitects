@@ -198,6 +198,7 @@ const prepareVideo = (props) => {
   el.onended = onEnd;
   el.loop = !onEnd;
   // el.currentTime = 0;
+  el.remove(); // Safari fix
   el.play();
   return el;
 };
