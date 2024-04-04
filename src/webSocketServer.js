@@ -114,7 +114,7 @@ const joinAsRoom = (socket) => {
     });
     socket.send(makeWsMsg(
       wsHeaders.serverToRoom.allStars,
-      Object.values(stars).filter(starIsBorn),
+      Object.values(stars).filter((star) => { return star.born }),
     ));
     socket.on('message', (rawData) => {
       const { header, data } = parseWsMsg(rawData);
