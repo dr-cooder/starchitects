@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-let starModel = {};
+let StarModel = {};
 
 const StarSchema = new mongoose.Schema({
     name: {
@@ -35,8 +35,12 @@ const StarSchema = new mongoose.Schema({
     },
     birthDate: {
         type: Date,
-        default: Date.now,
     },
+    born: {
+        type: Boolean,
+        required: true,
+        default: false,
+    }
 });
 
 // Converts a doc to JSON
@@ -49,8 +53,14 @@ StarSchema.statics.toAPI = (doc) => ({
     dustColor: doc.dustColor,
     dustShade: doc.dustShade,
     birthDate: doc.birthDate,
+    born: doc.born,
     id: doc._id,
 });
+
+StarSchema.statics.getBornStars = async () => {
+    const stars = await StarModel.find({ born: true });
+    return stars;
+}
 
 StarModel = mongoose.model('Star', StarSchema);
 

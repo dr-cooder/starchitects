@@ -6,7 +6,7 @@ const {
 } = require('../common/webSocket.js');
 const { starPrefix, starSuffix } = require('../common/starNames.js');
 const { starIsBorn } = require('../common/helpers.js');
-const { starModel } = require('./starModel.js');
+const { StarModel } = require('./starModel.js');
 
 const pingFrequency = 5000;
 
@@ -61,34 +61,33 @@ const applyBornStarBehavior = (id) => {
 const applyUnbornStarBehavior = (id) => {
   const socket = starSockets[id];
   const star = stars[id];
-  const unbornListener = (rawData) => {
+  const unbornListener = async (rawData) => {
     const { header, data } = parseWsMsg(rawData);
     if (header === wsHeaders.webAppToServer.newName) {
       const newName = generateName();
-      star.name = newName;
+      // update mongoDB
+      const result = await StarModel.findByIdAndUpdate(id, { name: newName }, { new: true, runValidators: true });
+      star.name = StarModel.toAPI(result).name;
       socket.send(makeWsMsg(
         wsHeaders.serverToWebApp.newName,
         newName,
       ));
     } else if (header === wsHeaders.webAppToServer.birthStar) {
       // TODO: send these whenever the respective customization screen is left
-      const {
-        starColor,
-        starShade,
-        dustColor,
-        dustShade,
-        // dustType,
-        // name,
-      } = data;
-      Object.assign(star, {
-        starColor,
-        starShade,
-        dustColor,
-        dustShade,
-        // dustType,
-        // name,
+
+      const update = {
+        starColor: data.starColor,
+        starShade: data.starShade,
+        dustColor: data.dustColor,
+        dustShade: data.dustShade,
         birthDate: Date.now(),
-      });
+        born: true,
+      }
+      // update mongoDB
+      const result = await StarModel.findByIdAndUpdate(id, update, { new: true, runValidators: true });
+
+      Object.assign(star, StarModel.toAPI(result));
+
       if (roomSocket) {
         roomSocket.send(makeWsMsg(
           wsHeaders.serverToRoom.newStar,
@@ -143,7 +142,8 @@ const joinAsExistingStar = (socket, id) => {
       starSockets[id] = undefined;
       console.log(`Client of star with ID ${id} disconnected`);
     });
-    if (starIsBorn(existingStar)) {
+    if (existingStar.born) {
+      //if (starIsBorn(existingStar)) {
       applyBornStarBehavior(id);
     } else {
       applyUnbornStarBehavior(id);
@@ -152,14 +152,12 @@ const joinAsExistingStar = (socket, id) => {
   }
 };
 
-const joinAsNewStar = (socket/* , quizAnswers */) => {
+const joinAsNewStar = async (socket/* , quizAnswers */) => {
   // TODO: Make data (quizAnswers) actually impact the star
-  // TODO: Store star in database
-  const id = getNextStarId();
+
   // Parameters initialized in the unborn state
-  const newStar = {
+  const newStarData = {
     name: generateName(), // String
-    id, // Nonnegative int
     shape: 0, // "Shape ID" - int ranging from 0 to 7 inclusive
     // (see "Objects" section of "Show your shine" FigJam)
     starColor: Math.random(),
@@ -171,6 +169,15 @@ const joinAsNewStar = (socket/* , quizAnswers */) => {
     // TO BE INITIALIZED AFTER BIRTH AND SENT TO ROOM ALONGSIDE OTHER PARAMETERS:
     // birthDate (Unix timestamp (miliseconds))
   };
+
+  // Store star in database
+  const newStar = new StarModel(newStarData);
+  await newStar.save();
+  const starObj = StarModel.toAPI(newStar);
+  // console.log(starObj);
+
+  const id = starObj.id;
+
   stars[id] = newStar;
   joinAsExistingStar(socket, id);
   console.log(`Client of new star with ID ${id} joined`);
@@ -191,7 +198,13 @@ const pingAllSockets = () => {
   setTimeout(pingAllSockets, pingFrequency);
 };
 
-const startWebSocketServer = (server) => {
+const startWebSocketServer = async (server) => {
+  // TODO: load pre-existing stars
+  const preBornStars = await StarModel.getBornStars();
+  preBornStars.map((star) => {
+    stars[star.id] = star;
+  });
+
   const socketServer = new WebSocketServer({ server });
   socketServer.on('connection', (socket) => {
     // Initial message establishes client type, and determines what to do with this new socket
