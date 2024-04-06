@@ -4,7 +4,7 @@ const { createRoot } = require('react-dom/client');
 const { ChangingScreen, Background } = require('./components');
 const screens = require('./screens');
 const {
-  allBlobsFromDoc, assignBlobsToVideosMisc, createImageVideoEls, misc,
+  preloadInfoFromDoc, assignPreloadInfoToVideosMisc, createImageVideoEls, misc,
 } = require('./preload.js');
 const { getStarId, setStarId /* , unsetStarId */ } = require('./localStorage.js');
 const compositeWorkerManager = require('./compositeWorkerManager.js');
@@ -12,13 +12,14 @@ const webSocket = require('./clientWebSocket.js');
 const { wsHeaders, makeWsMsg } = require('../common/webSocket.js');
 const { preventChildrenFromCalling, starIsBorn } = require('../common/helpers.js');
 
-assignBlobsToVideosMisc(allBlobsFromDoc());
+assignPreloadInfoToVideosMisc(preloadInfoFromDoc());
 createImageVideoEls();
 compositeWorkerManager.init();
 
 // Set rejoin to truthy to affix stars to sessions/tabs rather than browsers via local storage
 // (optimal for debugging multiple client instances on one device)
-const rejoin = true;
+// TODO: REJOIN SHOULD BE TRUE BY THE TIME OF PRESENTATION
+const rejoin = false;
 const screenRef = createRef();
 
 const setScreen = (screen) => {

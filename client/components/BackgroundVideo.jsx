@@ -1,5 +1,5 @@
 const React = require('react');
-const { useEffect, createRef } = require('react');
+const { useEffect, useRef } = require('react');
 const PropTypes = require('prop-types');
 const { Background } = require('.');
 
@@ -9,7 +9,7 @@ const BackgroundVideo = ({
 }) => {
   // Some browsers are very stubborn about autoplay,
   // hence this otherwise redundant failsafe
-  const videoRef = createRef();
+  const videoRef = useRef();
   useEffect(() => {
     videoRef.current.play();
   }, []);

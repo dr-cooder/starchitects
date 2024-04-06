@@ -4,22 +4,22 @@ const { dictToElement } = require('../common/helpers.js');
 
 const fonts = [
   {
-    filename: '/fonts/Geist-Regular.otf',
+    url: '/fonts/Geist-Regular.otf',
     family: 'Geist',
     weight: 400,
   },
   {
-    filename: '/fonts/Geist-Medium.otf',
+    url: '/fonts/Geist-Medium.otf',
     family: 'Geist',
     weight: 500,
   },
   {
-    filename: '/fonts/Geist-Bold.otf',
+    url: '/fonts/Geist-Bold.otf',
     family: 'Geist',
     weight: 700,
   },
   {
-    filename: '/fonts/Migra-Regular.otf',
+    url: '/fonts/Migra-Regular.otf',
     family: 'Migra',
     weight: 400,
   },
@@ -27,54 +27,168 @@ const fonts = [
 
 const styles = [
   {
-    filename: 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap-reboot.min.css',
+    url: 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap-reboot.min.css',
     integrity: 'sha384-AzXcmcMInlJeZ/nwA+GR1Ta94m/H/FK4P6NcvXCVMWbzM4WyU+i1JgunGXPetEyz',
     crossorigin: 'anonymous',
   },
   {
-    filename: '/style.css',
+    url: '/style.css',
   },
   {
-    filename: '/animations.css',
+    url: '/animations.css',
   },
 ];
 
 const scripts = [
   {
-    filename: '/main.js',
+    url: '/main.js',
   },
 ];
 
+// Ask server for prefix to video URL's - server should return cloud URL if on Heroku
+// and gitignored video folder otherwise
 const videos = {
   placeholderStarVid: {
     sources: [
       {
+        type: 'video/webm',
+        urlRel: 'composite/placeholder/1.webm',
+      },
+      {
         type: 'video/mp4',
-        filename: '/videos/composite/placeholder.mp4',
+        urlRel: 'composite/placeholder/1.mp4',
       },
     ],
   },
-  quizBgTestStart: {
+  quizBg1Start: {
     sources: [
       {
         type: 'video/webm',
-        filename: '/videos/background/quiz/test-start.webm',
+        urlRel: 'background/quiz/test-start.webm',
       },
       {
         type: 'video/mp4',
-        filename: '/videos/background/quiz/test-start.mp4',
+        urlRel: 'background/quiz/test-start.mp4',
       },
     ],
   },
-  quizBgTestLoop: {
+  quizBg1Loop: {
     sources: [
       {
         type: 'video/webm',
-        filename: '/videos/background/quiz/test-loop.webm',
+        urlRel: 'background/quiz/test-loop.webm',
       },
       {
         type: 'video/mp4',
-        filename: '/videos/background/quiz/test-loop.mp4',
+        urlRel: 'background/quiz/test-loop.mp4',
+      },
+    ],
+  },
+  quizBg2Start: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'background/quiz/test-loop.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'background/quiz/test-loop.mp4',
+      },
+    ],
+  },
+  quizBg2Loop: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'background/quiz/test-loop.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'background/quiz/test-loop.mp4',
+      },
+    ],
+  },
+  quizBg3Start: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'background/quiz/test-loop.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'background/quiz/test-loop.mp4',
+      },
+    ],
+  },
+  quizBg3Loop: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'background/quiz/test-loop.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'background/quiz/test-loop.mp4',
+      },
+    ],
+  },
+  quizBg4Start: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'background/quiz/test-loop.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'background/quiz/test-loop.mp4',
+      },
+    ],
+  },
+  quizBg4Loop: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'background/quiz/test-loop.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'background/quiz/test-loop.mp4',
+      },
+    ],
+  },
+  quizBg5Start: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'background/quiz/test-loop.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'background/quiz/test-loop.mp4',
+      },
+    ],
+  },
+  quizBg5Loop: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'background/quiz/test-loop.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'background/quiz/test-loop.mp4',
+      },
+    ],
+  },
+  quizBgEnd: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'background/quiz/test-loop.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'background/quiz/test-loop.mp4',
       },
     ],
   },
@@ -82,52 +196,59 @@ const videos = {
 
 const misc = {
   backgroundImg: {
-    filename: '/images/background.png',
+    url: '/images/background.png',
   },
   compositeWorker: {
-    filename: '/composite-worker.js',
+    url: '/composite-worker.js',
   },
   logo: {
-    filename: '/images/logo.svg',
+    url: '/images/logo.svg',
   },
   progressStar: {
-    filename: '/images/progress-star.svg',
+    url: '/images/progress-star.svg',
   },
 };
 
-const getFilename = (item) => item.filename;
-const fontFilenames = fonts.map(getFilename);
-const styleFilenames = styles.map(getFilename);
-const scriptFilenames = scripts.map(getFilename);
+const getURL = (item) => item.url;
+const fontURLs = fonts.map(getURL);
+const styleURLs = styles.map(getURL);
+const scriptURLs = scripts.map(getURL);
 const videoValues = Object.values(videos);
 const videoSourcesFlat = videoValues.map((video) => video.sources).flat();
-const videoSourceFilenames = videoSourcesFlat.map(getFilename);
 const miscValues = Object.values(misc);
-const miscFilenames = miscValues.map(getFilename);
+const miscURLs = miscValues.map(getURL);
 
 // ~~~ MOVING DATA BETWEEN DOCUMENT AND STATE ~~~
 
-const allBlobsToDoc = (allBlobs) => {
-  document.head.dataset.allBlobs = JSON.stringify(allBlobs);
+const preloadInfoToDoc = (preloadInfo) => {
+  document.head.dataset.preloadInfo = JSON.stringify(preloadInfo);
 };
 
-const allBlobsFromDoc = () => {
-  const allBlobs = JSON.parse(document.head.dataset.allBlobs);
-  delete document.head.dataset.allBlobs;
-  return allBlobs;
+const preloadInfoFromDoc = () => {
+  const preloadInfo = JSON.parse(document.head.dataset.preloadInfo);
+  delete document.head.dataset.preloadInfo;
+  return preloadInfo;
 };
 
-const assignBlobs = (allBlobs, items) => {
+const assignBlobs = (blobs, items) => {
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
-    item.blob = allBlobs[item.filename];
+    item.blob = blobs[getURL(item)];
   }
 };
 
-const assignBlobSrcsToFontsStylesScripts = (allBlobs) => {
-  assignBlobs(allBlobs, fonts);
-  assignBlobs(allBlobs, styles);
-  assignBlobs(allBlobs, scripts);
+const assignVideoFolder = (videoFolder) => {
+  for (let i = 0; i < videoSourcesFlat.length; i++) {
+    const videoSource = videoSourcesFlat[i];
+    videoSource.url = videoFolder + videoSource.urlRel;
+  }
+};
+
+const assignPreloadInfoToFontsStylesScripts = (preloadInfo) => {
+  const { blobs } = preloadInfo;
+  assignBlobs(blobs, fonts);
+  assignBlobs(blobs, styles);
+  assignBlobs(blobs, scripts);
 };
 
 const fontsStylesScriptsToHead = () => {
@@ -157,9 +278,11 @@ const fontsStylesScriptsToHead = () => {
   }
 };
 
-const assignBlobsToVideosMisc = (allBlobs) => {
-  // assignBlobs(allBlobs, videoSourcesFlat);
-  assignBlobs(allBlobs, miscValues);
+const assignPreloadInfoToVideosMisc = (preloadInfo) => {
+  const { blobs, videoFolder } = preloadInfo;
+  assignVideoFolder(videoFolder);
+  // assignBlobs(blobs, videoSourcesFlat);
+  assignBlobs(blobs, miscValues);
 };
 
 // In-DOM 'bench' exists so that all videos exist in the DOM from the get-go
@@ -178,7 +301,7 @@ const createImageVideoEls = () => {
     const { sources } = video;
     const videoEl = document.createElement('video');
     videoEl.muted = true;
-    videoEl.crossOrigin = 'anonymous';
+    videoEl.crossOrigin = 'Anonymous';
     videoEl.setAttribute('webkit-playsinline', 'webkit-playsinline');
     videoEl.setAttribute('playsinline', 'playsinline');
     videoEl.setAttribute('preload', 'auto');
@@ -187,11 +310,12 @@ const createImageVideoEls = () => {
       const source = sources[j];
       const sourceEl = document.createElement('source');
       sourceEl.type = source.type;
-      sourceEl.src = source.filename;
+      sourceEl.src = getURL(source);
       videoEl.appendChild(sourceEl);
     }
     video.el = videoEl;
     mediaBench.appendChild(videoEl);
+    // videoEl.load();
     // videoEl.play();
     // videoEl.pause();
   }
@@ -207,13 +331,18 @@ const prepareVideo = (props) => {
   return el;
 };
 
-const removeAndRewindVideo = (props) => {
+const hideAndRewindVideo = (props) => {
   const { el } = props;
   el.className = 'hiddenVideo';
-  // el.remove();
-  mediaBench.appendChild(el);
   el.pause();
-  el.currentTime = 0;
+  // Bit of a hacky anti-flicker measure that assumes the no element
+  // will be re-appended within a split second of its removal
+  setTimeout(() => { el.currentTime = 0; }, 100);
+};
+
+const removeAndRewindVideo = (props) => {
+  hideAndRewindVideo(props);
+  mediaBench.appendChild(props.el);
 };
 
 // ~~~ LOAD BEHAVIOR ~~~
@@ -253,42 +382,53 @@ const getTotalProgress = (progressList) => {
 let preloading = false;
 const preload = (onProgress) => (preloading ? null : new Promise((resolve, reject) => {
   preloading = true;
-  const allFilenames = [...new Set([
-    ...fontFilenames,
-    ...styleFilenames,
-    ...scriptFilenames,
-    // ...videoSourceFilenames, // Apparently Safari doesn't like videos with blob sources
-    ...miscFilenames,
-  ])];
-  const progresses = Object.assign({}, ...allFilenames.map((filename) => ({ [filename]: {} })));
-  Promise.all(allFilenames.map((filename) => loadBlob({
-    url: filename,
-    onProgress: (e) => {
-      progresses[filename] = e;
-      onProgress(getTotalProgress(Object.values(progresses)));
-    },
-  }))).then((allBlobsList) => {
-    resolve(Object.assign(
-      {},
-      ...allFilenames.map((filename, index) => ({
-        [filename]: allBlobsList[index],
-      })),
-    ));
-  }).catch(() => {
+  const stopPreloadingAndReject = () => {
     preloading = false;
     reject();
-  });
+  };
+  fetch('/video-folder').then((res) => res.text().then((videoFolder) => {
+    // assignVideoFolder(videoFolder);
+    const allURLs = [...new Set([
+      ...fontURLs,
+      ...styleURLs,
+      ...scriptURLs,
+      // ...videoSourceURLs, // Apparently Safari doesn't like videos with blob sources,
+      // but loading them this way anyway will hopefully cache them
+      // https://discussions.apple.com/thread/254893296?sortBy=best
+      ...miscURLs,
+    ])];
+    const progresses = Object.assign({}, ...allURLs.map((url) => ({ [url]: {} })));
+    Promise.all(allURLs.map((url) => loadBlob({
+      url,
+      onProgress: (e) => {
+        progresses[url] = e;
+        onProgress(getTotalProgress(Object.values(progresses)));
+      },
+    }))).then((preloadInfoList) => {
+      preloading = false;
+      resolve({
+        blobs: Object.assign(
+          {},
+          ...allURLs.map((url, index) => ({
+            [url]: preloadInfoList[index],
+          })),
+        ),
+        videoFolder,
+      });
+    }).catch(stopPreloadingAndReject);
+  }).catch(stopPreloadingAndReject)).catch(stopPreloadingAndReject);
 }));
 
 module.exports = {
   preload,
-  allBlobsToDoc,
-  allBlobsFromDoc,
-  assignBlobSrcsToFontsStylesScripts,
+  preloadInfoToDoc,
+  preloadInfoFromDoc,
+  assignPreloadInfoToFontsStylesScripts,
   fontsStylesScriptsToHead,
-  assignBlobsToVideosMisc,
+  assignPreloadInfoToVideosMisc,
   createImageVideoEls,
   prepareVideo,
+  hideAndRewindVideo,
   removeAndRewindVideo,
   videos,
   misc,

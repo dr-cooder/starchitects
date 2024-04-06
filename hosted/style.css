@@ -113,7 +113,7 @@ button.pressed {
 }
 
 .videoSequence, .background {
-  position: relative;
+  position: absolute;
   width: inherit;
   height: inherit;
 }
@@ -234,9 +234,16 @@ button, .outlined {
 /* Some browsers may not be able to copy image data from a video if it isn't actively being rendered in the DOM */
 .hiddenVideo {
   position: fixed;
+  top: 0;
+  left: 0;
   width: 0;
   height: 0;
-  visibility: hidden;
+  opacity: 0;
+  /*
+  width: 100px;
+  height: 100px;
+  opacity: 0.5;
+  */
 }
 
 .radial-slider-controller-outer {

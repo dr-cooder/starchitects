@@ -18,6 +18,7 @@ class UnbornStarScreen extends Component {
     const {
       starData: {
         name,
+        shape,
         starColor,
         starShade,
         dustColor,
@@ -26,6 +27,17 @@ class UnbornStarScreen extends Component {
       onNewNameRequest,
       onSwipeStarUp,
     } = props;
+
+    console.log([
+      'Thinker',
+      'Dreamer',
+      'Producer',
+      'Disciplined',
+      'Innovator',
+      'Visionary',
+      'Independent',
+      'Listener',
+    ][shape]);
 
     this.initialStarColor = starColor;
     this.initialStarShade = starShade;
@@ -77,6 +89,7 @@ class UnbornStarScreen extends Component {
           heightUnits={slidersHeight}
           heightFreeSpace={0.5}
         >
+          <div className='animTest'></div>
           <p>Here is your star! (Swipe it up when you are done customizing it)</p>
           <p>{this.state.name}</p>
           <p>

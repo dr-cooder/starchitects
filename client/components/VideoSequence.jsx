@@ -1,7 +1,7 @@
 const React = require('react');
 const { Component, createRef } = require('react');
 const PropTypes = require('prop-types');
-const { prepareVideo, removeAndRewindVideo } = require('../preload.js');
+const { prepareVideo, hideAndRewindVideo, removeAndRewindVideo } = require('../preload.js');
 // const { videos } = require('../preload.js');
 
 class VideoSequence extends Component {
@@ -10,12 +10,16 @@ class VideoSequence extends Component {
 
     this.divRef = createRef();
 
-    const { videos } = props;
+    const { onReady, videos } = props;
+    this.onReady = () => {
+      this.ready = true;
+      onReady();
+    };
     this.videos = videos;
     const videoCount = videos.length;
     this.videoCount = videoCount;
     // let videoEls = [];
-    let ready = true;
+    this.ready = false;
     let started = false;
     let currentVideoIndex = -1;
     // Promise.all(videos.map(videoToEl)).then((videoElsReady) => {
@@ -24,25 +28,46 @@ class VideoSequence extends Component {
     //   onReady();
     // });
     this.next = () => {
-      if (ready) {
-        const divRefCurrent = this.divRef.current;
+      if (this.ready) {
+        // const divRefCurrent = this.divRef.current;
+        const previousVideoIndex = currentVideoIndex;
         if (started) {
-          removeAndRewindVideo(videos[currentVideoIndex]);
+          hideAndRewindVideo(videos[previousVideoIndex]);
         } else {
           started = true;
         }
         currentVideoIndex++;
         if (currentVideoIndex < videoCount) {
-          divRefCurrent.appendChild(prepareVideo(videos[currentVideoIndex]));
+          prepareVideo(videos[currentVideoIndex]);
         } else {
-          ready = false;
+          this.ready = false;
         }
       }
     };
   }
 
+  componentDidMount() {
+    const {
+      divRef: { current: divRefCurrent }, onReady, videoCount, videos,
+    } = this;
+    const canPlayThroughPromises = [];
+    for (let i = 0; i < videoCount; i++) {
+      const { el } = videos[i];
+      canPlayThroughPromises.push(new Promise((resolve) => {
+        divRefCurrent.appendChild(el);
+        el.load();
+        const canPlayThroughCallback = () => {
+          el.removeEventListener('canplaythrough', canPlayThroughCallback);
+          resolve();
+        };
+        el.addEventListener('canplaythrough', canPlayThroughCallback);
+      }));
+    }
+    Promise.all(canPlayThroughPromises).then(onReady);
+  }
+
   componentWillUnmount() {
-    const { videos, videoCount } = this;
+    const { videoCount, videos } = this;
     for (let i = 0; i < videoCount; i++) {
       removeAndRewindVideo(videos[i]);
     }
@@ -54,8 +79,8 @@ class VideoSequence extends Component {
 }
 
 VideoSequence.propTypes = {
-  videos: PropTypes.arrayOf(PropTypes.object.isRequired),
   onReady: PropTypes.func,
+  videos: PropTypes.arrayOf(PropTypes.object.isRequired),
 };
 
 module.exports = VideoSequence;
