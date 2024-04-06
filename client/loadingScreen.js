@@ -7,11 +7,11 @@ const {
 } = require('./measurements.js');
 const {
   preload,
-  allBlobsToDoc,
-  assignBlobSrcsToFontsStylesScripts,
+  preloadInfoToDoc,
+  assignPreloadInfoToFontsStylesScripts,
   fontsStylesScriptsToHead,
 } = require('./preload.js');
-const { px, percent } = require('../common/helpers.js');
+const { px, percent, setIntervalWithInitialCall } = require('../common/helpers.js');
 
 const loadingStarWidth = 72;
 const loadingStarHeight = 72;
@@ -34,8 +34,9 @@ const loadingProgressHeightUnits = unitsVerticalInnerHalf - loadingStarHeightHal
 let loadingStar;
 let loadingStarCenter;
 const loadingStarRects = [];
-let loadingStarIsPlayingLoadingAnim = false;
 let loadingProgress;
+let loadingStarPreviousHalfBrightRect = loadingStarInitialPreviousHalfBrightRect;
+let loadingStarLoadingAnimInterval;
 
 const resize = () => {
   if (!loadingStar || !loadingProgress) {
@@ -73,32 +74,37 @@ const setAllLoadingStarRectsOpacity = (opacity) => {
   }
 };
 
-const displayLoadingStarLoadingAnimFrame = (previousHalfBrightRect) => {
-  if (loadingStarIsPlayingLoadingAnim) {
-    const halfBrightRect = (previousHalfBrightRect + 1) % loadingStarRectCount;
-    const fullBrightRect = (previousHalfBrightRect + 2) % loadingStarRectCount;
-    setSvgElementOpacity(loadingStarRects[previousHalfBrightRect], loadingStarDark);
-    setSvgElementOpacity(loadingStarRects[halfBrightRect], loadingStarHalfBright);
-    setSvgElementOpacity(loadingStarRects[fullBrightRect], loadingStarFullBright);
-    setTimeout(() => displayLoadingStarLoadingAnimFrame(halfBrightRect), loadingStarFrameDuration);
-  }
+const displayLoadingStarLoadingAnimFrame = () => {
+  const halfBrightRect = (loadingStarPreviousHalfBrightRect + 1) % loadingStarRectCount;
+  const fullBrightRect = (loadingStarPreviousHalfBrightRect + 2) % loadingStarRectCount;
+  setSvgElementOpacity(loadingStarRects[loadingStarPreviousHalfBrightRect], loadingStarDark);
+  setSvgElementOpacity(loadingStarRects[halfBrightRect], loadingStarHalfBright);
+  setSvgElementOpacity(loadingStarRects[fullBrightRect], loadingStarFullBright);
+  loadingStarPreviousHalfBrightRect = halfBrightRect;
+};
+
+const stopLoadingStarLoadingAnim = () => {
+  loadingStarPreviousHalfBrightRect = loadingStarInitialPreviousHalfBrightRect;
+  clearInterval(loadingStarLoadingAnimInterval);
 };
 
 const playLoadingStarLoadingAnim = () => {
-  loadingStarIsPlayingLoadingAnim = true;
   setSvgElementOpacity(loadingStarCenter, loadingStarFullBright);
   setAllLoadingStarRectsOpacity(loadingStarDark);
-  displayLoadingStarLoadingAnimFrame(loadingStarInitialPreviousHalfBrightRect);
+  stopLoadingStarLoadingAnim();
+  loadingStarLoadingAnimInterval = (
+    setIntervalWithInitialCall(displayLoadingStarLoadingAnimFrame, loadingStarFrameDuration)
+  );
 };
 
 const brightenLoadingStar = () => {
-  loadingStarIsPlayingLoadingAnim = false;
+  stopLoadingStarLoadingAnim();
   setSvgElementOpacity(loadingStarCenter, loadingStarFullBright);
   setAllLoadingStarRectsOpacity(loadingStarFullBright);
 };
 
 const darkenLoadingStar = () => {
-  loadingStarIsPlayingLoadingAnim = false;
+  stopLoadingStarLoadingAnim();
   setSvgElementOpacity(loadingStarCenter, loadingStarDark);
   setAllLoadingStarRectsOpacity(loadingStarDark);
 };
@@ -116,11 +122,11 @@ window.onload = () => {
   playLoadingStarLoadingAnim();
   preload((progress) => {
     if (loadNotFailedYet && progress != null) updateProgress(percent(progress, true));
-  }).then((allBlobs) => {
+  }).then((preloadInfo) => {
     brightenLoadingStar();
     updateProgress(percent(100));
-    allBlobsToDoc(allBlobs);
-    assignBlobSrcsToFontsStylesScripts(allBlobs);
+    preloadInfoToDoc(preloadInfo);
+    assignPreloadInfoToFontsStylesScripts(preloadInfo);
     fontsStylesScriptsToHead();
   }).catch((errorMsg) => {
     loadNotFailedYet = false;

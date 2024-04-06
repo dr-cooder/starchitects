@@ -1,9 +1,9 @@
 const React = require('react');
-const { createRef, useEffect } = require('react');
+const { useEffect, useRef } = require('react');
 const PropTypes = require('prop-types');
 
 const Inert = ({ inert, children }) => {
-  const divRef = createRef();
+  const divRef = useRef();
   useEffect(() => {
     const divRefCurrent = divRef.current;
     if (inert) {

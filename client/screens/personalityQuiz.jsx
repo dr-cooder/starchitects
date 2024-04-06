@@ -1,5 +1,5 @@
 const React = require('react');
-const { createRef, useEffect, useState } = require('react');
+const { useRef, useState } = require('react');
 const PropTypes = require('prop-types');
 const { unitsHorizontalInnerHalf, unitsVerticalInner } = require('../measurements.js');
 const {
@@ -102,7 +102,6 @@ const questions = {
       },
     ],
   },
-  // ctyguihojknjhbvgtfuygihjnhbgfytugih
   beInFuture: {
     text: 'What would you rather be in the future?',
     answers: [
@@ -150,16 +149,12 @@ const questions = {
 };
 
 const answerButtonGenerator = (isAnswer1) => {
-  const { goingOut } = animationClassNames;
   const answerId = isAnswer1 ? 1 : 0;
   const leftUnits = isAnswer1 ? unitsHorizontalInnerHalf : 0;
   const AnswerButton = ({
     currentQuestion,
     currentAnswer,
-    setCurrentAnswer,
-    questionsDone,
-    setQuestionsDone,
-    setAnimationClassName,
+    registerAnswer,
   }) => (
     <ScalingSection
       leftUnits={leftUnits}
@@ -170,21 +165,14 @@ const answerButtonGenerator = (isAnswer1) => {
     >
       <button
         className={`outlined outlinedWithTopNeighbor${isAnswer1 ? ' quizButton2 outlinedWithLeftNeighbor' : ' quizButton1 outlinedWithRightNeighbor'}${currentAnswer === answerId ? ' pressed' : ''}`}
-        onClick={() => {
-          setCurrentAnswer(answerId);
-          setQuestionsDone(questionsDone + 1);
-          setAnimationClassName(goingOut);
-        }}
+        onClick={() => registerAnswer(answerId)}
       >{currentQuestion.answers[answerId].text}</button>
     </ScalingSection>
   );
   AnswerButton.propTypes = {
     currentQuestion: PropTypes.object,
     currentAnswer: PropTypes.number,
-    setCurrentAnswer: PropTypes.func,
-    questionsDone: PropTypes.number,
-    setQuestionsDone: PropTypes.func,
-    setAnimationClassName: PropTypes.func,
+    registerAnswer: PropTypes.func,
   };
   return AnswerButton;
 };
@@ -193,9 +181,22 @@ const AnswerButton2 = answerButtonGenerator(true);
 
 const PersonalityQuizScreen = ({ onSubmit }) => {
   const {
-    notStartedYet, goingIn, idle,
+    notStartedYet, goingIn, idle, goingOut,
   } = animationClassNames;
-  const backgroundVideoRef = createRef();
+  const {
+    quizBg1Start,
+    quizBg1Loop,
+    quizBg2Start,
+    quizBg2Loop,
+    quizBg3Start,
+    quizBg3Loop,
+    quizBg4Start,
+    quizBg4Loop,
+    quizBg5Start,
+    quizBg5Loop,
+    quizBgEnd,
+  } = videos;
+  const backgroundVideoRef = useRef();
   const nextBackground = () => backgroundVideoRef.current.next();
   const [questionsDone, setQuestionsDone] = useState(0);
   const [animationClassName, setAnimationClassName] = useState(notStartedYet);
@@ -203,42 +204,51 @@ const PersonalityQuizScreen = ({ onSubmit }) => {
     progress: progressClassName,
     questionBlock: quesionBlockClassName,
   } = animationClassName;
-  const [currentQuestion, setCurrentQuestion] = useState({
-    answers: [
-      {
-        next: 'askYourself',
-      },
-      {},
-    ],
-  });
-  const [currentAnswer, setCurrentAnswer] = useState(0);
-  useEffect(nextBackground, []);
+  const [currentQuestion, setCurrentQuestion] = useState(questions.askYourself);
+  const [currentAnswer, setCurrentAnswer] = useState(undefined);
+  const [answerList, setAnswerList] = useState('');
+  const [outerClassName, setOuterClassName] = useState('quizNotStartedYet');
+  const registerAnswer = (answerId) => {
+    setCurrentAnswer(answerId);
+    setAnswerList(answerList + answerId);
+    setQuestionsDone(questionsDone + 1);
+    setAnimationClassName(goingOut);
+  };
+  // useEffect(nextBackground, []);
   return (
-    <div className='quizFadeIn'>
+    <div className={outerClassName} onAnimationEnd={outerClassName === 'quizFadeOut' ? (() => onSubmit(answerList)) : undefined}>
       <Background
         background={<VideoSequence
           ref={backgroundVideoRef}
+          onReady={() => {
+            setOuterClassName('quizFadeIn');
+            nextBackground();
+          }}
           videos={[
-            {
-              el: videos.quizBgTestStart.el,
-              className: 'background',
-              onEnd: () => {
-                nextBackground();
-                setCurrentQuestion(questions[currentQuestion.answers[currentAnswer].next]);
-                setCurrentAnswer(undefined);
-                setAnimationClassName(goingIn);
+            ...[
+              [quizBg1Start, quizBg1Loop],
+              [quizBg2Start, quizBg2Loop],
+              [quizBg3Start, quizBg3Loop],
+              [quizBg4Start, quizBg4Loop],
+              [quizBg5Start, quizBg5Loop],
+            ].map(([start, loop], index) => [
+              {
+                el: start.el,
+                className: `background${index === 0 ? '' : ' quizBackgroundNextStart'}`,
+                onEnd: () => {
+                  setAnimationClassName(goingIn);
+                  nextBackground();
+                },
               },
-            },
+              {
+                el: loop.el,
+                className: 'background quizBackgroundLoop',
+              },
+            ]).flat(),
             {
-              el: videos.quizBgTestLoop.el,
-              className: 'background quizBackgroundLoop',
-            },
-            {
-              el: videos.quizBgTestLoop.el,
+              el: quizBgEnd.el,
               className: 'background quizBackgroundNextStart',
-              onEnd: () => onSubmit({
-                sampleQuestion: 'Sample Answer',
-              }),
+              onEnd: () => setOuterClassName('quizFadeOut'),
             },
           ]}
         />}
@@ -262,6 +272,11 @@ const PersonalityQuizScreen = ({ onSubmit }) => {
               if (animationClassName === goingIn) {
                 setAnimationClassName(idle);
               } else {
+                const { next } = currentQuestion.answers[currentAnswer];
+                if (next) {
+                  setCurrentQuestion(questions[next]);
+                }
+                setCurrentAnswer(undefined);
                 nextBackground();
               }
             })}
@@ -278,18 +293,12 @@ const PersonalityQuizScreen = ({ onSubmit }) => {
             <AnswerButton1
               currentQuestion={currentQuestion}
               currentAnswer={currentAnswer}
-              setCurrentAnswer={setCurrentAnswer}
-              questionsDone={questionsDone}
-              setQuestionsDone={setQuestionsDone}
-              setAnimationClassName={setAnimationClassName}
+              registerAnswer={registerAnswer}
             />
             <AnswerButton2
               currentQuestion={currentQuestion}
               currentAnswer={currentAnswer}
-              setCurrentAnswer={setCurrentAnswer}
-              questionsDone={questionsDone}
-              setQuestionsDone={setQuestionsDone}
-              setAnimationClassName={setAnimationClassName}
+              registerAnswer={registerAnswer}
             />
           </div>
         </Inert>

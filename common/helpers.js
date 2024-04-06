@@ -38,6 +38,8 @@ const blurPx = (radiusPixels) => `blur(${px(radiusPixels)})`;
 
 const percent = (numberOutOfHundred, floor = false) => `${floor ? parseInt(numberOutOfHundred, 10) : parseFloat(numberOutOfHundred)}%`;
 
+const randomInt = (maxExclusive) => Math.floor(Math.random() * maxExclusive);
+
 const ensureNumber = (value) => Number(value) || 0;
 
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -99,6 +101,11 @@ const preventChildrenFromCalling = (callback) => (event) => {
   }
 };
 
+const setIntervalWithInitialCall = (callback, ms) => {
+  callback();
+  return setInterval(callback, ms);
+};
+
 const starIsBorn = ({ birthDate }) => birthDate != null;
 
 module.exports = {
@@ -106,6 +113,7 @@ module.exports = {
   px,
   blurPx,
   percent,
+  randomInt,
   ensureNumber,
   lerp,
   clamp01,
@@ -123,5 +131,6 @@ module.exports = {
   square,
   isMouseEvent,
   preventChildrenFromCalling,
+  setIntervalWithInitialCall,
   starIsBorn,
 };

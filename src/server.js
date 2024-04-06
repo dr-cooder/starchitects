@@ -8,6 +8,8 @@ const mongoose = require('mongoose');
 
 const config = require('./config.js');
 
+const inProduction = process.env.NODE_ENV === 'production';
+const videoFolder = process.env.VIDEO_FOLDER || '/videos/';
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 const staticPath = 'hosted';
 const faviconPath = 'client/favicon.png';
@@ -25,7 +27,7 @@ mongoose.connect(config.connections.mongo)
 const app = express();
 // app.disable('etag');
 
-if (process.env.NODE_ENV === 'production') {
+if (inProduction) {
   app.use(helmet({
     contentSecurityPolicy: {
       directives: {
@@ -62,6 +64,9 @@ if (process.env.NODE_ENV === 'production') {
 }
 app.use('/', express.static(path.resolve(staticPath)));
 app.use(favicon(path.resolve(faviconPath)));
+app.get('/video-folder', (req, res) => {
+  res.status(200).type('txt').send(videoFolder);
+});
 // https://stackoverflow.com/questions/6528876/how-to-redirect-404-errors-to-a-page-in-expressjs
 app.get('*', (req, res) => {
   res.status(404);

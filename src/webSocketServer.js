@@ -5,7 +5,7 @@ const {
   parseWsMsg,
 } = require('../common/webSocket.js');
 const { starPrefix, starSuffix } = require('../common/starNames.js');
-const { starIsBorn } = require('../common/helpers.js');
+const { randomInt, starIsBorn } = require('../common/helpers.js');
 const { StarModel } = require('./starModel.js');
 
 const pingFrequency = 5000;
@@ -152,35 +152,41 @@ const joinAsExistingStar = (socket, id) => {
   }
 };
 
-const joinAsNewStar = async (socket/* , quizAnswers */) => {
-  // TODO: Make data (quizAnswers) actually impact the star
+const quizAnswersRegExp = /[01]{5}/;
+const dustTypeCount = 3;
+const joinAsNewStar = (socket, quizAnswers) => {
+  // TODO: Store star in database
+  if (quizAnswersRegExp.test(quizAnswers)) {
+    const id = getNextStarId();
+    // Parameters initialized in the unborn state
+    const newStar = {
+      name: generateName(), // String
+      id, // Unix timestamp (miliseconds)
+      shape: parseInt(quizAnswers.slice(2), 2), // "Shape ID" - int ranging from 0 to 7 inclusive
+      // (see "Objects" section of "Show your shine" FigJam)
+      starColor: Math.random(),
+      starShade: Math.random(),
+      dustColor: Math.random(),
+      dustShade: Math.random(),
+      dustType: randomInt(dustTypeCount), // "Dust Type ID" - int ranging from 0 to 2 inclusive
+      // TO BE INITIALIZED AFTER BIRTH AND SENT TO ROOM ALONGSIDE OTHER PARAMETERS:
+      // birthDate (Unix timestamp (miliseconds))
+    };
+    
+    // Store star in database
+    const newStar = new StarModel(newStarData);
+    await newStar.save();
+    const starObj = StarModel.toAPI(newStar);
+    // console.log(starObj);
 
-  // Parameters initialized in the unborn state
-  const newStarData = {
-    name: generateName(), // String
-    shape: 0, // "Shape ID" - int ranging from 0 to 7 inclusive
-    // (see "Objects" section of "Show your shine" FigJam)
-    starColor: Math.random(),
-    starShade: Math.random(),
-    dustColor: Math.random(),
-    dustShade: Math.random(),
-    dustType: 0, // "Dust Type ID" - nonnegative int like shape,
-    // but otherwise not fully decided upon as per my current knowledge
-    // TO BE INITIALIZED AFTER BIRTH AND SENT TO ROOM ALONGSIDE OTHER PARAMETERS:
-    // birthDate (Unix timestamp (miliseconds))
-  };
-
-  // Store star in database
-  const newStar = new StarModel(newStarData);
-  await newStar.save();
-  const starObj = StarModel.toAPI(newStar);
-  // console.log(starObj);
-
-  const id = starObj.id;
-
-  stars[id] = newStar;
-  joinAsExistingStar(socket, id);
-  console.log(`Client of new star with ID ${id} joined`);
+    const id = starObj.id;
+    
+    stars[id] = newStar;
+    joinAsExistingStar(socket, id);
+    console.log(`Client of new star with ID ${id} joined with answers ${quizAnswers}`);
+  } else {
+    socket.send(makeWsMsg(wsHeaders.serverToWebApp.errorMsg, 'Invalid quiz answers.'));
+  }
 };
 
 // Circumvention of Heroku automatically closing any web socket
@@ -195,7 +201,6 @@ const pingAllSockets = () => {
   if (roomSocket) {
     roomSocket.send(makeWsMsg(wsHeaders.serverToRoom.ping));
   }
-  setTimeout(pingAllSockets, pingFrequency);
 };
 
 const startWebSocketServer = async (server) => {
@@ -231,7 +236,7 @@ const startWebSocketServer = async (server) => {
     };
     socket.on('message', handleInitialMessage);
   });
-  pingAllSockets();
+  setInterval(pingAllSockets, pingFrequency);
 };
 
 module.exports = { startWebSocketServer };

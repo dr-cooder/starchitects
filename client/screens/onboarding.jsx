@@ -26,7 +26,7 @@ const animationClassNames = {
   },
 };
 
-const OnboardingScreen = ({ onCreateStar, onSimulateRoom }) => {
+const OnboardingScreen = ({ onCreateStar/* , onSimulateRoom */ }) => {
   const { goingIn, idle, goingOut } = animationClassNames;
   const [animationClassName, setAnimationClassName] = useState(goingIn);
   const {
@@ -71,11 +71,11 @@ const OnboardingScreen = ({ onCreateStar, onSimulateRoom }) => {
           Begin Survey
         </button>
       </ScalingSection>
-      <ScalingSection
+      {/* <ScalingSection
         heightUnits={buttonHeight}
       >
         <button className='outlined' onClick={onSimulateRoom}>(DEBUG) Room Sim</button>
-      </ScalingSection>
+      </ScalingSection> */}
     </Inert>
   );
 };

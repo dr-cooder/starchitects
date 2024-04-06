@@ -11,7 +11,7 @@ const {
   starTimesDustDiffBounds,
   alphaBounds,
 } = require('../common/compositing.js');
-const { colorShadeToRGB } = require('../common/helpers.js');
+const { colorShadeToRGB, setIntervalWithInitialCall } = require('../common/helpers.js');
 const {
   videos, misc, prepareVideo, removeAndRewindVideo,
 } = require('./preload.js');
@@ -29,16 +29,16 @@ let starVideoEl;
 const starVideoCanvas = document.createElement('canvas');
 starVideoCanvas.width = vidWidth;
 starVideoCanvas.height = vidHeight;
-const starVideoCtx = starVideoCanvas.getContext('2d');
-document.body.appendChild(starVideoCanvas);
+const starVideoCtx = starVideoCanvas.getContext('2d', { willReadFrequently: true });
+// document.body.appendChild(starVideoCanvas);
 
 const starCompositeCanvas = document.createElement('canvas');
 starCompositeCanvas.width = vidPartWidth;
 starCompositeCanvas.height = vidPartHeight;
 const starCompositeCtx = starCompositeCanvas.getContext('2d');
-document.body.appendChild(starCompositeCanvas);
+// document.body.appendChild(starCompositeCanvas);
 
-let noActiveStarVideo = true;
+let tryCompositeNextStarVideoFrameInterval;
 
 const starCompositeParams = {
   starRGB: [1, 0, 0],
@@ -60,10 +60,7 @@ const tryCompositeStar = () => {
 };
 
 const tryCompositeNextStarVideoFrame = () => {
-  if (noActiveStarVideo) return;
-
-  setTimeout(() => tryCompositeNextStarVideoFrame(), vidFrameDurationMs);
-
+  // It seems cropping a larger video doesn't improve performance
   starVideoCtx.drawImage(starVideoEl, 0, 0);
 
   starVideoCtx.getImageData(...basisBounds);
@@ -77,14 +74,8 @@ const tryCompositeNextStarVideoFrame = () => {
   tryCompositeStar();
 };
 
-// const setVidSrc = (src) => {
-//   starVideoEl.src = src;
-//   noActiveStarVideo = false;
-//   tryCompositeNextStarVideoFrame();
-// };
-
 const stopCompositingStar = () => {
-  noActiveStarVideo = true;
+  clearInterval(tryCompositeNextStarVideoFrameInterval);
   removeAndRewindVideo({ el: starVideoEl });
 };
 
@@ -111,17 +102,21 @@ const applyStarData = (starData) => {
     starColor, starShade, dustColor, dustShade,
   } = starData;
   // TODO: starShape and dustType should map to the blob URL
-  // of the corresponding video
+  // of the corresponding videos, whose canplaythrough events should be awaited
   // setVidSrc(blobs[blobFilenames.placeholderStarVid]);
+  const { el } = videos.placeholderStarVid;
+  el.load();
   starVideoEl = prepareVideo({
-    el: videos.placeholderStarVid.el,
+    el,
     className: 'hiddenVideo',
   });
-  document.body.appendChild(starVideoEl);
-  noActiveStarVideo = false;
+  // document.body.appendChild(starVideoEl);
   setStarRgbWithoutComposite(colorShadeToRGB(starColor, starShade));
   setDustRgbWithoutComposite(colorShadeToRGB(dustColor, dustShade));
-  tryCompositeNextStarVideoFrame();
+  clearInterval(tryCompositeNextStarVideoFrameInterval);
+  tryCompositeNextStarVideoFrameInterval = (
+    setIntervalWithInitialCall(tryCompositeNextStarVideoFrame, vidFrameDurationMs)
+  );
 };
 
 let lastFinishedTime = Date.now();
