@@ -4,12 +4,25 @@ const compression = require('compression');
 const helmet = require('helmet');
 const favicon = require('serve-favicon');
 const { startWebSocketServer } = require('./webSocketServer.js');
+const mongoose = require('mongoose');
+
+const config = require('./config.js');
 
 const inProduction = process.env.NODE_ENV === 'production';
 const videoFolder = process.env.VIDEO_FOLDER || '/videos/';
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 const staticPath = 'hosted';
 const faviconPath = 'client/favicon.png';
+
+mongoose.connect(config.connections.mongo)
+  .then(() => {
+    console.log("Connected to mongoDB database!\n");
+  }).catch((err) => {
+    if (err) {
+      console.log('Could not connect to mongoDB database');
+      throw err;
+    }
+  });
 
 const app = express();
 // app.disable('etag');
