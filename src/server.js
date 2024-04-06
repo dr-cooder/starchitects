@@ -3,20 +3,19 @@ const express = require('express');
 const compression = require('compression');
 const helmet = require('helmet');
 const favicon = require('serve-favicon');
-const { startWebSocketServer } = require('./webSocketServer.js');
 const mongoose = require('mongoose');
+const { startWebSocketServer } = require('./webSocketServer.js');
+
+mongoose.set('debug', false);
 
 const config = require('./config.js');
 
-const inProduction = process.env.NODE_ENV === 'production';
-const videoFolder = process.env.VIDEO_FOLDER || '/videos/';
-const port = process.env.PORT || process.env.NODE_PORT || 3000;
 const staticPath = 'hosted';
 const faviconPath = 'client/favicon.png';
 
 mongoose.connect(config.connections.mongo)
   .then(() => {
-    console.log("Connected to mongoDB database!\n");
+    console.log('Connected to mongoDB database!');
   }).catch((err) => {
     if (err) {
       console.log('Could not connect to mongoDB database');
@@ -27,13 +26,14 @@ mongoose.connect(config.connections.mongo)
 const app = express();
 // app.disable('etag');
 
-if (inProduction) {
+if (config.useHelmet) {
   app.use(helmet({
     contentSecurityPolicy: {
       directives: {
         defaultSrc: [
           "'self'",
           'blob:',
+          'https://storage.googleapis.com/',
         ],
         scriptSrc: [
           "'self'",
@@ -65,7 +65,7 @@ if (inProduction) {
 app.use('/', express.static(path.resolve(staticPath)));
 app.use(favicon(path.resolve(faviconPath)));
 app.get('/video-folder', (req, res) => {
-  res.status(200).type('txt').send(videoFolder);
+  res.status(200).type('txt').send(config.connections.videoFolder);
 });
 // https://stackoverflow.com/questions/6528876/how-to-redirect-404-errors-to-a-page-in-expressjs
 app.get('*', (req, res) => {
@@ -84,8 +84,8 @@ app.get('*', (req, res) => {
 app.use(compression);
 
 // https://stackoverflow.com/questions/42472726/websockets-express-js-and-can-t-establish-a-connection-to-the-server
-const server = app.listen(port, () => {
-  console.log(`Server listening on 127.0.0.1:${port}`);
+const server = app.listen(config.connections.http.port, () => {
+  console.log(`Server listening on 127.0.0.1:${config.connections.http.port}`);
 });
 
 startWebSocketServer(server);

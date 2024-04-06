@@ -6,24 +6,18 @@ const {
 } = require('../common/webSocket.js');
 const { starPrefix, starSuffix } = require('../common/starNames.js');
 const { randomInt, starIsBorn } = require('../common/helpers.js');
-const { StarModel } = require('./starModel.js');
+const StarModel = require('./starModel.js');
 
 const pingFrequency = 5000;
 
-// let nextStarId = 0;
-const getNextStarId = Date.now; // () => nextStarId++;
-
 const generateName = () => `${starPrefix[Math.floor(Math.random() * starPrefix.length)]}-${starSuffix[Math.floor(Math.random() * starSuffix.length)]}`;
 
-const stars = {};
 const starSockets = {};
 let roomSocket;
 
 // TODO: JSON format validating, alongside handling of errors met while parsing
 const applyBornStarBehavior = (id) => {
   const socket = starSockets[id];
-  // const star = stars[id];
-  // socket.removeAllListeners('message');
   socket.on('message', (rawData) => {
     const { header/* , data */ } = parseWsMsg(rawData);
     const webAppToServerHeaders = wsHeaders.webAppToServer;
@@ -58,52 +52,55 @@ const applyBornStarBehavior = (id) => {
   });
 };
 
-const applyUnbornStarBehavior = (id) => {
+const applyUnbornStarBehavior = async (id) => {
   const socket = starSockets[id];
-  const star = stars[id];
   const unbornListener = async (rawData) => {
     const { header, data } = parseWsMsg(rawData);
     if (header === wsHeaders.webAppToServer.newName) {
       const newName = generateName();
-      // update mongoDB
-      const result = await StarModel.findByIdAndUpdate(id, { name: newName }, { new: true, runValidators: true });
-      star.name = StarModel.toAPI(result).name;
+      await StarModel.findByIdAndUpdate(...[
+        id,
+        { name: newName },
+        { new: true, runValidators: true },
+      ]);
       socket.send(makeWsMsg(
         wsHeaders.serverToWebApp.newName,
         newName,
       ));
     } else if (header === wsHeaders.webAppToServer.birthStar) {
       // TODO: send these whenever the respective customization screen is left
-
+      const {
+        starColor, starShade, dustColor, dustShade,
+      } = data;
       const update = {
-        starColor: data.starColor,
-        starShade: data.starShade,
-        dustColor: data.dustColor,
-        dustShade: data.dustShade,
-        birthDate: Date.now(),
+        starColor,
+        starShade,
+        dustColor,
+        dustShade,
         born: true,
-      }
-      // update mongoDB
-      const result = await StarModel.findByIdAndUpdate(id, update, { new: true, runValidators: true });
-
-      Object.assign(star, StarModel.toAPI(result));
-
+        birthDate: Date.now(),
+      };
+      const result = await StarModel.findByIdAndUpdate(...[
+        id,
+        update,
+        { new: true, runValidators: true },
+      ]);
       if (roomSocket) {
         roomSocket.send(makeWsMsg(
           wsHeaders.serverToRoom.newStar,
-          star,
+          StarModel.toAPI(result),
         ));
       }
       socket.removeListener('message', unbornListener);
       applyBornStarBehavior(id);
     } else {
-      socket.send(makeWsMsg(wsHeaders.serverToWebApp.errorMsg, 'Expected "birth star" header.'));
+      socket.send(makeWsMsg(wsHeaders.serverToWebApp.errorMsg, 'Unexpected star action header.'));
     }
   };
   socket.on('message', unbornListener);
 };
 
-const joinAsRoom = (socket) => {
+const joinAsRoom = async (socket) => {
   if (roomSocket) {
     socket.send(makeWsMsg(wsHeaders.serverToRoom.errorMsg, 'There is already an active room.'));
   } else {
@@ -112,9 +109,10 @@ const joinAsRoom = (socket) => {
       roomSocket = undefined;
       console.log('Room disconnected');
     });
+    const bornStars = await StarModel.getBornStars();
     socket.send(makeWsMsg(
       wsHeaders.serverToRoom.allStars,
-      Object.values(stars).filter((star) => { return star.born }),
+      bornStars.map(StarModel.toAPI),
     ));
     socket.on('message', (rawData) => {
       const { header, data } = parseWsMsg(rawData);
@@ -129,39 +127,45 @@ const joinAsRoom = (socket) => {
   }
 };
 
-const joinAsExistingStar = (socket, id) => {
-  const existingStar = stars[id];
-  if (!existingStar || existingStar.dead) {
+const joinAsExistingStar = async (socket, id, sayRejoined = true) => {
+  let existingStarObj;
+  try {
+    const existingStar = await StarModel.findById(id);
+    existingStarObj = StarModel.toAPI(existingStar);
+  } catch (e) {
+    socket.send(makeWsMsg(wsHeaders.serverToWebApp.errorMsg, `No star with ID ${id} exists.`));
+    return;
+  }
+  if (!existingStarObj) { // || existingStarObj.dead (scrapped feature I guess)
     socket.send(makeWsMsg(wsHeaders.serverToWebApp.errorMsg, `No star with ID ${id} exists.`));
   } else if (starSockets[id]) {
     socket.send(makeWsMsg(wsHeaders.serverToWebApp.errorMsg, `The star with ID ${id} is already under the control of another web app instance.`));
   } else {
     starSockets[id] = socket;
-    socket.send(makeWsMsg(wsHeaders.serverToWebApp.joinSuccess, existingStar));
+    socket.send(makeWsMsg(wsHeaders.serverToWebApp.joinSuccess, existingStarObj));
     socket.on('close', () => {
-      starSockets[id] = undefined;
+      delete starSockets[id];
       console.log(`Client of star with ID ${id} disconnected`);
     });
-    if (existingStar.born) {
-      //if (starIsBorn(existingStar)) {
+    if (starIsBorn(existingStarObj)) {
       applyBornStarBehavior(id);
     } else {
       applyUnbornStarBehavior(id);
     }
-    console.log(`Client of star with ID ${id} rejoined`);
+    if (sayRejoined) {
+      console.log(`Client of star with ID ${id} rejoined`);
+    }
   }
 };
 
 const quizAnswersRegExp = /[01]{5}/;
 const dustTypeCount = 3;
-const joinAsNewStar = (socket, quizAnswers) => {
+const joinAsNewStar = async (socket, quizAnswers) => {
   // TODO: Store star in database
   if (quizAnswersRegExp.test(quizAnswers)) {
-    const id = getNextStarId();
     // Parameters initialized in the unborn state
-    const newStar = {
+    const newStarData = {
       name: generateName(), // String
-      id, // Unix timestamp (miliseconds)
       shape: parseInt(quizAnswers.slice(2), 2), // "Shape ID" - int ranging from 0 to 7 inclusive
       // (see "Objects" section of "Show your shine" FigJam)
       starColor: Math.random(),
@@ -172,17 +176,14 @@ const joinAsNewStar = (socket, quizAnswers) => {
       // TO BE INITIALIZED AFTER BIRTH AND SENT TO ROOM ALONGSIDE OTHER PARAMETERS:
       // birthDate (Unix timestamp (miliseconds))
     };
-    
+
     // Store star in database
     const newStar = new StarModel(newStarData);
     await newStar.save();
     const starObj = StarModel.toAPI(newStar);
-    // console.log(starObj);
+    const { id } = starObj;
 
-    const id = starObj.id;
-    
-    stars[id] = newStar;
-    joinAsExistingStar(socket, id);
+    joinAsExistingStar(socket, id, false);
     console.log(`Client of new star with ID ${id} joined with answers ${quizAnswers}`);
   } else {
     socket.send(makeWsMsg(wsHeaders.serverToWebApp.errorMsg, 'Invalid quiz answers.'));
@@ -204,12 +205,6 @@ const pingAllSockets = () => {
 };
 
 const startWebSocketServer = async (server) => {
-  // TODO: load pre-existing stars
-  const preBornStars = await StarModel.getBornStars();
-  preBornStars.map((star) => {
-    stars[star.id] = star;
-  });
-
   const socketServer = new WebSocketServer({ server });
   socketServer.on('connection', (socket) => {
     // Initial message establishes client type, and determines what to do with this new socket

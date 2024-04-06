@@ -26,7 +26,7 @@ const animationClassNames = {
   },
 };
 
-const OnboardingScreen = ({ onCreateStar/* , onSimulateRoom */ }) => {
+const OnboardingScreen = ({ onCreateStar, onSimulateRoom, onSkipQuiz }) => {
   const { goingIn, idle, goingOut } = animationClassNames;
   const [animationClassName, setAnimationClassName] = useState(goingIn);
   const {
@@ -71,11 +71,17 @@ const OnboardingScreen = ({ onCreateStar/* , onSimulateRoom */ }) => {
           Begin Survey
         </button>
       </ScalingSection>
-      {/* <ScalingSection
+      <ScalingSection
         heightUnits={buttonHeight}
       >
         <button className='outlined' onClick={onSimulateRoom}>(DEBUG) Room Sim</button>
-      </ScalingSection> */}
+      </ScalingSection>
+      <ScalingSection
+        heightUnits={buttonHeight}
+        topUnits={buttonHeight}
+      >
+        <button className='outlined' onClick={onSkipQuiz}>(DEBUG) Skip Quiz</button>
+      </ScalingSection>
     </Inert>
   );
 };
@@ -83,6 +89,7 @@ const OnboardingScreen = ({ onCreateStar/* , onSimulateRoom */ }) => {
 OnboardingScreen.propTypes = {
   onCreateStar: PropTypes.func,
   onSimulateRoom: PropTypes.func,
+  onSkipQuiz: PropTypes.func,
 };
 
 module.exports = OnboardingScreen;

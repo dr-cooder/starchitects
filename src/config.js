@@ -1,21 +1,28 @@
 require('dotenv').config();
 
+const {
+  MONGODB_URI, NODE_ENV, NODE_PORT, PORT, VIDEO_FOLDER,
+} = process.env;
+
 const connections = {
-    development: {
-        http: {
-            port: 3000,
-        },
-        mongo: `${process.env.MONGODB_URI}/Development?retryWrites=true&w=majority&appName=Cluster0` || 'mongodb://localhost/Starchitects',
+  development: {
+    http: {
+      port: 3000,
     },
-    production: {
-        http: {
-            port: process.env.PORT || process.env.NODE_PORT || 3000,
-        },
-        mongo: `${process.env.MONGODB_URI}/Production?retryWrites=true&w=majority&appName=Cluster0`,
+    mongo: MONGODB_URI ? `${MONGODB_URI}/Development?retryWrites=true&w=majority&appName=Cluster0` : 'mongodb://127.0.0.1:27017/Starchitects',
+    videoFolder: '/videos/',
+  },
+  production: {
+    http: {
+      port: PORT || NODE_PORT || 3000,
     },
+    mongo: `${MONGODB_URI}/Production?retryWrites=true&w=majority&appName=Cluster0`,
+    videoFolder: VIDEO_FOLDER,
+  },
 };
 
 module.exports = {
-    connections: connections[process.env.NODE_ENV],
-    secret: process.env.SECRET,
+  connections: connections[NODE_ENV],
+  useHelmet: NODE_ENV === 'production',
+  secret: process.env.SECRET,
 };

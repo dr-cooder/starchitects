@@ -19,7 +19,7 @@ compositeWorkerManager.init();
 // Set rejoin to truthy to affix stars to sessions/tabs rather than browsers via local storage
 // (optimal for debugging multiple client instances on one device)
 // TODO: REJOIN SHOULD BE TRUE BY THE TIME OF PRESENTATION
-const rejoin = false;
+const rejoin = true;
 const screenRef = createRef();
 
 const setScreen = (screen) => {
@@ -64,26 +64,28 @@ const setAppState = {
   onboarding: () => setScreen(<screens.onboarding
     onCreateStar={setAppState.personalityQuiz}
     onSimulateRoom={setAppState.roomSim} // TODO: remove this once Unreal app has this functionality
+    onSkipQuiz={() => setAppState.submittingQuizAnswers('00000')}
   />),
   personalityQuiz: () => setScreen(<screens.personalityQuiz
-    onSubmit={(quizAnswers) => {
-      setScreen();
-      webSocket.send(makeWsMsg(
-        wsHeaders.newClientToServer.joinAsNewStar,
-        quizAnswers,
-      ));
-      webSocket.onMessage(({ header, data }) => {
-        if (header === wsHeaders.serverToWebApp.errorMsg) {
-          setAppState.error(data);
-          webSocket.hangUp();
-        } else if (header === wsHeaders.serverToWebApp.joinSuccess) {
-          setStarId(data.id);
-          compositeWorkerManager.applyStarData(data);
-          setAppState.unbornStar(data);
-        }
-      });
-    }}
+    onSubmit={setAppState.submittingQuizAnswers}
   />),
+  submittingQuizAnswers: (quizAnswers) => {
+    setScreen();
+    webSocket.send(makeWsMsg(
+      wsHeaders.newClientToServer.joinAsNewStar,
+      quizAnswers,
+    ));
+    webSocket.onMessage(({ header, data }) => {
+      if (header === wsHeaders.serverToWebApp.errorMsg) {
+        setAppState.error(data);
+        webSocket.hangUp();
+      } else if (header === wsHeaders.serverToWebApp.joinSuccess) {
+        setStarId(data.id);
+        compositeWorkerManager.applyStarData(data);
+        setAppState.unbornStar(data);
+      }
+    });
+  },
   unbornStar: (starData) => {
     const unbornStarScreenRef = createRef();
     webSocket.onMessage(({ header, data }) => {

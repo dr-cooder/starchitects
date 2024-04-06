@@ -28,6 +28,7 @@ class UnbornStarScreen extends Component {
       onSwipeStarUp,
     } = props;
 
+    console.log(props.starData);
     console.log([
       'Thinker',
       'Dreamer',

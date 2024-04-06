@@ -106,7 +106,7 @@ const setIntervalWithInitialCall = (callback, ms) => {
   return setInterval(callback, ms);
 };
 
-const starIsBorn = ({ birthDate }) => birthDate != null;
+const starIsBorn = ({ born }) => born;
 
 module.exports = {
   Queue,

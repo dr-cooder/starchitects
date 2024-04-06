@@ -46,7 +46,7 @@ class Star extends Component {
   render() {
     return (
       <div>
-        <div>{JSON.stringify(this.starData)}</div>
+        <div>{JSON.stringify(this.starData, undefined, 1)}</div>
         <div>{this.state.currentAnimation}</div>
       </div>
     );
@@ -84,7 +84,6 @@ const RoomSimScreen = () => {
         }
       } />;
       setStars([...stars, star]);
-      console.log(stars);
     };
 
     webSocket.addEventListener('open', () => {
@@ -97,6 +96,7 @@ const RoomSimScreen = () => {
 
     webSocket.addEventListener('message', (message) => {
       const { header, data } = parseWsMsg(message.data);
+      console.log(header, data);
       if (joinedSuccessfully) {
         switch (header) {
           case wsHeaders.serverToRoom.newStar:
@@ -134,7 +134,7 @@ const RoomSimScreen = () => {
   return (
     <ScalingSection>
       <div>{latestLog}</div>
-      {stars[0]}
+      {stars}
     </ScalingSection>
   );
 };
