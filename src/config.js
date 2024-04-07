@@ -10,7 +10,7 @@ const connections = {
       port: 3000,
     },
     mongo: MONGODB_URI ? `${MONGODB_URI}/Development?retryWrites=true&w=majority&appName=Cluster0` : 'mongodb://127.0.0.1:27017/Starchitects',
-    videoFolder: '/videos/',
+    videoFolder: VIDEO_FOLDER || '/videos/',
   },
   production: {
     http: {

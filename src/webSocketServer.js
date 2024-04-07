@@ -70,13 +70,14 @@ const applyUnbornStarBehavior = async (id) => {
     } else if (header === wsHeaders.webAppToServer.birthStar) {
       // TODO: send these whenever the respective customization screen is left
       const {
-        starColor, starShade, dustColor, dustShade,
+        starColor, starShade, dustColor, dustShade, dustType,
       } = data;
       const update = {
         starColor,
         starShade,
         dustColor,
         dustShade,
+        dustType,
         born: true,
         birthDate: Date.now(),
       };

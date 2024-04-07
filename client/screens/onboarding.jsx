@@ -80,7 +80,7 @@ const OnboardingScreen = ({ onCreateStar, onSimulateRoom, onSkipQuiz }) => {
         heightUnits={buttonHeight}
         topUnits={buttonHeight}
       >
-        <button className='outlined' onClick={onSkipQuiz}>(DEBUG) Skip Quiz</button>
+        <button className='outlined' onClick={() => onSkipQuiz('00000')}>(DEBUG) Skip Quiz (Thinker)</button>
       </ScalingSection>
     </Inert>
   );

@@ -7,6 +7,7 @@ const {
   unitsPaddingHorizontal, unitsHorizontalOuter, unitsHorizontalInner, unitsVerticalInner,
 } = require('../measurements.js');
 const { colorShadeToRGB } = require('../../common/helpers.js');
+const { starchetypes } = require('../starchetypes.js');
 
 const slidersHeight = unitsVerticalInner - unitsHorizontalInner;
 const sliderGranularity = 1000;
@@ -23,27 +24,21 @@ class UnbornStarScreen extends Component {
         starShade,
         dustColor,
         dustShade,
+        dustType,
       },
       onNewNameRequest,
       onSwipeStarUp,
     } = props;
 
     console.log(props.starData);
-    console.log([
-      'Thinker',
-      'Dreamer',
-      'Producer',
-      'Disciplined',
-      'Innovator',
-      'Visionary',
-      'Independent',
-      'Listener',
-    ][shape]);
+    const { name: starchetypeName, tagline, description } = starchetypes[shape];
+    console.log(`${starchetypeName}\n${tagline}\n\nWhy do you resemble this star?\n${description}`);
 
     this.initialStarColor = starColor;
     this.initialStarShade = starShade;
     this.initialDustColor = dustColor;
     this.initialDustShade = dustShade;
+    this.initialDustType = dustType;
 
     this.state = {
       name,
@@ -51,6 +46,7 @@ class UnbornStarScreen extends Component {
       starShade,
       dustColor,
       dustShade,
+      dustType,
       waitingForNewName: false,
     };
 
@@ -65,6 +61,11 @@ class UnbornStarScreen extends Component {
       compositeWorkerManager.setDustRGB(colorShadeToRGB(this.state.dustColor, newDustShade));
       this.setState({ dustShade: newDustShade });
     };
+    this.setDustType = (e) => {
+      const newDustType = e.target.value;
+      compositeWorkerManager.setDustType(newDustType);
+      this.setState({ dustType: newDustType });
+    };
     this.onSwipeStarUp = onSwipeStarUp;
     this.onNewNameRequest = () => {
       this.setState({ waitingForNewName: true });
@@ -76,6 +77,7 @@ class UnbornStarScreen extends Component {
   }
 
   render() {
+    const { name, waitingForNewName } = this.state;
     return (
       <>
         <ScalingSection
@@ -90,19 +92,23 @@ class UnbornStarScreen extends Component {
           heightUnits={slidersHeight}
           heightFreeSpace={0.5}
         >
-          <div className='animTest'></div>
-          <p>Here is your star! (Swipe it up when you are done customizing it)</p>
-          <p>{this.state.name}</p>
           <p>
-            Stardust Color: <input type='range' defaultValue={this.initialDustColor * sliderGranularity} max={sliderGranularity} onChange={this.setDustColor}/><br/>
-            Stardust Shade: <input type='range' defaultValue={this.initialDustShade * sliderGranularity} max={sliderGranularity} onChange={this.setDustShade}/>
+            Here is your star! (swipe it up when you are done customizing it)<br/>
+            Shine Type: <select onChange={this.setDustType} value={this.initialDustType}>
+              <option value={0}>Plasmo</option>
+              <option value={1}>Electro</option>
+              <option value={2}>Nucleo</option>
+            </select><br/>
+            Shine Color: <input type='range' defaultValue={this.initialDustColor * sliderGranularity} max={sliderGranularity} onChange={this.setDustColor}/><br/>
+            Shine Shade: <input type='range' defaultValue={this.initialDustShade * sliderGranularity} max={sliderGranularity} onChange={this.setDustShade}/><br/>
+            Name: {name}
           </p>
           <button
-            disabled={this.state.waitingForNewName}
+            disabled={waitingForNewName}
             onClick={this.onNewNameRequest}
           >New name</button>
           <button
-            disabled={this.state.waitingForNewName}
+            disabled={waitingForNewName}
             onClick={() => {
               const {
                 // name,
@@ -110,6 +116,7 @@ class UnbornStarScreen extends Component {
                 starShade,
                 dustColor,
                 dustShade,
+                dustType,
               } = this.state;
               this.onSwipeStarUp({
                 // name,
@@ -117,6 +124,7 @@ class UnbornStarScreen extends Component {
                 starShade,
                 dustColor,
                 dustShade,
+                dustType,
               });
             }}
           >&quot;Swipe up&quot;</button>

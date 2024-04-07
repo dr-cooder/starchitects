@@ -1,6 +1,6 @@
 const { dictToElement } = require('../common/helpers.js');
 
-// ~~~ INFO OF ITEMS TO PRELOAD, SOME STATEFUL ~~~
+// ~~~ INFO OF ITEMS TO PRELOAD, LOAD RESULTS BEING STATEFUL ~~~
 
 const fonts = [
   {
@@ -45,10 +45,85 @@ const scripts = [
   },
 ];
 
+const images = {
+  thinker1: {
+    urlRel: 'composite/placeholder/1.jpg',
+  },
+  thinker2: {
+    urlRel: 'composite/placeholder/2.jpg',
+  },
+  thinker3: {
+    urlRel: 'composite/placeholder/3.jpg',
+  },
+  dreamer1: {
+    urlRel: 'composite/placeholder/1.jpg',
+  },
+  dreamer2: {
+    urlRel: 'composite/placeholder/2.jpg',
+  },
+  dreamer3: {
+    urlRel: 'composite/placeholder/3.jpg',
+  },
+  producer1: {
+    urlRel: 'composite/placeholder/1.jpg',
+  },
+  producer2: {
+    urlRel: 'composite/placeholder/2.jpg',
+  },
+  producer3: {
+    urlRel: 'composite/placeholder/3.jpg',
+  },
+  disciplined1: {
+    urlRel: 'composite/placeholder/1.jpg',
+  },
+  disciplined2: {
+    urlRel: 'composite/placeholder/2.jpg',
+  },
+  disciplined3: {
+    urlRel: 'composite/placeholder/3.jpg',
+  },
+  innovator1: {
+    urlRel: 'composite/placeholder/1.jpg',
+  },
+  innovator2: {
+    urlRel: 'composite/placeholder/2.jpg',
+  },
+  innovator3: {
+    urlRel: 'composite/placeholder/3.jpg',
+  },
+  visionary1: {
+    urlRel: 'composite/placeholder/1.jpg',
+  },
+  visionary2: {
+    urlRel: 'composite/placeholder/2.jpg',
+  },
+  visionary3: {
+    urlRel: 'composite/placeholder/3.jpg',
+  },
+  independent1: {
+    urlRel: 'composite/placeholder/1.jpg',
+  },
+  independent2: {
+    urlRel: 'composite/placeholder/2.jpg',
+  },
+  independent3: {
+    urlRel: 'composite/placeholder/3.jpg',
+  },
+  listener1: {
+    urlRel: 'composite/placeholder/1.jpg',
+  },
+  listener2: {
+    urlRel: 'composite/placeholder/2.jpg',
+  },
+  listener3: {
+    urlRel: 'composite/placeholder/3.jpg',
+  },
+};
+
 // Ask server for prefix to video URL's - server should return cloud URL if on Heroku
-// and gitignored video folder otherwise
+// and gitignored local video folder otherwise
 const videos = {
-  placeholderStarVid: {
+  thinker1: {
     sources: [
       {
         type: 'video/webm',
@@ -57,6 +132,282 @@ const videos = {
       {
         type: 'video/mp4',
         urlRel: 'composite/placeholder/1.mp4',
+      },
+    ],
+  },
+  thinker2: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/placeholder/2.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/placeholder/2.mp4',
+      },
+    ],
+  },
+  thinker3: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/placeholder/3.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/placeholder/3.mp4',
+      },
+    ],
+  },
+  dreamer1: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/placeholder/1.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/placeholder/1.mp4',
+      },
+    ],
+  },
+  dreamer2: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/placeholder/2.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/placeholder/2.mp4',
+      },
+    ],
+  },
+  dreamer3: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/placeholder/3.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/placeholder/3.mp4',
+      },
+    ],
+  },
+  producer1: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/placeholder/1.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/placeholder/1.mp4',
+      },
+    ],
+  },
+  producer2: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/placeholder/2.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/placeholder/2.mp4',
+      },
+    ],
+  },
+  producer3: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/placeholder/3.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/placeholder/3.mp4',
+      },
+    ],
+  },
+  disciplined1: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/placeholder/1.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/placeholder/1.mp4',
+      },
+    ],
+  },
+  disciplined2: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/placeholder/2.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/placeholder/2.mp4',
+      },
+    ],
+  },
+  disciplined3: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/placeholder/3.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/placeholder/3.mp4',
+      },
+    ],
+  },
+  innovator1: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/placeholder/1.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/placeholder/1.mp4',
+      },
+    ],
+  },
+  innovator2: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/placeholder/2.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/placeholder/2.mp4',
+      },
+    ],
+  },
+  innovator3: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/placeholder/3.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/placeholder/3.mp4',
+      },
+    ],
+  },
+  visionary1: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/placeholder/1.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/placeholder/1.mp4',
+      },
+    ],
+  },
+  visionary2: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/placeholder/2.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/placeholder/2.mp4',
+      },
+    ],
+  },
+  visionary3: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/placeholder/3.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/placeholder/3.mp4',
+      },
+    ],
+  },
+  independent1: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/placeholder/1.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/placeholder/1.mp4',
+      },
+    ],
+  },
+  independent2: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/placeholder/2.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/placeholder/2.mp4',
+      },
+    ],
+  },
+  independent3: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/placeholder/3.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/placeholder/3.mp4',
+      },
+    ],
+  },
+  listener1: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/placeholder/1.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/placeholder/1.mp4',
+      },
+    ],
+  },
+  listener2: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/placeholder/2.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/placeholder/2.mp4',
+      },
+    ],
+  },
+  listener3: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/placeholder/3.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/placeholder/3.mp4',
       },
     ],
   },
@@ -210,9 +561,14 @@ const misc = {
 };
 
 const getURL = (item) => item.url;
+const getURLRel = (item) => item.urlRel;
+const getBlob = (item) => item.blob;
+const getEl = (item) => item.el;
 const fontURLs = fonts.map(getURL);
 const styleURLs = styles.map(getURL);
 const scriptURLs = scripts.map(getURL);
+const imageValues = Object.values(images);
+const imageURLsRel = imageValues.map(getURLRel);
 const videoValues = Object.values(videos);
 const videoSourcesFlat = videoValues.map((video) => video.sources).flat();
 const miscValues = Object.values(misc);
@@ -238,9 +594,14 @@ const assignBlobs = (blobs, items) => {
 };
 
 const assignVideoFolder = (videoFolder) => {
+  // Videos and canvas images (video "thumbnails") are stored in the external CDN
+  for (let i = 0; i < imageValues.length; i++) {
+    const image = imageValues[i];
+    image.url = videoFolder + getURLRel(image);
+  }
   for (let i = 0; i < videoSourcesFlat.length; i++) {
     const videoSource = videoSourcesFlat[i];
-    videoSource.url = videoFolder + videoSource.urlRel;
+    videoSource.url = videoFolder + getURLRel(videoSource);
   }
 };
 
@@ -253,7 +614,7 @@ const assignPreloadInfoToFontsStylesScripts = (preloadInfo) => {
 
 const fontsStylesScriptsToHead = () => {
   const fontStyleElement = document.createElement('style');
-  fontStyleElement.innerHTML = fonts.map((font) => `@font-face{font-family:${font.family};font-weight:${font.weight};src:url('${font.blob}')}`).join('');
+  fontStyleElement.innerHTML = fonts.map((font) => `@font-face{font-family:${font.family};font-weight:${font.weight};src:url('${getBlob(font)}')}`).join('');
   const headElements = [
     fontStyleElement,
     ...styles.map((style) => dictToElement(
@@ -261,7 +622,7 @@ const fontsStylesScriptsToHead = () => {
       {
         rel: 'stylesheet',
         type: 'text/css',
-        href: style.blob,
+        href: getBlob(style),
         integrity: style.integrity,
         crossorigin: style.crossorigin,
       },
@@ -269,7 +630,7 @@ const fontsStylesScriptsToHead = () => {
     ...scripts.map((script) => dictToElement(
       'script',
       {
-        src: script.blob,
+        src: getBlob(script),
       },
     )),
   ];
@@ -278,22 +639,35 @@ const fontsStylesScriptsToHead = () => {
   }
 };
 
-const assignPreloadInfoToVideosMisc = (preloadInfo) => {
+const assignPreloadInfoToVideosImagesMisc = (preloadInfo) => {
   const { blobs, videoFolder } = preloadInfo;
   assignVideoFolder(videoFolder);
   // assignBlobs(blobs, videoSourcesFlat);
+  assignBlobs(blobs, imageValues);
   assignBlobs(blobs, miscValues);
 };
+
+const loadImage = (url) => new Promise((resolve, reject) => {
+  const img = new Image();
+  img.crossOrigin = 'Anonymous';
+  img.src = url;
+  img.onload = () => {
+    resolve(img);
+  };
+  img.onerror = (e) => {
+    reject(e);
+  };
+});
 
 // In-DOM 'bench' exists so that all videos exist in the DOM from the get-go
 // and still do so one "removed", a further anti-flicker measure
 let mediaBench;
 
 // No video (or canvas image) will ever need to be in more than one place at any given point
-// during the runtime of this app, so avoid the memory impact and individual load lag of a new
-// video element every time that video is called for, and instead give each a designated,
-// reusable DOM node
-const createImageVideoEls = () => {
+// during the runtime of this app, so avoid the memory impact of a new video element every time
+// that video is called for (on browsers where it works like that I guess), and instead give each
+// a designated, reusable DOM node
+const createImageVideoEls = () => new Promise((resolve, reject) => {
   mediaBench = document.createElement('div');
   document.body.appendChild(mediaBench);
   for (let i = 0; i < videoValues.length; i++) {
@@ -319,7 +693,13 @@ const createImageVideoEls = () => {
     // videoEl.play();
     // videoEl.pause();
   }
-};
+  Promise.all(imageValues.map((image) => loadImage(getBlob(image)))).then((imageEls) => {
+    for (let i = 0; i < imageValues.length; i++) {
+      imageValues[i].el = imageEls[i];
+    }
+    resolve();
+  }).catch(reject);
+});
 
 const prepareVideo = (props) => {
   const { el, className, onEnd } = props;
@@ -342,7 +722,7 @@ const hideAndRewindVideo = (props) => {
 
 const removeAndRewindVideo = (props) => {
   hideAndRewindVideo(props);
-  mediaBench.appendChild(props.el);
+  mediaBench.appendChild(getEl(props));
 };
 
 // ~~~ LOAD BEHAVIOR ~~~
@@ -387,18 +767,20 @@ const preload = (onProgress) => (preloading ? null : new Promise((resolve, rejec
     reject();
   };
   fetch('/video-folder').then((res) => res.text().then((videoFolder) => {
+    const imageURLs = imageURLsRel.map((imageURLRel) => videoFolder + imageURLRel);
     // assignVideoFolder(videoFolder);
-    const allURLs = [...new Set([
+    const allURLsToBecomeBlobs = [...new Set([
       ...fontURLs,
       ...styleURLs,
       ...scriptURLs,
+      ...imageURLs,
       // ...videoSourceURLs, // Apparently Safari doesn't like videos with blob sources,
       // but loading them this way anyway will hopefully cache them
       // https://discussions.apple.com/thread/254893296?sortBy=best
       ...miscURLs,
     ])];
-    const progresses = Object.assign({}, ...allURLs.map((url) => ({ [url]: {} })));
-    Promise.all(allURLs.map((url) => loadBlob({
+    const progresses = Object.assign({}, ...allURLsToBecomeBlobs.map((url) => ({ [url]: {} })));
+    Promise.all(allURLsToBecomeBlobs.map((url) => loadBlob({
       url,
       onProgress: (e) => {
         progresses[url] = e;
@@ -409,7 +791,7 @@ const preload = (onProgress) => (preloading ? null : new Promise((resolve, rejec
       resolve({
         blobs: Object.assign(
           {},
-          ...allURLs.map((url, index) => ({
+          ...allURLsToBecomeBlobs.map((url, index) => ({
             [url]: preloadInfoList[index],
           })),
         ),
@@ -425,11 +807,13 @@ module.exports = {
   preloadInfoFromDoc,
   assignPreloadInfoToFontsStylesScripts,
   fontsStylesScriptsToHead,
-  assignPreloadInfoToVideosMisc,
+  assignPreloadInfoToVideosImagesMisc,
   createImageVideoEls,
   prepareVideo,
   hideAndRewindVideo,
   removeAndRewindVideo,
+  images,
   videos,
   misc,
+  getEl,
 };

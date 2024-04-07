@@ -280,32 +280,3 @@
     filter: blur(0.25em);
   }
 }
-
-/* ~~~ */
-
-.animTest {
-  position: absolute;
-  width: 100px;
-  height: 100px;
-  background-color: red;
-  border-radius: 50%;
-  opacity: 0.5;
-  animation-name: animTest;
-  animation-duration: 1s;
-  /* animation-timing-function: linear; */
-  animation-iteration-count: infinite;
-}
-
-@keyframes animTest {
-  from {
-    transform: translate(0, 0);
-  }
-
-  50% {
-    transform: translate(2em, 0);
-  }
-
-  to {
-    transform: translate(0, 0);
-  }
-}

@@ -13,8 +13,9 @@ const {
 } = require('../common/compositing.js');
 const { colorShadeToRGB, setIntervalWithInitialCall } = require('../common/helpers.js');
 const {
-  videos, misc, prepareVideo, removeAndRewindVideo,
+  misc, prepareVideo, removeAndRewindVideo, getEl,
 } = require('./preload.js');
+const { starchetypes } = require('./starchetypes.js');
 
 const compositeWorkerStates = {
   idle: 0,
@@ -22,25 +23,28 @@ const compositeWorkerStates = {
   queued: 2,
 };
 
-let starCompositeWorker;
-let starCompositeWorkerState = compositeWorkerStates.idle;
-let starVideoEl;
+let compositeWorker;
+let compositeWorkerState = compositeWorkerStates.idle;
+let imageEls = [];
+// let imageEl;
+let videoEls = [];
+let currentVideoEl;
 
-const starVideoCanvas = document.createElement('canvas');
-starVideoCanvas.width = vidWidth;
-starVideoCanvas.height = vidHeight;
-const starVideoCtx = starVideoCanvas.getContext('2d', { willReadFrequently: true });
-// document.body.appendChild(starVideoCanvas);
+const videoCanvas = document.createElement('canvas');
+videoCanvas.width = vidWidth;
+videoCanvas.height = vidHeight;
+const videoCtx = videoCanvas.getContext('2d', { willReadFrequently: true });
+// document.body.appendChild(videoCanvas);
 
-const starCompositeCanvas = document.createElement('canvas');
-starCompositeCanvas.width = vidPartWidth;
-starCompositeCanvas.height = vidPartHeight;
-const starCompositeCtx = starCompositeCanvas.getContext('2d');
-// document.body.appendChild(starCompositeCanvas);
+const compositeCanvas = document.createElement('canvas');
+compositeCanvas.width = vidPartWidth;
+compositeCanvas.height = vidPartHeight;
+const compositeCtx = compositeCanvas.getContext('2d');
+// document.body.appendChild(compositeCanvas);
 
-let tryCompositeNextStarVideoFrameInterval;
+let tryCompositeNextVideoFrameInterval;
 
-const starCompositeParams = {
+const compositeParams = {
   starRGB: [1, 0, 0],
   dustRGB: [0, 1, 0],
   basisBytes: new Uint8ClampedArray(bytesPerVidPart),
@@ -50,100 +54,106 @@ const starCompositeParams = {
   alphaBytes: new Uint8ClampedArray(bytesPerVidPart),
 };
 
-const tryCompositeStar = () => {
-  if (starCompositeWorkerState === compositeWorkerStates.idle) {
-    starCompositeWorkerState = compositeWorkerStates.compositing;
-    starCompositeWorker.postMessage(starCompositeParams);
+const tryComposite = () => {
+  if (compositeWorkerState === compositeWorkerStates.idle) {
+    compositeWorkerState = compositeWorkerStates.compositing;
+    compositeWorker.postMessage(compositeParams);
   } else {
-    starCompositeWorkerState = compositeWorkerStates.queued;
+    compositeWorkerState = compositeWorkerStates.queued;
   }
 };
 
-const tryCompositeNextStarVideoFrame = () => {
+const tryCompositeNextVideoFrame = () => {
   // It seems cropping a larger video doesn't improve performance
-  starVideoCtx.drawImage(starVideoEl, 0, 0);
+  videoCtx.drawImage(currentVideoEl, 0, 0);
 
-  starVideoCtx.getImageData(...basisBounds);
-  Object.assign(starCompositeParams, {
-    basisBytes: starVideoCtx.getImageData(...basisBounds).data,
-    starDiffBytes: starVideoCtx.getImageData(...starDiffBounds).data,
-    dustDiffBytes: starVideoCtx.getImageData(...dustDiffBounds).data,
-    starTimesDustDiffBytes: starVideoCtx.getImageData(...starTimesDustDiffBounds).data,
-    alphaBytes: starVideoCtx.getImageData(...alphaBounds).data,
+  Object.assign(compositeParams, {
+    basisBytes: videoCtx.getImageData(...basisBounds).data,
+    starDiffBytes: videoCtx.getImageData(...starDiffBounds).data,
+    dustDiffBytes: videoCtx.getImageData(...dustDiffBounds).data,
+    starTimesDustDiffBytes: videoCtx.getImageData(...starTimesDustDiffBounds).data,
+    alphaBytes: videoCtx.getImageData(...alphaBounds).data,
   });
-  tryCompositeStar();
+  tryComposite();
 };
 
-const stopCompositingStar = () => {
-  clearInterval(tryCompositeNextStarVideoFrameInterval);
-  removeAndRewindVideo({ el: starVideoEl });
+const stopCompositing = () => {
+  clearInterval(tryCompositeNextVideoFrameInterval);
+  for (let i = 0; i < videoEls.length; i++) {
+    removeAndRewindVideo({ el: videoEls[i] });
+  }
 };
 
 const setStarRgbWithoutComposite = (rgb) => {
-  starCompositeParams.starRGB = rgb;
+  compositeParams.starRGB = rgb;
 };
 
 const setDustRgbWithoutComposite = (rgb) => {
-  starCompositeParams.dustRGB = rgb;
+  compositeParams.dustRGB = rgb;
 };
 
 const setStarRGB = (rgb) => {
   setStarRgbWithoutComposite(rgb);
-  tryCompositeStar();
+  tryComposite();
 };
 
 const setDustRGB = (rgb) => {
   setDustRgbWithoutComposite(rgb);
-  tryCompositeStar();
+  tryComposite();
+};
+
+const setDustType = (dustType) => {
+  videoCtx.drawImage(imageEls[dustType], 0, 0);
+  currentVideoEl = videoEls[dustType];
+  clearInterval(tryCompositeNextVideoFrameInterval);
+  tryCompositeNextVideoFrameInterval = (
+    setIntervalWithInitialCall(tryCompositeNextVideoFrame, vidFrameDurationMs)
+  );
 };
 
 const applyStarData = (starData) => {
   const {
-    starColor, starShade, dustColor, dustShade,
+    shape, starColor, starShade, dustColor, dustShade, dustType,
   } = starData;
+  const { dustTypeImages, dustTypeVideos } = starchetypes[shape];
   // TODO: starShape and dustType should map to the blob URL
   // of the corresponding videos, whose canplaythrough events should be awaited
-  // setVidSrc(blobs[blobFilenames.placeholderStarVid]);
-  const { el } = videos.placeholderStarVid;
-  el.load();
-  starVideoEl = prepareVideo({
-    el,
-    className: 'hiddenVideo',
-  });
+  // setVidSrc(blobs[blobFilenames.thinker1]);
+  imageEls = dustTypeImages.map(getEl);
+  videoEls = [];
+  for (let i = 0; i < dustTypeVideos.length; i++) {
+    const videoEl = prepareVideo({
+      el: getEl(dustTypeVideos[i]),
+      className: 'hiddenVideo',
+    });
+    videoCtx.drawImage(videoEl, 0, 0); // Avoid "skip" I noticed on Firefox
+    videoEls[i] = videoEl;
+  }
+  videoCtx.clearRect(0, 0, vidWidth, vidHeight);
   // document.body.appendChild(starVideoEl);
   setStarRgbWithoutComposite(colorShadeToRGB(starColor, starShade));
   setDustRgbWithoutComposite(colorShadeToRGB(dustColor, dustShade));
-  clearInterval(tryCompositeNextStarVideoFrameInterval);
-  tryCompositeNextStarVideoFrameInterval = (
-    setIntervalWithInitialCall(tryCompositeNextStarVideoFrame, vidFrameDurationMs)
-  );
+  setDustType(dustType);
 };
 
-let lastFinishedTime = Date.now();
-let compositeFPS = '0fps';
-const getCompositeFPS = () => compositeFPS;
 const init = () => {
   // console.log('Initializing composite worker manager');
   // document.body.appendChild(starVideoEl);
-  starCompositeWorker = new Worker(misc.compositeWorker.blob);
-  starCompositeWorker.onmessage = ({ data }) => {
-    const currentFinishedTime = Date.now();
-    compositeFPS = `${Math.floor(1000 / (currentFinishedTime - lastFinishedTime))}fps`;
-    lastFinishedTime = currentFinishedTime;
-    starCompositeCtx.putImageData(data, 0, 0);
-    const compositeWorkerWasQueued = starCompositeWorkerState === compositeWorkerStates.queued;
-    starCompositeWorkerState = 0;
-    if (compositeWorkerWasQueued) tryCompositeStar();
+  compositeWorker = new Worker(misc.compositeWorker.blob);
+  compositeWorker.onmessage = ({ data }) => {
+    compositeCtx.putImageData(data, 0, 0);
+    const compositeWorkerWasQueued = compositeWorkerState === compositeWorkerStates.queued;
+    compositeWorkerState = 0;
+    if (compositeWorkerWasQueued) tryComposite();
   };
 };
 
-// TODO: Setter for particle type (will impact video's negative Y draw offset on canvas)
 module.exports = {
   init,
-  stopCompositing: stopCompositingStar,
-  starCompositeCanvas,
+  stopCompositing,
+  compositeCanvas,
   setStarRGB,
   setDustRGB,
+  setDustType,
   applyStarData,
-  getCompositeFPS,
 };
