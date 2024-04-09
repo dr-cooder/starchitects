@@ -53,6 +53,7 @@ if (config.useHelmet) {
         connectSrc: [
           "'self'",
           'https://cdn.jsdelivr.net/',
+          'https://storage.googleapis.com/',
         ],
         frameSrc: ["'self'"],
         fontSrc: [
