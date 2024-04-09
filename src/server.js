@@ -48,6 +48,7 @@ if (config.useHelmet) {
         imgSrc: [
           "'self'",
           'blob:',
+          'https://storage.googleapis.com/',
         ],
         connectSrc: [
           "'self'",
