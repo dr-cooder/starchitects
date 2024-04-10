@@ -56,7 +56,7 @@ const {
 
 const starchetypes = [
   {
-    name: 'Rook',
+    name: 'Chess',
     tagline: 'The Thinker',
     description: 'You bridge the perspectives between theory and practice. You are a perpetual student, with a strong sense of wonder and depth in thinking.',
     dustTypeImages: [
@@ -71,7 +71,7 @@ const starchetypes = [
     ],
   },
   {
-    name: 'Rook',
+    name: 'Balloon',
     tagline: 'The Dreamer',
     description: 'You are naturally curious with an unwavering sense of optimism, approaching life with a sense of wonder. You are always asking questions and seeking answers.',
     dustTypeImages: [
@@ -86,7 +86,7 @@ const starchetypes = [
     ],
   },
   {
-    name: 'Rook',
+    name: 'Appliance',
     tagline: 'The Producer',
     description: 'Your process of creating things is powerful. You like to be realistic and get things done, balancing productivity with purpose.',
     dustTypeImages: [
@@ -101,7 +101,7 @@ const starchetypes = [
     ],
   },
   {
-    name: 'Rook',
+    name: 'Bonsai',
     tagline: 'The Disciplined',
     description: 'You are focused on dedication, the ability to achieve mastery of your discipline, and manifesting ideas.',
     dustTypeImages: [
@@ -116,7 +116,7 @@ const starchetypes = [
     ],
   },
   {
-    name: 'Rook',
+    name: 'Geode',
     tagline: 'The Innovator',
     description: 'You are a big experimentalist. You take current ideas and execute improvements and new ways, thinking outside the box.',
     dustTypeImages: [
@@ -131,7 +131,7 @@ const starchetypes = [
     ],
   },
   {
-    name: 'Rook',
+    name: 'Duck',
     tagline: 'The Visionary',
     description: 'You are full of big ideas, able to find potential in everything. You are charismatic and very expressive about sharing and contributing ideas that can come to life.',
     dustTypeImages: [
@@ -146,7 +146,7 @@ const starchetypes = [
     ],
   },
   {
-    name: 'Rook',
+    name: 'Jet',
     tagline: 'The Independent',
     description: 'You are independent, marching to the beat of your own drum. You have a fearless approach to creativity.',
     dustTypeImages: [
@@ -161,7 +161,7 @@ const starchetypes = [
     ],
   },
   {
-    name: 'Rook',
+    name: 'Radio',
     tagline: 'The Listener',
     description: 'You like to listen. You have an open mind, are curious of other people\'s perspectives, and are a heavy empathizer',
     dustTypeImages: [

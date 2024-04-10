@@ -2,7 +2,14 @@ const React = require('react');
 const { useEffect, useRef } = require('react');
 const PropTypes = require('prop-types');
 
-const Inert = ({ inert, children }) => {
+const Inert = ({
+  inert,
+  style,
+  className,
+  onAnimationEnd,
+  onClick,
+  children,
+}) => {
   const divRef = useRef();
   useEffect(() => {
     const divRefCurrent = divRef.current;
@@ -13,7 +20,13 @@ const Inert = ({ inert, children }) => {
     }
   }, [inert]);
   return (
-    <div ref={divRef}>
+    <div
+      ref={divRef}
+      style={style}
+      className={className}
+      onAnimationEnd={onAnimationEnd}
+      onClick={onClick}
+    >
       {children}
     </div>
   );
@@ -21,6 +34,10 @@ const Inert = ({ inert, children }) => {
 
 Inert.propTypes = {
   inert: PropTypes.bool,
+  style: PropTypes.object,
+  className: PropTypes.string,
+  onAnimationEnd: PropTypes.func,
+  onClick: PropTypes.func,
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node.isRequired),
     PropTypes.node,

@@ -411,6 +411,7 @@ const videos = {
       },
     ],
   },
+  /*
   quizBg1Start: {
     sources: [
       {
@@ -543,6 +544,7 @@ const videos = {
       },
     ],
   },
+  */
 };
 
 const misc = {
@@ -815,5 +817,6 @@ module.exports = {
   images,
   videos,
   misc,
+  getBlob,
   getEl,
 };

@@ -58,6 +58,7 @@ const applyUnbornStarBehavior = async (id) => {
     const { header, data } = parseWsMsg(rawData);
     if (header === wsHeaders.webAppToServer.newName) {
       const newName = generateName();
+      // TODO: CATCH MONGODB ERRORS!
       await StarModel.findByIdAndUpdate(...[
         id,
         { name: newName },

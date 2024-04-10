@@ -63,7 +63,7 @@
   transition: width 1s;
 }
 
-.quizNotStartedYet {
+.hiddenStill {
   visibility: hidden;
 }
 
@@ -87,6 +87,30 @@
   animation-name: questionBlockOut;
   animation-duration: 2s;
   opacity: 0;
+}
+
+.galleryInFromRight, .galleryInFromLeft, .galleryOutToLeft, .galleryOutToRight {
+  animation-duration: 1s;
+}
+
+.galleryOutToLeft, .galleryOutToRight {
+  display: none;
+}
+
+.galleryInFromRight {
+  animation-name: galleryInFromRight;
+}
+
+.galleryInFromLeft {
+  animation-name: galleryInFromLeft;
+}
+
+.galleryOutToLeft {
+  animation-name: galleryOutToLeft;
+}
+
+.galleryOutToRight {
+  animation-name: galleryOutToRight;
 }
 
 @keyframes simpleFadeIn {
@@ -278,5 +302,53 @@
     opacity: 0;
     transform: translate(0, 5em);
     filter: blur(0.25em);
+  }
+}
+
+@keyframes galleryInFromRight {
+  from {
+    opacity: 0;
+    transform: translate(22.5em, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes galleryInFromLeft {
+  from {
+    opacity: 0;
+    transform: translate(-22.5em, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes galleryOutToLeft {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+
+  to {
+    opacity: 0;
+    transform: translate(-22.5em, 0);
+  }
+}
+
+@keyframes galleryOutToRight {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+
+  to {
+    opacity: 0;
+    transform: translate(22.5em, 0);
   }
 }

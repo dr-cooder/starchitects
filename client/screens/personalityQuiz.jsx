@@ -1,12 +1,10 @@
 const React = require('react');
-const { useRef, useState } = require('react');
+const { useState } = require('react');
 const PropTypes = require('prop-types');
 const { questions, percentPerQuestion } = require('../personalityQuizQuestions.js');
 const { unitsHorizontalInnerHalf, unitsVerticalInner } = require('../measurements.js');
-const {
-  Background, Inert, ScalingSection, VideoSequence,
-} = require('../components');
-const { videos, misc, getEl } = require('../preload.js');
+const { Inert, ScalingSection } = require('../components');
+const { misc: { progressStar }, getBlob } = require('../preload.js');
 const { percent, preventChildrenFromCalling } = require('../../common/helpers.js');
 
 const questionHeight = 116;
@@ -16,20 +14,13 @@ const questionTop = (unitsVerticalInner - questionHeight - answerButtonHeight) /
 const answerButtonTop = questionTop + questionHeight;
 
 const animationClassNames = {
-  notStartedYet: {
-    progress: 'quizNotStartedYet',
-    questionBlock: 'quizNotStartedYet',
-  },
   goingIn: {
-    progress: 'quizProgressIn',
     questionBlock: 'questionBlockIn',
   },
   idle: {
-    progress: 'quizProgressIn',
     questionBlock: 'questionBlockIn',
   },
   goingOut: {
-    progress: 'quizProgressOut',
     questionBlock: 'questionBlockOut',
   },
 };
@@ -67,33 +58,17 @@ const AnswerButton2 = answerButtonGenerator(true);
 
 const PersonalityQuizScreen = ({ onSubmit }) => {
   const {
-    notStartedYet, goingIn, idle, goingOut,
+    goingIn, idle, goingOut,
   } = animationClassNames;
-  const {
-    quizBg1Start,
-    quizBg1Loop,
-    quizBg2Start,
-    quizBg2Loop,
-    quizBg3Start,
-    quizBg3Loop,
-    quizBg4Start,
-    quizBg4Loop,
-    quizBg5Start,
-    quizBg5Loop,
-    quizBgEnd,
-  } = videos;
-  const backgroundVideoRef = useRef();
-  const nextBackground = () => backgroundVideoRef.current.next();
   const [questionsDone, setQuestionsDone] = useState(0);
-  const [animationClassName, setAnimationClassName] = useState(notStartedYet);
+  const [animationClassName, setAnimationClassName] = useState(goingIn);
   const {
-    progress: progressClassName,
     questionBlock: quesionBlockClassName,
   } = animationClassName;
   const [currentQuestion, setCurrentQuestion] = useState(questions.askYourself);
   const [currentAnswer, setCurrentAnswer] = useState(undefined);
   const [answerList, setAnswerList] = useState('');
-  const [outerClassName, setOuterClassName] = useState('quizNotStartedYet');
+  const [outerClassName, setOuterClassName] = useState('quizFadeIn');
   const registerAnswer = (answerId) => {
     setCurrentAnswer(answerId);
     setAnswerList(answerList + answerId);
@@ -103,92 +78,57 @@ const PersonalityQuizScreen = ({ onSubmit }) => {
   // useEffect(nextBackground, []);
   return (
     <div className={outerClassName} onAnimationEnd={outerClassName === 'quizFadeOut' ? (() => onSubmit(answerList)) : undefined}>
-      <Background
-        background={<VideoSequence
-          ref={backgroundVideoRef}
-          onReady={() => {
-            setOuterClassName('quizFadeIn');
-            nextBackground();
-          }}
-          videos={[
-            ...[
-              [quizBg1Start, quizBg1Loop],
-              [quizBg2Start, quizBg2Loop],
-              [quizBg3Start, quizBg3Loop],
-              [quizBg4Start, quizBg4Loop],
-              [quizBg5Start, quizBg5Loop],
-            ].map(([start, loop], index) => [
-              {
-                el: getEl(start),
-                className: `background${index === 0 ? '' : ' quizBackgroundNextStart'}`,
-                onEnd: () => {
-                  setAnimationClassName(goingIn);
-                  nextBackground();
-                },
-              },
-              {
-                el: getEl(loop),
-                className: 'background quizBackgroundLoop',
-              },
-            ]).flat(),
-            {
-              el: getEl(quizBgEnd),
-              className: 'background quizBackgroundNextStart',
-              onEnd: () => setOuterClassName('quizFadeOut'),
-            },
-          ]}
-        />}
-      >
-        <Inert inert={animationClassName !== idle}>
-          <div className={progressClassName}>
-            <ScalingSection heightUnits={0}>
-              <div className='quizProgress'>
-                <div className='quizProgressPercent' style={{
-                  width: percent(percentPerQuestion * questionsDone),
-                }}>
-                  <div className='quizProgressBar'></div>
-                  <img src={misc.progressStar.blob} alt='Progress star' className='quizProgressStar'/>
-                </div>
+      <Inert inert={animationClassName !== idle}>
+        <div className='quizProgressIn'>
+          <ScalingSection heightUnits={0}>
+            <div className='quizProgress'>
+              <div className='quizProgressPercent' style={{
+                width: percent(percentPerQuestion * questionsDone),
+              }}>
+                <div className='quizProgressBar'></div>
+                <img src={getBlob(progressStar)} alt='Progress star' className='quizProgressStar'/>
               </div>
-            </ScalingSection>
-          </div>
-          <div
-            className={quesionBlockClassName}
-            onAnimationEnd={preventChildrenFromCalling(() => {
-              if (animationClassName === goingIn) {
-                setAnimationClassName(idle);
-              } else {
-                const { next } = currentQuestion.answers[currentAnswer];
-                if (next) {
-                  setCurrentQuestion(questions[next]);
-                }
+            </div>
+          </ScalingSection>
+        </div>
+        <div
+          className={quesionBlockClassName}
+          onAnimationEnd={preventChildrenFromCalling(() => {
+            if (animationClassName === goingIn) {
+              setAnimationClassName(idle);
+            } else {
+              const { next } = currentQuestion.answers[currentAnswer];
+              if (next) {
+                setCurrentQuestion(questions[next]);
                 setCurrentAnswer(undefined);
-                nextBackground();
+                setAnimationClassName(goingIn);
+              } else {
+                setOuterClassName('quizFadeOut');
               }
-            })}
+            }
+          })}
+        >
+          <ScalingSection
+            topUnits={questionTop}
+            topFreeSpace={0.5}
+            heightUnits={questionHeight}
           >
-            <ScalingSection
-              topUnits={questionTop}
-              topFreeSpace={0.5}
-              heightUnits={questionHeight}
-            >
-              <div className={'questionBlock outlined outlinedWithBottomNeighbor'}>
-                <div>{currentQuestion.text}</div>
-              </div>
-            </ScalingSection>
-            <AnswerButton1
-              currentQuestion={currentQuestion}
-              currentAnswer={currentAnswer}
-              registerAnswer={registerAnswer}
-            />
-            <AnswerButton2
-              currentQuestion={currentQuestion}
-              currentAnswer={currentAnswer}
-              registerAnswer={registerAnswer}
-            />
-          </div>
-        </Inert>
-      </Background>
+            <div className={'questionBlock outlined outlinedWithBottomNeighbor'}>
+              <div>{currentQuestion.text}</div>
+            </div>
+          </ScalingSection>
+          <AnswerButton1
+            currentQuestion={currentQuestion}
+            currentAnswer={currentAnswer}
+            registerAnswer={registerAnswer}
+          />
+          <AnswerButton2
+            currentQuestion={currentQuestion}
+            currentAnswer={currentAnswer}
+            registerAnswer={registerAnswer}
+          />
+        </div>
+      </Inert>
     </div>
   );
 };

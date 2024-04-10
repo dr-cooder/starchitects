@@ -13,7 +13,7 @@ const {
 } = require('../common/compositing.js');
 const { colorShadeToRGB, setIntervalWithInitialCall } = require('../common/helpers.js');
 const {
-  misc, prepareVideo, removeAndRewindVideo, getEl,
+  misc: { compositeWorker: compositeWorkerSrc }, prepareVideo, removeAndRewindVideo, getEl, getBlob,
 } = require('./preload.js');
 const { starchetypes } = require('./starchetypes.js');
 
@@ -139,7 +139,7 @@ const applyStarData = (starData) => {
 const init = () => {
   // console.log('Initializing composite worker manager');
   // document.body.appendChild(starVideoEl);
-  compositeWorker = new Worker(misc.compositeWorker.blob);
+  compositeWorker = new Worker(getBlob(compositeWorkerSrc));
   compositeWorker.onmessage = ({ data }) => {
     compositeCtx.putImageData(data, 0, 0);
     const compositeWorkerWasQueued = compositeWorkerState === compositeWorkerStates.queued;
