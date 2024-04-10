@@ -1,6 +1,7 @@
 const React = require('react');
 const { useEffect, useRef } = require('react');
 const PropTypes = require('prop-types');
+const { preventChildrenFromCalling } = require('../../common/helpers.js');
 
 const Inert = ({
   inert,
@@ -24,7 +25,7 @@ const Inert = ({
       ref={divRef}
       style={style}
       className={className}
-      onAnimationEnd={onAnimationEnd}
+      onAnimationEnd={preventChildrenFromCalling(onAnimationEnd)}
       onClick={onClick}
     >
       {children}

@@ -4,7 +4,7 @@ const PropTypes = require('prop-types');
 const Inert = require('./Inert.jsx');
 const { unitsPerEm } = require('../measurements.js');
 const { usePixelsPerUnit } = require('../measurementsReact.js');
-const { px } = require('../../common/helpers.js');
+const { px, preventChildrenFromCalling } = require('../../common/helpers.js');
 
 const GalleryItem = ({
   currentGalleryIndex,
@@ -20,7 +20,7 @@ const GalleryItem = ({
   let onAnimationEnd;
   if (itemIndex === currentGalleryIndex) {
     if (inert) {
-      onAnimationEnd = () => setInert(false);
+      onAnimationEnd = preventChildrenFromCalling(() => setInert(false));
     }
     switch (galleryIndexDelta) {
       case 1:

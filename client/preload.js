@@ -545,6 +545,42 @@ const videos = {
     ],
   },
   */
+  preReveal: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'background/unborn/pre-reveal.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'background/unborn/pre-reveal.mp4',
+      },
+    ],
+  },
+  reveal: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'background/unborn/reveal.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'background/unborn/reveal.mp4',
+      },
+    ],
+  },
+  sendoff: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'background/unborn/sendoff.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'background/unborn/sendoff.mp4',
+      },
+    ],
+  },
 };
 
 const misc = {

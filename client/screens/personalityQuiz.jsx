@@ -77,7 +77,10 @@ const PersonalityQuizScreen = ({ onSubmit }) => {
   };
   // useEffect(nextBackground, []);
   return (
-    <div className={outerClassName} onAnimationEnd={outerClassName === 'quizFadeOut' ? (() => onSubmit(answerList)) : undefined}>
+    <div
+      className={outerClassName}
+      onAnimationEnd={outerClassName === 'quizFadeOut' ? preventChildrenFromCalling(() => onSubmit(answerList)) : undefined}
+    >
       <Inert inert={animationClassName !== idle}>
         <div className='quizProgressIn'>
           <ScalingSection heightUnits={0}>

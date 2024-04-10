@@ -1,17 +1,51 @@
 const React = require('react');
 const { Component, createRef } = require('react');
 const PropTypes = require('prop-types');
-const { RadialColorPicker, ScalingSection, StarCanvas } = require('../components');
+const {
+  Background, RadialColorPicker, ScalingSection, StarCanvas, VideoSequence,
+} = require('../components');
 const compositeWorkerManager = require('../compositeWorkerManager.js');
 const {
   unitsPaddingHorizontal, unitsHorizontalOuter, unitsHorizontalInner, unitsVerticalInner,
 } = require('../measurements.js');
-const { colorShadeToRGB } = require('../../common/helpers.js');
+const { colorShadeToRGB, preventChildrenFromCalling } = require('../../common/helpers.js');
 const { starchetypes } = require('../starchetypes.js');
+const {
+  videos: {
+    preReveal: preRevealVideo,
+    reveal: revealVideo,
+    sendoff: sendoffVideo,
+  },
+  getEl,
+} = require('../preload.js');
 
+const starCanvasTop = (unitsVerticalInner - unitsHorizontalInner) / 2;
 const slidersHeight = unitsVerticalInner - unitsHorizontalInner;
 const sliderGranularity = 1000;
 const translateSliderValue = (e) => e.target.value / sliderGranularity;
+
+const animationClassNames = {
+  waitingForBackground: {
+    yourStarDescendsOuter: 'hiddenStill',
+    starCanvasTransition: 'hiddenStill',
+  },
+  yourStarDescends: {
+    yourStarDescendsOuter: 'yourStarDescendsOuter',
+    starCanvasTransition: 'hiddenStill',
+  },
+  reveal: {
+    starCanvasAnimation: 'unbornStarCanvasAnimation',
+    starCanvasTransition: 'unbornStarCanvasTransition unbornStarCanvasTransitionReveal',
+  },
+  whyDoYouResemble: {},
+  starColor: {},
+  dustType: {},
+  dustColor: {},
+  name: {},
+  confirmation: {},
+  sendoff: {},
+  witnessJoin: {},
+};
 
 class UnbornStarScreen extends Component {
   constructor(props) {
@@ -26,6 +60,9 @@ class UnbornStarScreen extends Component {
         dustShade,
         dustType,
       },
+      onStarColorUpdate,
+      onDustTypeUpdate,
+      onDustColorUpdate,
       onNewNameRequest,
       onSwipeStarUp,
     } = props;
@@ -48,9 +85,21 @@ class UnbornStarScreen extends Component {
       dustShade,
       dustType,
       waitingForNewName: false,
+      animationClassName: animationClassNames.waitingForBackground,
+      backgroundVideoPlaying: false,
     };
+    this.animationClassNameSetter = (animationClassName) => () => this.setState({
+      animationClassName,
+    });
 
-    this.starCanvasRef = createRef();
+    this.backgroundVideoRef = createRef();
+    this.playBackgroundVideo = () => {
+      this.backgroundVideoRef.current.next();
+      this.setState({ backgroundVideoPlaying: true });
+    };
+    this.backgroundVideoEnded = () => {
+      this.setState({ backgroundVideoPlaying: false });
+    };
     this.setDustColor = (e) => {
       const newDustColor = translateSliderValue(e);
       compositeWorkerManager.setDustRGB(colorShadeToRGB(newDustColor, this.state.dustShade));
@@ -77,14 +126,78 @@ class UnbornStarScreen extends Component {
   }
 
   render() {
-    const { name, waitingForNewName } = this.state;
+    const {
+      yourStarDescends,
+      reveal,
+    } = animationClassNames;
+    const {
+      state: {
+        name,
+        waitingForNewName,
+        animationClassName: {
+          yourStarDescendsOuter: yourStarDescendsOuterClassName,
+          starCanvasAnimation: starCanvasAnimationClassName,
+          starCanvasTransition: starCanvasTransitionClassName,
+        },
+        backgroundVideoPlaying,
+      },
+      playBackgroundVideo,
+      backgroundVideoEnded,
+      backgroundVideoRef,
+      animationClassNameSetter,
+    } = this;
     return (
-      <>
+      <Background
+        visible={backgroundVideoPlaying}
+        background={
+          <VideoSequence
+            ref={backgroundVideoRef}
+            videos={[
+              {
+                el: getEl(preRevealVideo),
+                className: 'background',
+                onEnd: () => {
+                  backgroundVideoEnded();
+                  animationClassNameSetter(reveal)();
+                },
+              },
+              {
+                el: getEl(revealVideo),
+                className: 'background',
+                onEnd: backgroundVideoEnded,
+              },
+              {
+                el: getEl(sendoffVideo),
+                className: 'background',
+                onEnd: backgroundVideoEnded,
+              },
+            ]}
+            onReady={animationClassNameSetter(yourStarDescends)}
+          />
+        }
+      >
         <ScalingSection
           topFreeSpace={0.5}
+        >
+          <div
+            className={yourStarDescendsOuterClassName}
+            onAnimationEnd={preventChildrenFromCalling(playBackgroundVideo)}
+          >
+            <p>Your star descends</p>
+            <div></div>
+            <p>The Great Cosmos deems you…</p>
+          </div>
+        </ScalingSection>
+        <ScalingSection
+          topFreeSpace={0.5}
+          topUnits={starCanvasTop}
           heightUnits={unitsHorizontalInner}
         >
-          <StarCanvas ref={this.starCanvasRef}/>
+          <div className={starCanvasTransitionClassName}>
+            <div className={starCanvasAnimationClassName}>
+              <StarCanvas/>
+            </div>
+          </div>
         </ScalingSection>
         <ScalingSection
           topUnits={unitsHorizontalInner}
@@ -153,7 +266,7 @@ class UnbornStarScreen extends Component {
             />
           </div>
         </ScalingSection>
-      </>
+      </Background>
     );
   }
 }

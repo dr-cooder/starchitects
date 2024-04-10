@@ -79,7 +79,7 @@ button.quizButton1 {
   color: var(--color-shine);
 }
 
-button.quizButton1.pressed {
+button.quizButton1.pressed, button.quizButton1:active {
   background-color: var(--color-shine);
 }
 
@@ -87,7 +87,7 @@ button.quizButton2 {
   color: var(--color-radiance);
 }
 
-button.quizButton2.pressed {
+button.quizButton2.pressed, button.quizButton2:active {
   background-color: var(--color-radiance);
 }
 
@@ -95,7 +95,7 @@ button:disabled {
   opacity: 0.25;
 }
 
-button.pressed {
+button.pressed, button:active {
   background-color: var(--color-bright);
   color: var(--color-midnight);
 }
