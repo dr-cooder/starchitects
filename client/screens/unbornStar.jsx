@@ -19,6 +19,9 @@ const {
   getEl,
 } = require('../preload.js');
 
+const yourStarDescendsOuterHeight = 56;
+
+const yourStarDescendsOuterTop = (unitsVerticalInner - yourStarDescendsOuterHeight) / 2;
 const starCanvasTop = (unitsVerticalInner - unitsHorizontalInner) / 2;
 const slidersHeight = unitsVerticalInner - unitsHorizontalInner;
 const sliderGranularity = 1000;
@@ -34,6 +37,7 @@ const animationClassNames = {
     starCanvasTransition: 'hiddenStill',
   },
   reveal: {
+    yourStarDescendsOuter: 'hiddenStill',
     starCanvasAnimation: 'unbornStarCanvasAnimation',
     starCanvasTransition: 'unbornStarCanvasTransition unbornStarCanvasTransitionReveal',
   },
@@ -178,14 +182,16 @@ class UnbornStarScreen extends Component {
       >
         <ScalingSection
           topFreeSpace={0.5}
+          topUnits={yourStarDescendsOuterTop}
+          heightUnits={yourStarDescendsOuterHeight}
         >
           <div
             className={yourStarDescendsOuterClassName}
             onAnimationEnd={preventChildrenFromCalling(playBackgroundVideo)}
           >
-            <p>Your star descends</p>
-            <div></div>
-            <p>The Great Cosmos deems you…</p>
+            <p className='yourStarDescends'>Your star descends</p>
+            <div className='yourStarDescendsSeparator'></div>
+            <p className='theGreatCosmosDeemsYou'>The Great Cosmos deems you…</p>
           </div>
         </ScalingSection>
         <ScalingSection

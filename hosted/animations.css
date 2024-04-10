@@ -95,6 +95,16 @@
   opacity: 0;
 }
 
+.yourStarDescendsOuter .yourStarDescendsSeparator {
+  animation-name: yourStarDescendsSeparator;
+  animation-duration: 2.5s;
+}
+
+.yourStarDescendsOuter .theGreatCosmosDeemsYou {
+  animation-name: theGreatCosmosDeemsYou;
+  animation-duration: 2.5s;
+}
+
 .galleryInFromRight, .galleryInFromLeft, .galleryOutToLeft, .galleryOutToRight {
   animation-duration: 1s;
 }
@@ -190,6 +200,36 @@
   to {
     opacity: 0;
     transform: none;
+  }
+}
+
+@keyframes yourStarDescendsSeparator {
+  from, 10% {
+    transform: scale(0, 1);
+  }
+
+  40%, to {
+    transform: none;
+  }
+}
+
+@keyframes theGreatCosmosDeemsYou {
+  from, 20% {
+    transform: translate(0, 1em);
+    opacity: 0;
+  }
+
+  40% {
+    transform: none;
+  }
+
+  60% {
+    opacity: 1;
+  }
+
+  to {
+    transform: none;
+    opacity: 1;
   }
 }
 
