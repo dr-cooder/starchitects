@@ -2,7 +2,7 @@ const React = require('react');
 const { Component, createRef } = require('react');
 const PropTypes = require('prop-types');
 const {
-  Background, RadialColorPicker, ScalingSection, StarCanvas, VideoSequence,
+  Background, Inert, RadialColorPicker, ScalingSection, StarCanvas, VideoSequence,
 } = require('../components');
 const compositeWorkerManager = require('../compositeWorkerManager.js');
 const {
@@ -19,10 +19,16 @@ const {
   getEl,
 } = require('../preload.js');
 
+const revealVideoDelay = 250;
 const yourStarDescendsOuterHeight = 56;
+const revealOuterHeight = 96;
+const buttonHeight = 40;
+const whyDoYouResembleOuterHeight = 200;
 
 const yourStarDescendsOuterTop = (unitsVerticalInner - yourStarDescendsOuterHeight) / 2;
 const starCanvasTop = (unitsVerticalInner - unitsHorizontalInner) / 2;
+const revealOuterTop = starCanvasTop - revealOuterHeight;
+const whyDoYouResembleOuterTop = unitsVerticalInner - buttonHeight - whyDoYouResembleOuterHeight;
 const slidersHeight = unitsVerticalInner - unitsHorizontalInner;
 const sliderGranularity = 1000;
 const translateSliderValue = (e) => e.target.value / sliderGranularity;
@@ -30,18 +36,29 @@ const translateSliderValue = (e) => e.target.value / sliderGranularity;
 const animationClassNames = {
   waitingForBackground: {
     yourStarDescendsOuter: 'hiddenStill',
+    revealOuter: 'hiddenStill',
     starCanvasTransition: 'hiddenStill',
+    whyDoYouResembleOuter: 'hiddenStill',
   },
   yourStarDescends: {
     yourStarDescendsOuter: 'yourStarDescendsOuter',
+    revealOuter: 'hiddenStill',
     starCanvasTransition: 'hiddenStill',
+    whyDoYouResembleOuter: 'hiddenStill',
   },
   reveal: {
     yourStarDescendsOuter: 'hiddenStill',
+    revealOuter: 'revealOuter',
     starCanvasAnimation: 'unbornStarCanvasAnimation',
     starCanvasTransition: 'unbornStarCanvasTransition unbornStarCanvasTransitionReveal',
+    whyDoYouResembleOuter: 'hiddenStill',
   },
-  whyDoYouResemble: {},
+  whyDoYouResemble: {
+    yourStarDescendsOuter: 'hiddenStill',
+    revealOuter: 'hiddenStill',
+    starCanvasTransition: 'unbornStarCanvasTransition unbornStarCanvasTransitionWhyDoYouResemble',
+    whyDoYouResembleOuter: 'whyDoYouResembleOuter',
+  },
   starColor: {},
   dustType: {},
   dustColor: {},
@@ -75,6 +92,7 @@ class UnbornStarScreen extends Component {
     const { name: starchetypeName, tagline, description } = starchetypes[shape];
     console.log(`${starchetypeName}\n${tagline}\n\nWhy do you resemble this star?\n${description}`);
 
+    this.starchetype = starchetypes[shape];
     this.initialStarColor = starColor;
     this.initialStarShade = starShade;
     this.initialDustColor = dustColor;
@@ -91,9 +109,13 @@ class UnbornStarScreen extends Component {
       waitingForNewName: false,
       animationClassName: animationClassNames.waitingForBackground,
       backgroundVideoPlaying: false,
+      whyDoYouResembleAnimationNotFinishedYet: true,
     };
     this.animationClassNameSetter = (animationClassName) => () => this.setState({
       animationClassName,
+    });
+    this.whyDoYouResembleAnimationHasFinished = () => this.setState({
+      whyDoYouResembleAnimationNotFinishedYet: false,
     });
 
     this.backgroundVideoRef = createRef();
@@ -133,22 +155,32 @@ class UnbornStarScreen extends Component {
     const {
       yourStarDescends,
       reveal,
+      whyDoYouResemble,
     } = animationClassNames;
     const {
+      starchetype: {
+        name: starchetypeName,
+        tagline: starchetypeTagline,
+        description: starchetypeDescription,
+      },
       state: {
         name,
         waitingForNewName,
         animationClassName: {
           yourStarDescendsOuter: yourStarDescendsOuterClassName,
+          revealOuter: revealOuterClassName,
           starCanvasAnimation: starCanvasAnimationClassName,
           starCanvasTransition: starCanvasTransitionClassName,
+          whyDoYouResembleOuter: whyDoYouResembleOuterClassName,
         },
         backgroundVideoPlaying,
+        whyDoYouResembleAnimationNotFinishedYet,
       },
       playBackgroundVideo,
       backgroundVideoEnded,
       backgroundVideoRef,
       animationClassNameSetter,
+      whyDoYouResembleAnimationHasFinished,
     } = this;
     return (
       <Background
@@ -163,6 +195,7 @@ class UnbornStarScreen extends Component {
                 onEnd: () => {
                   backgroundVideoEnded();
                   animationClassNameSetter(reveal)();
+                  setTimeout(playBackgroundVideo, revealVideoDelay);
                 },
               },
               {
@@ -193,6 +226,34 @@ class UnbornStarScreen extends Component {
             <div className='yourStarDescendsSeparator'></div>
             <p className='theGreatCosmosDeemsYou'>The Great Cosmos deems you…</p>
           </div>
+        </ScalingSection>
+        <ScalingSection
+          topFreeSpace={0.5}
+          topUnits={revealOuterTop}
+          heightUnits={revealOuterHeight}
+        >
+          <div
+            className={revealOuterClassName}
+            onAnimationEnd={preventChildrenFromCalling(animationClassNameSetter(whyDoYouResemble))}
+          >
+            <p className='revealName'>{starchetypeName}</p>
+            <div className='revealSeparator'></div>
+            <p className='revealTagline'>{starchetypeTagline}</p>
+          </div>
+        </ScalingSection>
+        <ScalingSection
+          topFreeSpace={1}
+          topUnits={whyDoYouResembleOuterTop}
+          heightUnits={whyDoYouResembleOuterHeight}
+        >
+          <Inert
+            inert={whyDoYouResembleAnimationNotFinishedYet}
+            className={whyDoYouResembleOuterClassName}
+            onAnimationEnd={preventChildrenFromCalling(whyDoYouResembleAnimationHasFinished)}
+          >
+            <p className='header whyDoYouResemble'>Why do you resemble <span className='emphasized'>this</span> star?</p>
+            <p>{starchetypeDescription}</p>
+          </Inert>
         </ScalingSection>
         <ScalingSection
           topFreeSpace={0.5}

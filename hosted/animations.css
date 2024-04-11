@@ -105,6 +105,38 @@
   animation-duration: 2.5s;
 }
 
+.revealOuter {
+  animation-name: revealOuter;
+  animation-duration: 2s;
+  opacity: 0;
+}
+
+.unbornStarCanvasAnimation {
+  animation-name: unbornStarCanvasAnimation;
+  animation-duration: 0.5s;
+  animation-timing-function: cubic-bezier(0, 0, 0, 1);
+}
+
+.unbornStarCanvasTransition {
+  transition-property: transform;
+  transition-duration: 1s;
+}
+
+.unbornStarCanvasTransitionReveal {
+  transform: scale(1, 1) translate(0, 0);
+}
+
+.unbornStarCanvasTransitionWhyDoYouResemble {
+  transform: scale(0.8, 0.8) translate(0, -10em);
+  transition-timing-function: cubic-bezier(0, 0, 0, 1);
+}
+
+.whyDoYouResembleOuter {
+  animation-name: whyDoYouResembleOuter;
+  animation-duration: 1s;
+  animation-timing-function: cubic-bezier(0, 0, 0, 1);
+}
+
 .galleryInFromRight, .galleryInFromLeft, .galleryOutToLeft, .galleryOutToRight {
   animation-duration: 1s;
 }
@@ -230,6 +262,23 @@
   to {
     transform: none;
     opacity: 1;
+  }
+}
+
+@keyframes revealOuter {
+  from {
+    filter: blur(0.25em);
+    opacity: 0;
+  }
+
+  20%, 80% {
+    filter: none;
+    opacity: 1;
+  }
+
+  to {
+    filter: none;
+    opacity: 0;
   }
 }
 
@@ -359,6 +408,34 @@
     opacity: 0;
     transform: translate(0, 5em);
     filter: blur(0.25em);
+  }
+}
+
+@keyframes unbornStarCanvasAnimation {
+  from {
+    opacity: 0;
+    transform: scale(2, 2);
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes whyDoYouResembleOuter {
+  from {
+    opacity: 0;
+    transform: translate(0, 10em);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 
