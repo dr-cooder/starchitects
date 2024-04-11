@@ -1,5 +1,5 @@
 const React = require('react');
-const { useState } = require('react');
+const { useState, useEffect } = require('react');
 const PropTypes = require('prop-types');
 const Inert = require('./Inert.jsx');
 const { unitsPerEm } = require('../measurements.js');
@@ -13,36 +13,37 @@ const GalleryItem = ({
   children,
 }) => {
   const { pixelsPerUnit } = usePixelsPerUnit();
-  const [inert, setInert] = useState(
-    !(itemIndex === currentGalleryIndex && galleryIndexDelta === 0),
-  );
-  let className = 'hiddenStill';
-  let onAnimationEnd;
-  if (itemIndex === currentGalleryIndex) {
-    if (inert) {
-      onAnimationEnd = preventChildrenFromCalling(() => setInert(false));
+  const [inert, setInert] = useState(true);
+  const [className, setClassName] = useState('hiddenStill');
+  useEffect(() => {
+    if (itemIndex === currentGalleryIndex) {
+      switch (galleryIndexDelta) {
+        case 1:
+          setClassName('galleryInFromRight');
+          setInert(true);
+          break;
+        case -1:
+          setClassName('galleryInFromLeft');
+          setInert(true);
+          break;
+        default:
+          setClassName('');
+          setInert(false);
+      }
+    } else {
+      setInert(true);
+      switch (galleryIndexDelta) {
+        case 1:
+          setClassName('galleryOutToLeft');
+          break;
+        case -1:
+          setClassName('galleryOutToRight');
+          break;
+        default:
+          setClassName('hiddenStill');
+      }
     }
-    switch (galleryIndexDelta) {
-      case 1:
-        className = 'galleryInFromRight';
-        break;
-      case -1:
-        className = 'galleryInFromLeft';
-        break;
-      default:
-        className = '';
-    }
-  } else {
-    switch (galleryIndexDelta) {
-      case 1:
-        className = 'galleryOutToLeft';
-        break;
-      case -1:
-        className = 'galleryOutToRight';
-        break;
-      default:
-    }
-  }
+  }, [currentGalleryIndex, galleryIndexDelta]);
   return (
     <Inert
       inert={inert}
@@ -50,7 +51,9 @@ const GalleryItem = ({
         fontSize: px(pixelsPerUnit * unitsPerEm),
       }}
       className={className}
-      onAnimationEnd={onAnimationEnd}
+      onAnimationEnd={itemIndex === currentGalleryIndex ? preventChildrenFromCalling(
+        () => setInert(false),
+      ) : undefined}
     >
       {children}
     </Inert>

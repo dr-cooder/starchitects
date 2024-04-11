@@ -2,7 +2,14 @@ const React = require('react');
 const { Component, createRef } = require('react');
 const PropTypes = require('prop-types');
 const {
-  Background, Inert, RadialColorPicker, ScalingSection, StarCanvas, VideoSequence,
+  Background,
+  GalleryButton,
+  GalleryItem,
+  Inert,
+  RadialColorPicker,
+  ScalingSection,
+  StarCanvas,
+  VideoSequence,
 } = require('../components');
 const compositeWorkerManager = require('../compositeWorkerManager.js');
 const {
@@ -28,7 +35,8 @@ const whyDoYouResembleOuterHeight = 200;
 const yourStarDescendsOuterTop = (unitsVerticalInner - yourStarDescendsOuterHeight) / 2;
 const starCanvasTop = (unitsVerticalInner - unitsHorizontalInner) / 2;
 const revealOuterTop = starCanvasTop - revealOuterHeight;
-const whyDoYouResembleOuterTop = unitsVerticalInner - buttonHeight - whyDoYouResembleOuterHeight;
+const buttonTop = unitsVerticalInner - buttonHeight;
+const whyDoYouResembleOuterTop = buttonTop - whyDoYouResembleOuterHeight;
 const slidersHeight = unitsVerticalInner - unitsHorizontalInner;
 const sliderGranularity = 1000;
 const translateSliderValue = (e) => e.target.value / sliderGranularity;
@@ -88,10 +96,6 @@ class UnbornStarScreen extends Component {
       onSwipeStarUp,
     } = props;
 
-    console.log(props.starData);
-    const { name: starchetypeName, tagline, description } = starchetypes[shape];
-    console.log(`${starchetypeName}\n${tagline}\n\nWhy do you resemble this star?\n${description}`);
-
     this.starchetype = starchetypes[shape];
     this.initialStarColor = starColor;
     this.initialStarShade = starShade;
@@ -110,6 +114,9 @@ class UnbornStarScreen extends Component {
       animationClassName: animationClassNames.waitingForBackground,
       backgroundVideoPlaying: false,
       whyDoYouResembleAnimationNotFinishedYet: true,
+      currentGalleryIndex: 0,
+      previousGalleryIndex: 0,
+      galleryIndexDelta: 0,
     };
     this.animationClassNameSetter = (animationClassName) => () => this.setState({
       animationClassName,
@@ -117,6 +124,21 @@ class UnbornStarScreen extends Component {
     this.whyDoYouResembleAnimationHasFinished = () => this.setState({
       whyDoYouResembleAnimationNotFinishedYet: false,
     });
+
+    const galleryMover = (next) => {
+      const galleryIndexDelta = next ? 1 : -1;
+      return () => {
+        const { currentGalleryIndex: previousGalleryIndex } = this.state;
+        const currentGalleryIndex = previousGalleryIndex + galleryIndexDelta;
+        this.setState({
+          galleryIndexDelta,
+          previousGalleryIndex,
+          currentGalleryIndex,
+        });
+      };
+    };
+    this.galleryNext = galleryMover(true);
+    this.galleryPrev = galleryMover(false);
 
     this.backgroundVideoRef = createRef();
     this.playBackgroundVideo = () => {
@@ -175,12 +197,17 @@ class UnbornStarScreen extends Component {
         },
         backgroundVideoPlaying,
         whyDoYouResembleAnimationNotFinishedYet,
+        currentGalleryIndex,
+        previousGalleryIndex,
+        galleryIndexDelta,
       },
       playBackgroundVideo,
       backgroundVideoEnded,
       backgroundVideoRef,
       animationClassNameSetter,
       whyDoYouResembleAnimationHasFinished,
+      galleryNext,
+      galleryPrev,
     } = this;
     return (
       <Background
@@ -213,48 +240,71 @@ class UnbornStarScreen extends Component {
           />
         }
       >
-        <ScalingSection
-          topFreeSpace={0.5}
-          topUnits={yourStarDescendsOuterTop}
-          heightUnits={yourStarDescendsOuterHeight}
+        <GalleryItem
+          itemIndex={0}
+          currentGalleryIndex={currentGalleryIndex}
+          galleryIndexDelta={galleryIndexDelta}
         >
-          <div
-            className={yourStarDescendsOuterClassName}
-            onAnimationEnd={preventChildrenFromCalling(playBackgroundVideo)}
+          <ScalingSection
+            topFreeSpace={0.5}
+            topUnits={yourStarDescendsOuterTop}
+            heightUnits={yourStarDescendsOuterHeight}
           >
-            <p className='yourStarDescends'>Your star descends</p>
-            <div className='yourStarDescendsSeparator'></div>
-            <p className='theGreatCosmosDeemsYou'>The Great Cosmos deems you…</p>
-          </div>
-        </ScalingSection>
-        <ScalingSection
-          topFreeSpace={0.5}
-          topUnits={revealOuterTop}
-          heightUnits={revealOuterHeight}
-        >
-          <div
-            className={revealOuterClassName}
-            onAnimationEnd={preventChildrenFromCalling(animationClassNameSetter(whyDoYouResemble))}
+            <div
+              className={yourStarDescendsOuterClassName}
+              onAnimationEnd={preventChildrenFromCalling(playBackgroundVideo)}
+            >
+              <p className='yourStarDescends'>Your star descends</p>
+              <div className='yourStarDescendsSeparator'></div>
+              <p className='theGreatCosmosDeemsYou'>The Great Cosmos deems you…</p>
+            </div>
+          </ScalingSection>
+          <ScalingSection
+            topFreeSpace={0.5}
+            topUnits={revealOuterTop}
+            heightUnits={revealOuterHeight}
           >
-            <p className='revealName'>{starchetypeName}</p>
-            <div className='revealSeparator'></div>
-            <p className='revealTagline'>{starchetypeTagline}</p>
-          </div>
-        </ScalingSection>
-        <ScalingSection
-          topFreeSpace={1}
-          topUnits={whyDoYouResembleOuterTop}
-          heightUnits={whyDoYouResembleOuterHeight}
-        >
+            <div
+              className={revealOuterClassName}
+              onAnimationEnd={preventChildrenFromCalling(
+                animationClassNameSetter(whyDoYouResemble),
+              )}
+            >
+              <p className='revealName'>{starchetypeName}</p>
+              <div className='revealSeparator'></div>
+              <p className='revealTagline'>{starchetypeTagline}</p>
+            </div>
+          </ScalingSection>
           <Inert
             inert={whyDoYouResembleAnimationNotFinishedYet}
             className={whyDoYouResembleOuterClassName}
             onAnimationEnd={preventChildrenFromCalling(whyDoYouResembleAnimationHasFinished)}
           >
-            <p className='header whyDoYouResemble'>Why do you resemble <span className='emphasized'>this</span> star?</p>
-            <p>{starchetypeDescription}</p>
+            <ScalingSection
+              topFreeSpace={1}
+              topUnits={whyDoYouResembleOuterTop}
+              heightUnits={whyDoYouResembleOuterHeight}
+            >
+              <p className='header whyDoYouResemble'>Why do you resemble <span className='emphasized'>this</span> star?</p>
+              <p>{starchetypeDescription}</p>
+            </ScalingSection>
+            <ScalingSection
+              topFreeSpace={1}
+              topUnits={buttonTop}
+              heightUnits={buttonHeight}
+            >
+              <GalleryButton
+                onClick={galleryNext}
+                expectedPreviousGalleryIndex={0}
+                expectedGalleryIndexDelta={1}
+                previousGalleryIndex={previousGalleryIndex}
+                galleryIndexDelta={galleryIndexDelta}
+              >
+                Customize Star
+              </GalleryButton>
+            </ScalingSection>
           </Inert>
-        </ScalingSection>
+        </GalleryItem>
         <ScalingSection
           topFreeSpace={0.5}
           topUnits={starCanvasTop}
@@ -266,73 +316,79 @@ class UnbornStarScreen extends Component {
             </div>
           </div>
         </ScalingSection>
-        <ScalingSection
-          topUnits={unitsHorizontalInner}
-          topFreeSpace={0.5}
-          heightUnits={slidersHeight}
-          heightFreeSpace={0.5}
+        <GalleryItem
+          itemIndex={1}
+          currentGalleryIndex={currentGalleryIndex}
+          galleryIndexDelta={galleryIndexDelta}
         >
-          <p>
-            Here is your star! (swipe it up when you are done customizing it)<br/>
-            Shine Type: <select onChange={this.setDustType} value={this.initialDustType}>
-              <option value={0}>Plasmo</option>
-              <option value={1}>Electro</option>
-              <option value={2}>Nucleo</option>
-            </select><br/>
-            Shine Color: <input type='range' defaultValue={this.initialDustColor * sliderGranularity} max={sliderGranularity} onChange={this.setDustColor}/><br/>
-            Shine Shade: <input type='range' defaultValue={this.initialDustShade * sliderGranularity} max={sliderGranularity} onChange={this.setDustShade}/><br/>
-            Name: {name}
-          </p>
-          <button
-            disabled={waitingForNewName}
-            onClick={this.onNewNameRequest}
-          >New name</button>
-          <button
-            disabled={waitingForNewName}
-            onClick={() => {
-              const {
-                // name,
-                starColor,
-                starShade,
-                dustColor,
-                dustShade,
-                dustType,
-              } = this.state;
-              this.onSwipeStarUp({
-                // name,
-                starColor,
-                starShade,
-                dustColor,
-                dustShade,
-                dustType,
-              });
-            }}
-          >&quot;Swipe up&quot;</button>
-        </ScalingSection>
-        <ScalingSection
-          leftUnits={-unitsPaddingHorizontal}
-          topUnits={-unitsPaddingHorizontal}
-          topFreeSpace={0.5}
-          widthUnits={unitsHorizontalOuter}
-          heightUnits={unitsHorizontalOuter}
-        >
-          <div
-            onMouseDown={this.startSwipeUpAnim}
-            onTouchStart={this.startSwipeUpAnim}
+          <ScalingSection
+            topUnits={unitsHorizontalInner}
+            topFreeSpace={0.5}
+            heightUnits={slidersHeight}
+            heightFreeSpace={0.5}
           >
-            <RadialColorPicker
-              initialColorValue={this.initialStarColor}
-              initialShadeValue={this.initialStarShade}
-              onChange={({ rgb, color, shade }) => {
-                this.setState({
-                  starColor: color,
-                  starShade: shade,
+            <p>
+              Here is your star! (swipe it up when you are done customizing it)<br/>
+              Shine Type: <select onChange={this.setDustType} value={this.initialDustType}>
+                <option value={0}>Plasmo</option>
+                <option value={1}>Electro</option>
+                <option value={2}>Nucleo</option>
+              </select><br/>
+              Shine Color: <input type='range' defaultValue={this.initialDustColor * sliderGranularity} max={sliderGranularity} onChange={this.setDustColor}/><br/>
+              Shine Shade: <input type='range' defaultValue={this.initialDustShade * sliderGranularity} max={sliderGranularity} onChange={this.setDustShade}/><br/>
+              Name: {name}
+            </p>
+            <button
+              disabled={waitingForNewName}
+              onClick={this.onNewNameRequest}
+            >New name</button>
+            <button
+              disabled={waitingForNewName}
+              onClick={() => {
+                const {
+                  // name,
+                  starColor,
+                  starShade,
+                  dustColor,
+                  dustShade,
+                  dustType,
+                } = this.state;
+                this.onSwipeStarUp({
+                  // name,
+                  starColor,
+                  starShade,
+                  dustColor,
+                  dustShade,
+                  dustType,
                 });
-                compositeWorkerManager.setStarRGB(rgb);
               }}
-            />
-          </div>
-        </ScalingSection>
+            >&quot;Swipe up&quot;</button>
+          </ScalingSection>
+          <ScalingSection
+            leftUnits={-unitsPaddingHorizontal}
+            topUnits={-unitsPaddingHorizontal}
+            topFreeSpace={0.5}
+            widthUnits={unitsHorizontalOuter}
+            heightUnits={unitsHorizontalOuter}
+          >
+            <div
+              onMouseDown={this.startSwipeUpAnim}
+              onTouchStart={this.startSwipeUpAnim}
+            >
+              <RadialColorPicker
+                initialColorValue={this.initialStarColor}
+                initialShadeValue={this.initialStarShade}
+                onChange={({ rgb, color, shade }) => {
+                  this.setState({
+                    starColor: color,
+                    starShade: shade,
+                  });
+                  compositeWorkerManager.setStarRGB(rgb);
+                }}
+              />
+            </div>
+          </ScalingSection>
+        </GalleryItem>
       </Background>
     );
   }

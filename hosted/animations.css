@@ -142,7 +142,7 @@
 }
 
 .galleryOutToLeft, .galleryOutToRight {
-  display: none;
+  opacity: 0;
 }
 
 .galleryInFromRight {

@@ -94,12 +94,12 @@ const square = (value) => value * value;
 
 const isMouseEvent = ({ type }) => type.startsWith('mouse');
 
-const preventChildrenFromCalling = (callback) => (event) => {
+const preventChildrenFromCalling = (callback) => (callback != null ? (event) => {
   const { currentTarget, target } = event;
   if (currentTarget === target) {
     callback(event);
   }
-};
+} : undefined);
 
 const setIntervalWithInitialCall = (callback, ms) => {
   callback();
