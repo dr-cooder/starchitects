@@ -54,47 +54,57 @@ const slidersHeight = unitsVerticalInner - unitsHorizontalInner;
 const sliderGranularity = 1000;
 const translateSliderValue = (e) => e.target.value / sliderGranularity;
 
-const animationClassNames = {
-  waitingForBackground: {
-    yourStarDescendsOuter: 'hiddenStill',
-    revealOuter: 'hiddenStill',
-    starCanvasTransition: 'hiddenStill',
-    whyDoYouResembleOuter: 'hiddenStill',
-    progress: 'hiddenStill',
-  },
-  yourStarDescends: {
-    yourStarDescendsOuter: 'yourStarDescendsOuter',
-    revealOuter: 'hiddenStill',
-    starCanvasTransition: 'hiddenStill',
-    whyDoYouResembleOuter: 'hiddenStill',
-    progress: 'hiddenStill',
-  },
-  reveal: {
-    yourStarDescendsOuter: 'hiddenStill',
-    revealOuter: 'revealOuter',
-    starCanvasAnimation: 'unbornStarCanvasAnimation',
-    starCanvasTransition: 'unbornStarCanvasTransition unbornStarCanvasTransitionReveal',
-    whyDoYouResembleOuter: 'hiddenStill',
-    progress: 'hiddenStill',
-  },
-  whyDoYouResemble: {
-    yourStarDescendsOuter: 'hiddenStill',
-    revealOuter: 'hiddenStill',
-    starCanvasTransition: 'unbornStarCanvasTransition unbornStarCanvasTransitionWhyDoYouResemble',
-    whyDoYouResembleOuter: 'whyDoYouResembleOuter',
-    progress: 'hiddenStill',
-  },
-  starColor: {
-    progress: 'quizProgress quizProgressIn',
-    progressPercent: 'quizProgressPercent unbornProgressStarColor',
-  },
-  dustType: {},
-  dustColor: {},
-  name: {},
-  confirmation: {},
-  sendoff: {},
-  witnessJoin: {},
+const waitingForBackgroundClassNames = {
+  yourStarDescendsOuter: 'hiddenStill',
+  revealOuter: 'hiddenStill',
+  starCanvasTransition: 'hiddenStill',
+  whyDoYouResembleOuter: 'hiddenStill',
+  progress: 'hiddenStill',
 };
+const yourStarDescendsClassNames = {
+  yourStarDescendsOuter: 'yourStarDescendsOuter',
+  revealOuter: 'hiddenStill',
+  starCanvasTransition: 'hiddenStill',
+  whyDoYouResembleOuter: 'hiddenStill',
+  progress: 'hiddenStill',
+};
+const revealClassNames = {
+  yourStarDescendsOuter: 'hiddenStill',
+  revealOuter: 'revealOuter',
+  starCanvasAnimation: 'unbornStarCanvasAnimation',
+  starCanvasTransition: 'unbornStarCanvasTransition unbornStarCanvasTransitionReveal',
+  whyDoYouResembleOuter: 'hiddenStill',
+  progress: 'hiddenStill',
+};
+const whyDoYouResembleClassNames = {
+  yourStarDescendsOuter: 'hiddenStill',
+  revealOuter: 'hiddenStill',
+  starCanvasTransition: 'unbornStarCanvasTransition unbornStarCanvasTransitionWhyDoYouResemble',
+  whyDoYouResembleOuter: 'whyDoYouResembleOuter',
+  progress: 'hiddenStill',
+};
+const starColorClassNames = {
+  yourStarDescendsOuter: 'hiddenStill',
+  revealOuter: 'hiddenStill',
+  starCanvasTransition: 'unbornStarCanvasTransition unbornStarCanvasTransitionStarColor',
+  progress: 'quizProgress quizProgressIn',
+  progressPercent: 'quizProgressPercent unbornProgressStarColor',
+};
+const dustTypeClassNames = {};
+const dustColorClassNames = {};
+const nameClassNames = {};
+const confirmationClassNames = {};
+const sendoffClassNames = {};
+const witnessJoinClassNames = {};
+
+const galleryClassNames = [
+  whyDoYouResembleClassNames,
+  starColorClassNames,
+  dustTypeClassNames,
+  dustColorClassNames,
+  nameClassNames,
+  confirmationClassNames,
+];
 
 class UnbornStarScreen extends Component {
   constructor(props) {
@@ -131,7 +141,7 @@ class UnbornStarScreen extends Component {
       dustShade,
       dustType,
       waitingForNewName: false,
-      animationClassName: animationClassNames.waitingForBackground,
+      classNames: waitingForBackgroundClassNames,
       backgroundVideoPlaying: false,
       whyDoYouResembleAnimationNotFinishedYet: true,
       currentGalleryIndex: 0,
@@ -139,8 +149,8 @@ class UnbornStarScreen extends Component {
       galleryIndexDelta: 0,
       galleryMoving: false,
     };
-    this.animationClassNameSetter = (animationClassName) => () => this.setState({
-      animationClassName,
+    this.classNamesSetter = (classNames) => () => this.setState({
+      classNames,
     });
     this.whyDoYouResembleAnimationHasFinished = () => this.setState({
       whyDoYouResembleAnimationNotFinishedYet: false,
@@ -156,6 +166,7 @@ class UnbornStarScreen extends Component {
           previousGalleryIndex,
           currentGalleryIndex,
           galleryMoving: true,
+          classNames: galleryClassNames[currentGalleryIndex],
         });
       };
     };
@@ -198,11 +209,6 @@ class UnbornStarScreen extends Component {
 
   render() {
     const {
-      yourStarDescends,
-      reveal,
-      whyDoYouResemble,
-    } = animationClassNames;
-    const {
       starchetype: {
         name: starchetypeName,
         tagline: starchetypeTagline,
@@ -211,7 +217,7 @@ class UnbornStarScreen extends Component {
       state: {
         name,
         waitingForNewName,
-        animationClassName: {
+        classNames: {
           yourStarDescendsOuter: yourStarDescendsOuterClassName,
           revealOuter: revealOuterClassName,
           starCanvasAnimation: starCanvasAnimationClassName,
@@ -230,7 +236,7 @@ class UnbornStarScreen extends Component {
       playBackgroundVideo,
       backgroundVideoEnded,
       backgroundVideoRef,
-      animationClassNameSetter,
+      classNamesSetter,
       whyDoYouResembleAnimationHasFinished,
       galleryNext,
       galleryPrev,
@@ -248,7 +254,7 @@ class UnbornStarScreen extends Component {
                 className: 'background',
                 onEnd: () => {
                   backgroundVideoEnded();
-                  animationClassNameSetter(reveal)();
+                  classNamesSetter(revealClassNames)();
                   setTimeout(playBackgroundVideo, revealVideoDelay);
                 },
               },
@@ -263,7 +269,7 @@ class UnbornStarScreen extends Component {
                 onEnd: backgroundVideoEnded,
               },
             ]}
-            onReady={animationClassNameSetter(yourStarDescends)}
+            onReady={classNamesSetter(yourStarDescendsClassNames)}
           />
         }
       >
@@ -295,7 +301,7 @@ class UnbornStarScreen extends Component {
             <div
               className={revealOuterClassName}
               onAnimationEnd={preventChildrenFromCalling(
-                animationClassNameSetter(whyDoYouResemble),
+                classNamesSetter(whyDoYouResembleClassNames),
               )}
             >
               <p className='revealName'>{starchetypeName}</p>
@@ -340,7 +346,7 @@ class UnbornStarScreen extends Component {
         >
           <div className={starCanvasTransitionClassName}>
             <div className={starCanvasAnimationClassName}>
-              <StarCanvas/>
+              <StarCanvas />
             </div>
           </div>
         </ScalingSection>
@@ -348,7 +354,7 @@ class UnbornStarScreen extends Component {
           <div className={progressClassName}>
             <div className={progressPercentClassName}>
               <div className='quizProgressBar'></div>
-              <img src={getBlob(progressStar)} alt='Progress star' className='quizProgressStar'/>
+              <img src={getBlob(progressStar)} alt='Progress star' className='quizProgressStar' />
             </div>
           </div>
         </ScalingSection>
@@ -358,21 +364,21 @@ class UnbornStarScreen extends Component {
           galleryIndexDelta={galleryIndexDelta}
           onInAnimationFinished={galleryStoppedMoving}
         >
-          <ScalingSection
+          {/* <ScalingSection
             topUnits={unitsHorizontalInner}
             topFreeSpace={0.5}
             heightUnits={slidersHeight}
             heightFreeSpace={0.5}
           >
             <p>
-              Here is your star! (swipe it up when you are done customizing it)<br/>
+              Here is your star! (swipe it up when you are done customizing it)<br />
               Shine Type: <select onChange={this.setDustType} value={this.initialDustType}>
                 <option value={0}>Plasmo</option>
                 <option value={1}>Electro</option>
                 <option value={2}>Nucleo</option>
-              </select><br/>
-              Shine Color: <input type='range' defaultValue={this.initialDustColor * sliderGranularity} max={sliderGranularity} onChange={this.setDustColor}/><br/>
-              Shine Shade: <input type='range' defaultValue={this.initialDustShade * sliderGranularity} max={sliderGranularity} onChange={this.setDustShade}/><br/>
+              </select><br />
+              Shine Color: <input type='range' defaultValue={this.initialDustColor * sliderGranularity} max={sliderGranularity} onChange={this.setDustColor} /><br />
+              Shine Shade: <input type='range' defaultValue={this.initialDustShade * sliderGranularity} max={sliderGranularity} onChange={this.setDustShade} /><br />
               Name: {name}
             </p>
             <button
@@ -400,7 +406,7 @@ class UnbornStarScreen extends Component {
                 });
               }}
             >&quot;Swipe up&quot;</button>
-          </ScalingSection>
+          </ScalingSection> */}
           <ScalingSection
             leftUnits={-unitsPaddingHorizontal}
             topUnits={radialColorPickerTop}

@@ -131,6 +131,14 @@
   transition-timing-function: cubic-bezier(0, 0, 0, 1);
 }
 
+.unbornStarCanvasTransitionStarColor {
+  transform: scale(0.65, 0.65) translate(0, 0);
+}
+
+.unbornProgressStarColor {
+  width: 0%;
+}
+
 .whyDoYouResembleOuter {
   animation-name: whyDoYouResembleOuter;
   animation-duration: 1s;
