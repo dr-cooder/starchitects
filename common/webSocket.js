@@ -10,6 +10,9 @@ const wsHeaders = {
     animSparkle: 2,
     animTwirl: 3,
     animSupernova: 4,
+    updateStarColor: 5,
+    updateDustType: 6,
+    updateDustColor: 7,
   },
   serverToWebApp: {
     errorMsg: 0,

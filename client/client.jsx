@@ -87,24 +87,45 @@ createImageVideoEls().then(() => {
       });
     },
     unbornStar: (starData) => {
+      const {
+        webAppToServer: {
+          newName: newNameHeader,
+          birthStar: birthStarHeader,
+          updateStarColor: updateStarColorHeader,
+          updateDustType: updateDustTypeHeader,
+          updateDustColor: updateDustColorHeader,
+        },
+        serverToWebApp: {
+          newName: newNameReceivedHeader,
+        },
+      } = wsHeaders;
       const unbornStarScreenRef = createRef();
       webSocket.onMessage(({ header, data }) => {
         unbornStarScreenRef.current.applyNewName(
-          header === wsHeaders.serverToWebApp.newName ? data : null,
+          header === newNameReceivedHeader ? data : null,
         );
       });
       return setScreen(<screens.unbornStar
         ref={unbornStarScreenRef}
         starData={starData}
+        onStarColorUpdate={({ starColor, starShade }) => {
+          webSocket.send(makeWsMsg(updateStarColorHeader, { starColor, starShade }));
+        }}
+        onDustTypeUpdate={(dustType) => {
+          webSocket.send(makeWsMsg(updateDustTypeHeader, dustType));
+        }}
+        onDustColorUpdate={({ dustColor, dustShade }) => {
+          webSocket.send(makeWsMsg(updateDustColorHeader, { dustColor, dustShade }));
+        }}
         onNewNameRequest={() => {
-          webSocket.send(makeWsMsg(wsHeaders.webAppToServer.newName));
+          webSocket.send(makeWsMsg(newNameHeader));
         }}
         onSwipeStarUp={(customization) => {
           const bornStarData = starData; // JSON.parse(JSON.stringify(starData));
           Object.assign(bornStarData, customization);
           // Can't edit function parameters as per ESLint rules, but
           // mutating starData via a shallow copy shouldn't be an issue
-          webSocket.send(makeWsMsg(wsHeaders.webAppToServer.birthStar, customization));
+          webSocket.send(makeWsMsg(birthStarHeader, customization));
           setAppState.bornStar(bornStarData);
         }}
       />);

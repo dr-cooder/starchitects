@@ -224,8 +224,11 @@ class RadialColorPicker extends Component {
   constructor(props) {
     super(props);
 
-    const { initialColorValue, initialShadeValue, onChange } = props;
+    const {
+      id, disabled, initialColorValue, initialShadeValue, onChange,
+    } = props;
     this.onChange = onChange ?? (() => {});
+    this.id = id;
 
     const colorValue = clamp01(ensureNumber(initialColorValue));
     const { x: colorX, y: colorY } = valueToControllerPosition({
@@ -239,6 +242,8 @@ class RadialColorPicker extends Component {
     });
     const [rValue, gValue, bValue] = colorShadeToRGB(colorValue, shadeValue);
     this.state = {
+      disabled,
+      awaitingListenerUpdate: false,
       rValue,
       gValue,
       bValue,
@@ -256,7 +261,7 @@ class RadialColorPicker extends Component {
 
     this.svgRef = createRef();
 
-    this.handlePointerDown = (event) => {
+    const handlePointerDown = (event) => {
       const {
         none: noMoverType, mouse: mouseMoverType, touch: touchMoverType,
       } = controllerMoverTypes;
@@ -382,7 +387,7 @@ class RadialColorPicker extends Component {
       }
     };
 
-    this.handlePointerMove = (event) => {
+    const handlePointerMove = (event) => {
       const { mouse: mouseMoverType, touch: touchMoverType } = controllerMoverTypes;
       const { colorMoverType, shadeMoverType } = this.state;
       const eventIsMouseEvent = isMouseEvent(event);
@@ -534,7 +539,7 @@ class RadialColorPicker extends Component {
       }
     };
 
-    this.handlePointerUp = (event) => {
+    const handlePointerUp = (event) => {
       const {
         none: noMoverType, mouse: mouseMoverType, touch: touchMoverType,
       } = controllerMoverTypes;
@@ -589,6 +594,26 @@ class RadialColorPicker extends Component {
       }
     };
 
+    this.updateListeners = () => {
+      // console.log('updating listeners');
+
+      const { addEventListener, removeEventListener } = document;
+      const eventListenerMutator = this.state.disabled ? removeEventListener : addEventListener;
+
+      eventListenerMutator('mousedown', handlePointerDown);
+      eventListenerMutator('touchstart', handlePointerDown);
+
+      eventListenerMutator('mousemove', handlePointerMove);
+      eventListenerMutator('touchmove', handlePointerMove);
+
+      eventListenerMutator('mouseleave', handlePointerUp);
+      eventListenerMutator('mouseup', handlePointerUp);
+      eventListenerMutator('touchcancel', handlePointerUp);
+      eventListenerMutator('touchend', handlePointerUp);
+
+      this.setState({ awaitingListenerUpdate: false });
+    };
+
     this.getValue = () => {
       const {
         onChange: onChangeCurrent,
@@ -608,46 +633,45 @@ class RadialColorPicker extends Component {
     };
   }
 
+  static getDerivedStateFromProps({ disabled }, { disabled: previousDisabled }) {
+    return {
+      disabled,
+      awaitingListenerUpdate: disabled !== previousDisabled,
+    };
+  }
+
   componentDidMount() {
-    document.addEventListener('mousedown', this.handlePointerDown);
-    document.addEventListener('touchstart', this.handlePointerDown);
-
-    document.addEventListener('mousemove', this.handlePointerMove);
-    document.addEventListener('touchmove', this.handlePointerMove);
-
-    document.addEventListener('mouseleave', this.handlePointerUp);
-    document.addEventListener('mouseup', this.handlePointerUp);
-    document.addEventListener('touchcancel', this.handlePointerUp);
-    document.addEventListener('touchend', this.handlePointerUp);
+    const { state: { disabled }, updateListeners } = this;
+    if (!disabled) updateListeners();
   }
 
   componentWillUnmount() {
-    document.removeEventListener('mousedown', this.handlePointerDown);
-    document.removeEventListener('touchstart', this.handlePointerDown);
-
-    document.removeEventListener('mousemove', this.handlePointerMove);
-    document.removeEventListener('touchmove', this.handlePointerMove);
-
-    document.removeEventListener('mouseleave', this.handlePointerUp);
-    document.removeEventListener('mouseup', this.handlePointerUp);
-    document.removeEventListener('touchcancel', this.handlePointerUp);
-    document.removeEventListener('touchend', this.handlePointerUp);
+    const { state: { disabled }, updateListeners } = this;
+    if (disabled) updateListeners();
   }
 
   render() {
     const {
-      rValue,
-      gValue,
-      bValue,
-      colorValue,
-      colorX,
-      colorY,
-      shadeValue,
-      shadeX,
-      shadeY,
-    } = this.state;
+      id,
+      state: {
+        awaitingListenerUpdate,
+        rValue,
+        gValue,
+        bValue,
+        colorValue,
+        colorX,
+        colorY,
+        shadeValue,
+        shadeX,
+        shadeY,
+      },
+      updateListeners,
+    } = this;
+    if (awaitingListenerUpdate) updateListeners();
     const rgb = colorToRGB(colorValue);
 
+    const colorFilterId = `${id}ColorFilter`;
+    const shadeFilterId = `${id}ShadeFilter`;
     // https://stackoverflow.com/questions/5736398/how-to-calculate-the-svg-path-for-an-arc-of-a-circle
     // https://css-tricks.com/my-struggle-to-use-and-animate-a-conic-gradient-in-svg/
     return (
@@ -661,8 +685,22 @@ class RadialColorPicker extends Component {
             <path d={`M ${arcEndXMin} ${arcEndYMin} A ${unitsHorizontalInnerHalf} ${unitsHorizontalInnerHalf} 0 0 0 ${arcEndXMin} ${arcEndYMax}`} stroke='white' strokeWidth='4' fill='none'/>
             <path d={`M ${arcEndXMax} ${arcEndYMax} A ${unitsHorizontalInnerHalf} ${unitsHorizontalInnerHalf} 0 0 0 ${arcEndXMax} ${arcEndYMin}`} stroke='white' strokeWidth='4' fill='none'/>
           </mask>
-          <ControllerFilter id='colorFilter' x={colorX} y={colorY} r={rValue} g={gValue} b={bValue}/>
-          <ControllerFilter id='shadeFilter' x={shadeX} y={shadeY} r={rValue} g={gValue} b={bValue}/>
+          <ControllerFilter
+            id={colorFilterId}
+            x={colorX}
+            y={colorY}
+            r={rValue}
+            g={gValue}
+            b={bValue}
+          />
+          <ControllerFilter
+            id={shadeFilterId}
+            x={shadeX}
+            y={shadeY}
+            r={rValue}
+            g={gValue}
+            b={bValue}
+          />
         </defs>
         <foreignObject x='0' y='0' width={unitsHorizontalOuter} height={unitsHorizontalOuter} mask='url(#mask)'>
           <div style={{
@@ -671,14 +709,16 @@ class RadialColorPicker extends Component {
             background: `conic-gradient(from 0deg, ${shadeGradientStopInfos(rgb)}, ${colorGradientStopInfos(shadeValue)})`,
           }} xmlns='http://www.w3.org/1999/xhtml'/>
         </foreignObject>
-        <Controller filterId='colorFilter' x={colorX} y={colorY} />
-        <Controller filterId='shadeFilter' x={shadeX} y={shadeY }/>
+        <Controller filterId={colorFilterId} x={colorX} y={colorY} />
+        <Controller filterId={shadeFilterId} x={shadeX} y={shadeY }/>
       </svg>
     );
   }
 }
 
 RadialColorPicker.propTypes = {
+  id: PropTypes.string,
+  disabled: PropTypes.bool,
   initialColorValue: PropTypes.number,
   initialShadeValue: PropTypes.number,
   onChange: PropTypes.func,

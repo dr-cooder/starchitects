@@ -10,8 +10,10 @@ const GalleryItem = ({
   currentGalleryIndex,
   galleryIndexDelta,
   itemIndex,
+  onInAnimationFinished,
   children,
 }) => {
+  const onInAnimationFinishedFinal = onInAnimationFinished ?? (() => {});
   const { pixelsPerUnit } = usePixelsPerUnit();
   const [inert, setInert] = useState(true);
   const [className, setClassName] = useState('hiddenStill');
@@ -51,9 +53,10 @@ const GalleryItem = ({
         fontSize: px(pixelsPerUnit * unitsPerEm),
       }}
       className={className}
-      onAnimationEnd={itemIndex === currentGalleryIndex ? preventChildrenFromCalling(
-        () => setInert(false),
-      ) : undefined}
+      onAnimationEnd={itemIndex === currentGalleryIndex ? preventChildrenFromCalling(() => {
+        setInert(false);
+        onInAnimationFinishedFinal();
+      }) : undefined}
     >
       {children}
     </Inert>
@@ -64,6 +67,7 @@ GalleryItem.propTypes = {
   currentGalleryIndex: PropTypes.number,
   galleryIndexDelta: PropTypes.number,
   itemIndex: PropTypes.number,
+  onInAnimationFinished: PropTypes.func,
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node.isRequired),
     PropTypes.node,

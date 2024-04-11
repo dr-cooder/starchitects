@@ -13,30 +13,43 @@ const {
 } = require('../components');
 const compositeWorkerManager = require('../compositeWorkerManager.js');
 const {
-  unitsPaddingHorizontal, unitsHorizontalOuter, unitsHorizontalInner, unitsVerticalInner,
+  unitsPaddingHorizontal,
+  unitsHorizontalOuter,
+  unitsHorizontalInner,
+  unitsVerticalInner,
+  unitsVerticalInnerHalf,
+  unitsHorizontalOuterHalf,
 } = require('../measurements.js');
 const { colorShadeToRGB, preventChildrenFromCalling } = require('../../common/helpers.js');
 const { starchetypes } = require('../starchetypes.js');
 const {
+  misc: {
+    progressStar,
+  },
   videos: {
     preReveal: preRevealVideo,
     reveal: revealVideo,
     sendoff: sendoffVideo,
   },
   getEl,
+  getBlob,
 } = require('../preload.js');
 
 const revealVideoDelay = 250;
 const yourStarDescendsOuterHeight = 56;
 const revealOuterHeight = 96;
 const buttonHeight = 40;
+const buttonSpacing = 24;
 const whyDoYouResembleOuterHeight = 200;
 
 const yourStarDescendsOuterTop = (unitsVerticalInner - yourStarDescendsOuterHeight) / 2;
 const starCanvasTop = (unitsVerticalInner - unitsHorizontalInner) / 2;
 const revealOuterTop = starCanvasTop - revealOuterHeight;
 const buttonTop = unitsVerticalInner - buttonHeight;
+const buttonHalfWidth = (unitsHorizontalInner - buttonSpacing) / 2;
+const buttonHalfRightLeft = buttonHalfWidth + buttonSpacing;
 const whyDoYouResembleOuterTop = buttonTop - whyDoYouResembleOuterHeight;
+const radialColorPickerTop = unitsVerticalInnerHalf - unitsHorizontalOuterHalf;
 const slidersHeight = unitsVerticalInner - unitsHorizontalInner;
 const sliderGranularity = 1000;
 const translateSliderValue = (e) => e.target.value / sliderGranularity;
@@ -47,12 +60,14 @@ const animationClassNames = {
     revealOuter: 'hiddenStill',
     starCanvasTransition: 'hiddenStill',
     whyDoYouResembleOuter: 'hiddenStill',
+    progress: 'hiddenStill',
   },
   yourStarDescends: {
     yourStarDescendsOuter: 'yourStarDescendsOuter',
     revealOuter: 'hiddenStill',
     starCanvasTransition: 'hiddenStill',
     whyDoYouResembleOuter: 'hiddenStill',
+    progress: 'hiddenStill',
   },
   reveal: {
     yourStarDescendsOuter: 'hiddenStill',
@@ -60,14 +75,19 @@ const animationClassNames = {
     starCanvasAnimation: 'unbornStarCanvasAnimation',
     starCanvasTransition: 'unbornStarCanvasTransition unbornStarCanvasTransitionReveal',
     whyDoYouResembleOuter: 'hiddenStill',
+    progress: 'hiddenStill',
   },
   whyDoYouResemble: {
     yourStarDescendsOuter: 'hiddenStill',
     revealOuter: 'hiddenStill',
     starCanvasTransition: 'unbornStarCanvasTransition unbornStarCanvasTransitionWhyDoYouResemble',
     whyDoYouResembleOuter: 'whyDoYouResembleOuter',
+    progress: 'hiddenStill',
   },
-  starColor: {},
+  starColor: {
+    progress: 'quizProgress quizProgressIn',
+    progressPercent: 'quizProgressPercent unbornProgressStarColor',
+  },
   dustType: {},
   dustColor: {},
   name: {},
@@ -117,6 +137,7 @@ class UnbornStarScreen extends Component {
       currentGalleryIndex: 0,
       previousGalleryIndex: 0,
       galleryIndexDelta: 0,
+      galleryMoving: false,
     };
     this.animationClassNameSetter = (animationClassName) => () => this.setState({
       animationClassName,
@@ -134,11 +155,13 @@ class UnbornStarScreen extends Component {
           galleryIndexDelta,
           previousGalleryIndex,
           currentGalleryIndex,
+          galleryMoving: true,
         });
       };
     };
     this.galleryNext = galleryMover(true);
     this.galleryPrev = galleryMover(false);
+    this.galleryStoppedMoving = () => this.setState({ galleryMoving: false });
 
     this.backgroundVideoRef = createRef();
     this.playBackgroundVideo = () => {
@@ -194,12 +217,15 @@ class UnbornStarScreen extends Component {
           starCanvasAnimation: starCanvasAnimationClassName,
           starCanvasTransition: starCanvasTransitionClassName,
           whyDoYouResembleOuter: whyDoYouResembleOuterClassName,
+          progress: progressClassName,
+          progressPercent: progressPercentClassName,
         },
         backgroundVideoPlaying,
         whyDoYouResembleAnimationNotFinishedYet,
         currentGalleryIndex,
         previousGalleryIndex,
         galleryIndexDelta,
+        galleryMoving,
       },
       playBackgroundVideo,
       backgroundVideoEnded,
@@ -208,6 +234,7 @@ class UnbornStarScreen extends Component {
       whyDoYouResembleAnimationHasFinished,
       galleryNext,
       galleryPrev,
+      galleryStoppedMoving,
     } = this;
     return (
       <Background
@@ -244,6 +271,7 @@ class UnbornStarScreen extends Component {
           itemIndex={0}
           currentGalleryIndex={currentGalleryIndex}
           galleryIndexDelta={galleryIndexDelta}
+          onInAnimationFinished={galleryStoppedMoving}
         >
           <ScalingSection
             topFreeSpace={0.5}
@@ -316,10 +344,19 @@ class UnbornStarScreen extends Component {
             </div>
           </div>
         </ScalingSection>
+        <ScalingSection heightUnits={0}>
+          <div className={progressClassName}>
+            <div className={progressPercentClassName}>
+              <div className='quizProgressBar'></div>
+              <img src={getBlob(progressStar)} alt='Progress star' className='quizProgressStar'/>
+            </div>
+          </div>
+        </ScalingSection>
         <GalleryItem
           itemIndex={1}
           currentGalleryIndex={currentGalleryIndex}
           galleryIndexDelta={galleryIndexDelta}
+          onInAnimationFinished={galleryStoppedMoving}
         >
           <ScalingSection
             topUnits={unitsHorizontalInner}
@@ -366,27 +403,24 @@ class UnbornStarScreen extends Component {
           </ScalingSection>
           <ScalingSection
             leftUnits={-unitsPaddingHorizontal}
-            topUnits={-unitsPaddingHorizontal}
+            topUnits={radialColorPickerTop}
             topFreeSpace={0.5}
             widthUnits={unitsHorizontalOuter}
             heightUnits={unitsHorizontalOuter}
           >
-            <div
-              onMouseDown={this.startSwipeUpAnim}
-              onTouchStart={this.startSwipeUpAnim}
-            >
-              <RadialColorPicker
-                initialColorValue={this.initialStarColor}
-                initialShadeValue={this.initialStarShade}
-                onChange={({ rgb, color, shade }) => {
-                  this.setState({
-                    starColor: color,
-                    starShade: shade,
-                  });
-                  compositeWorkerManager.setStarRGB(rgb);
-                }}
-              />
-            </div>
+            <RadialColorPicker
+              id='star'
+              disabled={galleryMoving || currentGalleryIndex !== 1}
+              initialColorValue={this.initialStarColor}
+              initialShadeValue={this.initialStarShade}
+              onChange={({ rgb, color, shade }) => {
+                this.setState({
+                  starColor: color,
+                  starShade: shade,
+                });
+                compositeWorkerManager.setStarRGB(rgb);
+              }}
+            />
           </ScalingSection>
         </GalleryItem>
       </Background>
