@@ -9,6 +9,7 @@ const {
   RadialColorPicker,
   ScalingSection,
   StarCanvas,
+  SwipeDetector,
   VideoSequence,
 } = require('../components');
 const compositeWorkerManager = require('../compositeWorkerManager.js');
@@ -20,7 +21,7 @@ const {
   unitsVerticalInnerHalf,
   unitsHorizontalOuterHalf,
 } = require('../measurements.js');
-const { colorShadeToRGB, preventChildrenFromCalling } = require('../../common/helpers.js');
+const { preventChildrenFromCalling } = require('../../common/helpers.js');
 const { starchetypes } = require('../starchetypes.js');
 const {
   misc: {
@@ -52,9 +53,6 @@ const buttonHalfWidth = (unitsHorizontalInner - buttonSpacing) / 2;
 const buttonHalfRightLeft = buttonHalfWidth + buttonSpacing;
 const whyDoYouResembleOuterTop = buttonTop - whyDoYouResembleOuterHeight;
 const radialColorPickerTop = unitsVerticalInnerHalf - unitsHorizontalOuterHalf;
-const slidersHeight = unitsVerticalInner - unitsHorizontalInner;
-const sliderGranularity = 1000;
-const translateSliderValue = (e) => e.target.value / sliderGranularity;
 
 const waitingForBackgroundClassNames = {
   yourStarDescendsOuter: 'hiddenStill',
@@ -221,16 +219,6 @@ class UnbornStarScreen extends Component {
     };
     this.backgroundVideoEnded = () => {
       this.setState({ backgroundVideoPlaying: false });
-    };
-    this.setDustColor = (e) => {
-      const newDustColor = translateSliderValue(e);
-      compositeWorkerManager.setDustRGB(colorShadeToRGB(newDustColor, this.state.dustShade));
-      this.setState({ dustColor: newDustColor });
-    };
-    this.setDustShade = (e) => {
-      const newDustShade = translateSliderValue(e);
-      compositeWorkerManager.setDustRGB(colorShadeToRGB(this.state.dustColor, newDustShade));
-      this.setState({ dustShade: newDustShade });
     };
     this.setDustType = (e) => {
       const newDustType = e.target.value;
@@ -563,6 +551,10 @@ class UnbornStarScreen extends Component {
           >
             <p className={swipeYourStarUpClassName}>Swipe your <span className='emphasized'>star</span> up into space!</p>
           </ScalingSection>
+          <SwipeDetector
+            disabled={false}
+            onSwipe={() => console.log('Oh, man!')}
+          ></SwipeDetector>
         </GalleryItem>
       </Background>
     );

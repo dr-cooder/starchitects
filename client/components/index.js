@@ -9,4 +9,5 @@ module.exports.Inert = require('./Inert.jsx');
 module.exports.RadialColorPicker = require('./RadialColorPicker.jsx');
 module.exports.ScalingSection = require('./ScalingSection.jsx');
 module.exports.StarCanvas = require('./StarCanvas.jsx');
+module.exports.SwipeDetector = require('./SwipeDetector.jsx');
 module.exports.VideoSequence = require('./VideoSequence.jsx');

@@ -163,7 +163,7 @@ const starchetypes = [
   {
     name: 'Radio',
     tagline: 'The Listener',
-    description: 'You like to listen. You have an open mind, are curious of other people\'s perspectives, and are a heavy empathizer',
+    description: 'You like to listen. You have an open mind, are curious of other people\'s perspectives, and are a heavy empathizer.',
     dustTypeImages: [
       listener1Img,
       listener2Img,

@@ -1,5 +1,5 @@
 const React = require('react');
-const { useEffect, useRef, useState } = require('react');
+const { Component, createRef } = require('react');
 const PropTypes = require('prop-types');
 const {
   unitsHorizontalInnerHalf,
@@ -9,6 +9,12 @@ const {
   isWithin01,
   isMouseEvent,
 } = require('../../common/helpers.js');
+const {
+  misc: {
+    progressStar,
+  },
+  getBlob,
+} = require('../preload.js');
 const ScalingSection = require('./ScalingSection.jsx');
 
 const pointerTypes = {
@@ -27,47 +33,40 @@ const boundsSpacePointer = ({ pointer, boundsStart, boundsLength }) => (
   (pointer - boundsStart) / boundsLength
 );
 
-const SwipeDetector = ({ disabled, onSwipe }) => {
-  const boundsRef = useRef();
-  const { none: noPointerType, mouse: mousePointerType, touch: touchPointerType } = pointerTypes;
-  const [pointerType, setPointerType] = useState(noPointerType);
-  const [pointerTouchIdentifier, setPointerTouchIdentifier] = useState(undefined);
-  const [pointerInitialY, setPointerInitialY] = useState(0);
-  const handlePointerDown = (event) => {
-    if (pointerType === noPointerType) {
+class SwipeDetector extends Component {
+  constructor(props) {
+    super(props);
+
+    const { none: noPointerType, mouse: mousePointerType, touch: touchPointerType } = pointerTypes;
+
+    const { disabled, onSwipe } = props;
+    this.onSwipe = onSwipe;
+    this.state = {
+      disabled,
+      awaitingListenerUpdate: false,
+      pointerType: noPointerType,
+      pointerTouchIdentifier: undefined,
+      pointerInitialY: 0,
+    };
+    this.boundsRef = createRef();
+
+    const handlePointerDown = (event) => {
       const {
-        x: boundsX,
-        y: boundsY,
-        width: boundsWidth,
-        height: boundsHeight,
-      } = boundsRef.current.getBoundingClientRect();
-      if (isMouseEvent(event)) {
+        state: { pointerType },
+        boundsRef: { current: boundsRefCurrent },
+      } = this;
+      if (pointerType === noPointerType) {
         const {
-          clientX: pointerX,
-          clientY: pointerY,
-        } = event;
-        const boundsSpacePointerX = boundsSpacePointer({
-          pointer: pointerX,
-          boundsStart: boundsX,
-          boundsLength: boundsWidth,
-        });
-        const boundsSpacePointerY = boundsSpacePointer({
-          pointer: pointerY,
-          boundsStart: boundsY,
-          boundsLength: boundsHeight,
-        });
-        if (isWithin01(boundsSpacePointerX) && isWithin01(boundsSpacePointerY)) {
-          setPointerType(mousePointerType);
-          setPointerInitialY(boundsSpacePointerY);
-        }
-      } else {
-        const { changedTouches } = event;
-        for (let i = 0; i < changedTouches.length; i++) {
+          x: boundsX,
+          y: boundsY,
+          width: boundsWidth,
+          height: boundsHeight,
+        } = boundsRefCurrent.getBoundingClientRect();
+        if (isMouseEvent(event)) {
           const {
-            identifier: touchIdentifier,
             clientX: pointerX,
             clientY: pointerY,
-          } = changedTouches[i];
+          } = event;
           const boundsSpacePointerX = boundsSpacePointer({
             pointer: pointerX,
             boundsStart: boundsX,
@@ -79,83 +78,156 @@ const SwipeDetector = ({ disabled, onSwipe }) => {
             boundsLength: boundsHeight,
           });
           if (isWithin01(boundsSpacePointerX) && isWithin01(boundsSpacePointerY)) {
-            setPointerType(touchPointerType);
-            setPointerTouchIdentifier(touchIdentifier);
-            setPointerInitialY(boundsSpacePointerY);
-            break;
+            this.setState({
+              pointerType: mousePointerType,
+              pointerInitialY: boundsSpacePointerY,
+            });
+          }
+        } else {
+          const { changedTouches } = event;
+          for (let i = 0; i < changedTouches.length; i++) {
+            const {
+              identifier: touchIdentifier,
+              clientX: pointerX,
+              clientY: pointerY,
+            } = changedTouches[i];
+            const boundsSpacePointerX = boundsSpacePointer({
+              pointer: pointerX,
+              boundsStart: boundsX,
+              boundsLength: boundsWidth,
+            });
+            const boundsSpacePointerY = boundsSpacePointer({
+              pointer: pointerY,
+              boundsStart: boundsY,
+              boundsLength: boundsHeight,
+            });
+            if (isWithin01(boundsSpacePointerX) && isWithin01(boundsSpacePointerY)) {
+              this.setState({
+                pointerType: touchPointerType,
+                pointerTouchIdentifier: touchIdentifier,
+                pointerInitialY: boundsSpacePointerY,
+              });
+              break;
+            }
           }
         }
       }
-    }
-  };
-  const handlePointerUp = (event) => {
-    const eventIsMouseEvent = isMouseEvent(event);
-    const expectedPointerType = eventIsMouseEvent ? mousePointerType : touchPointerType;
-    if (pointerType === expectedPointerType) {
+    };
+
+    const handlePointerUp = (event) => {
       const {
-        y: boundsY,
-        height: boundsHeight,
-      } = boundsRef.current.getBoundingClientRect();
-      if (eventIsMouseEvent) {
-        const { clientY: pointerY } = event;
-        const boundsSpacePointerY = boundsSpacePointer({
-          pointer: pointerY,
-          boundsStart: boundsY,
-          boundsLength: boundsHeight,
-        });
-        if (boundsSpacePointerY < pointerInitialY) onSwipe();
-        setPointerType(noPointerType);
-      } else {
-        const changedTouchArray = [...event.changedTouches];
-        const pointerTouch = changedTouchArray.find(
-          (touch) => touch.identifier === pointerTouchIdentifier,
-        );
-        if (pointerTouch !== undefined) {
-          const { clientY: pointerY } = pointerTouch;
+        state: {
+          pointerType,
+          pointerTouchIdentifier,
+          pointerInitialY,
+        },
+        boundsRef: { current: boundsRefCurrent },
+      } = this;
+      const eventIsMouseEvent = isMouseEvent(event);
+      const expectedPointerType = eventIsMouseEvent ? mousePointerType : touchPointerType;
+      if (pointerType === expectedPointerType) {
+        const {
+          y: boundsY,
+          height: boundsHeight,
+        } = boundsRefCurrent.getBoundingClientRect();
+        if (eventIsMouseEvent) {
+          const { clientY: pointerY } = event;
           const boundsSpacePointerY = boundsSpacePointer({
             pointer: pointerY,
             boundsStart: boundsY,
             boundsLength: boundsHeight,
           });
           if (boundsSpacePointerY < pointerInitialY) onSwipe();
-          setPointerType(noPointerType);
-          setPointerTouchIdentifier(undefined);
+          this.setState({
+            pointerType: noPointerType,
+          });
+        } else {
+          const changedTouchArray = [...event.changedTouches];
+          const pointerTouch = changedTouchArray.find(
+            (touch) => touch.identifier === pointerTouchIdentifier,
+          );
+          if (pointerTouch !== undefined) {
+            const { clientY: pointerY } = pointerTouch;
+            const boundsSpacePointerY = boundsSpacePointer({
+              pointer: pointerY,
+              boundsStart: boundsY,
+              boundsLength: boundsHeight,
+            });
+            if (boundsSpacePointerY < pointerInitialY) onSwipe();
+            this.setState({
+              pointerType: noPointerType,
+              pointerTouchIdentifier: undefined,
+            });
+          }
         }
       }
-    }
-  };
-  const updateListeners = (add) => {
-    const { addEventListener, removeEventListener } = document;
-    const eventListenerMutator = add ? addEventListener : removeEventListener;
+    };
 
-    eventListenerMutator('mousedown', handlePointerDown);
-    eventListenerMutator('touchstart', handlePointerDown);
+    this.updateListeners = () => {
+      const { addEventListener, removeEventListener } = document;
+      const { disabled: disabledState } = this.state;
+      const eventListenerMutator = disabledState ? removeEventListener : addEventListener;
 
-    eventListenerMutator('mouseleave', handlePointerUp);
-    eventListenerMutator('mouseup', handlePointerUp);
-    eventListenerMutator('touchcancel', handlePointerUp);
-    eventListenerMutator('touchend', handlePointerUp);
+      eventListenerMutator('mousedown', handlePointerDown);
+      eventListenerMutator('touchstart', handlePointerDown);
 
-    console.log(
-      `${add ? 'Added' : 'Removed'} event listeners for swipe detector`,
+      eventListenerMutator('mouseleave', handlePointerUp);
+      eventListenerMutator('mouseup', handlePointerUp);
+      eventListenerMutator('touchcancel', handlePointerUp);
+      eventListenerMutator('touchend', handlePointerUp);
+
+      this.setState({
+        ...(disabled ? {
+          pointerType: noPointerType,
+          pointerTouchIdentifier: undefined,
+        } : {}),
+        awaitingListenerUpdate: false,
+      });
+
+      // console.log(
+      //   `${disabledState ? 'Removed' : 'Added'} event listeners for swipe detector`,
+      // );
+    };
+  }
+
+  componentDidMount() {
+    const { state: { disabled }, updateListeners } = this;
+    if (!disabled) updateListeners();
+  }
+
+  componentWillUnmount() {
+    const { state: { disabled }, updateListeners } = this;
+    if (disabled) updateListeners();
+  }
+
+  render() {
+    const {
+      state: { awaitingListenerUpdate, pointerType },
+      updateListeners,
+      boundsRef,
+    } = this;
+    if (awaitingListenerUpdate) updateListeners();
+
+    const { none: noPointerType } = pointerTypes;
+    return (
+      <ScalingSection
+        leftUnits={detectorLeft}
+        topFreeSpace={0.5}
+        topUnits={detectorTop}
+        widthUnits={detectorDiameter}
+        heightUnits={detectorDiameter}
+      >
+        <div ref={boundsRef} className='swipeTwinkleContainer'>
+          <img
+            className={`swipeTwinkle ${pointerType === noPointerType ? 'swipeTwinkleInactive' : 'swipeTwinkleActive'}`}
+            src={getBlob(progressStar)}
+            alt='Twinkle'
+          />
+        </div>
+      </ScalingSection>
     );
-  };
-  useEffect(() => {
-    if (disabled) return undefined;
-    updateListeners(true);
-    return () => updateListeners(false);
-  }, [disabled]);
-  return (
-    <ScalingSection
-      ref={boundsRef}
-      leftUnits={detectorLeft}
-      topFreeSpace={0.5}
-      topUnits={detectorTop}
-      widthUnits={detectorDiameter}
-      heightUnits={detectorDiameter}
-    ></ScalingSection>
-  );
-};
+  }
+}
 
 SwipeDetector.propTypes = {
   disabled: PropTypes.bool,

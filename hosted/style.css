@@ -24,6 +24,10 @@ body {
   letter-spacing: -0.011em;
 }
 
+img {
+  -webkit-user-drag: none;
+}
+
 p {
   margin-bottom: 1em;
   line-height: 1.5em;
@@ -271,6 +275,11 @@ button, .outlined {
 
 .revealTagline {
   font-weight: 500;
+}
+
+.swipeTwinkleContainer {
+  width: inherit;
+  height: inherit;
 }
 
 /* Some browsers may not be able to copy image data from a video if it isn't actively being rendered in the DOM */

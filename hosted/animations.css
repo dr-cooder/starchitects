@@ -182,6 +182,19 @@
   animation-duration: 2s;
 }
 
+.swipeTwinkle {
+  transition-property: transform;
+  transition-duration: 1s;
+}
+
+.swipeTwinkleInactive {
+  transform: scale(0, 0);
+}
+
+.swipeTwinkleActive {
+  transform: scale(1, 1);
+}
+
 .galleryInFromRight, .galleryInFromLeft, .galleryOutToLeft, .galleryOutToRight {
   animation-duration: 1s;
 }
