@@ -238,6 +238,17 @@
   animation-name: galleryOutToRight;
 }
 
+.bornStarControlPanel {
+  animation-name: bornStarControlPanel;
+  animation-duration: 0.5s;
+}
+
+.bornStarCanvas {
+  animation-name: bornStarCanvas;
+  animation-duration: 1s;
+  animation-timing-function: cubic-bezier(0, 0, 0, 1);
+}
+
 @keyframes simpleFadeIn {
   from {opacity: 0;}
 }
@@ -585,5 +596,27 @@
   to {
     opacity: 0;
     transform: translate(22.5em, 0);
+  }
+}
+
+@keyframes bornStarControlPanel {
+  from {
+    opacity: 0;
+    transform: scale(0.9, 0.9) translate(0, 2em);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes bornStarCanvas {
+  from, 50% {
+    transform: scale(0, 0);
+  }
+
+  to {
+    transform: none;
   }
 }

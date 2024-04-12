@@ -44,7 +44,7 @@ p {
   font-size: 1.5em;
 }
 
-.theArchitectsPresent::after, .showUsYourShine::after, .yourStarDescendsSeparator, .revealSeparator, .whyDoYouResemble::after {
+.theArchitectsPresent::after, .showUsYourShine::after, .yourStarDescendsSeparator, .revealSeparator, .whyDoYouResemble::after, .bornStarName::after {
   display: block;
   content: '';
   height: auto;
@@ -71,6 +71,10 @@ p {
 
 .revealSeparator {
   margin-bottom: 0.5em;
+}
+
+.bornStarName::after {
+  font-size: 0.5em;
 }
 
 .customizationHeader, .witnessJoin {
@@ -283,6 +287,7 @@ button, .outlined {
   letter-spacing: -0.05em;
   font-weight: bold;
   margin-bottom: 0;
+  white-space: nowrap;
 }
 
 /* https://www.youtube.com/watch?v=dqTE2K-shts */

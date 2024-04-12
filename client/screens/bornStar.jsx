@@ -1,26 +1,27 @@
 const React = require('react');
 const { Component } = require('react');
 const PropTypes = require('prop-types');
-const { ScalingSection, StarCanvas } = require('../components');
+const { Inert, ScalingSection, StarCanvas } = require('../components');
 const { unitsHorizontalInner, unitsVerticalInner } = require('../measurements.js');
+const { preventChildrenFromCalling } = require('../../common/helpers.js');
 
+const starCanvasWidth = 210;
 const buttonHeight = 40;
 const buttonSpacing = 24;
+const controlPanelTop = 218;
 
+const starCanvasLeft = (unitsHorizontalInner - starCanvasWidth) / 2;
 const buttonTop = unitsVerticalInner - buttonHeight;
 const buttonWidth = (unitsHorizontalInner - buttonSpacing * 2) / 3;
 const middleButtonOffset = buttonWidth + buttonSpacing;
 const rightButtonOffset = middleButtonOffset * 2;
-
-const nameplateHeight = 24;
-const canvasTop = (buttonTop - unitsHorizontalInner - nameplateHeight) / 2;
-const namePlateTop = canvasTop + unitsHorizontalInner;
+const controlPaneHeight = unitsVerticalInner - controlPanelTop;
 
 class BornStarScreen extends Component {
   constructor(props) {
     super(props);
     const {
-      starData: { name, size },
+      starData: { name },
       onSparkle,
       onTwirl,
       onSupernova,
@@ -28,6 +29,7 @@ class BornStarScreen extends Component {
 
     this.state = {
       animationInProgress: false,
+      controlsNotReady: true,
     };
 
     const startAnimation = (callback) => () => {
@@ -36,7 +38,6 @@ class BornStarScreen extends Component {
     };
 
     this.name = name;
-    this.size = size;
     this.onSparkle = startAnimation(onSparkle);
     this.onTwirl = startAnimation(onTwirl);
     this.onSupernova = startAnimation(onSupernova);
@@ -46,21 +47,44 @@ class BornStarScreen extends Component {
   }
 
   render() {
+    const {
+      state: {
+        controlsNotReady,
+        animationInProgress,
+      },
+      name,
+      onSparkle,
+      onTwirl,
+      onSupernova,
+    } = this;
     return (
       <>
         <ScalingSection
-          topUnits={canvasTop}
           topFreeSpace={0.5}
-          heightUnits={unitsHorizontalInner}
+          leftUnits={starCanvasLeft}
+          widthUnits={starCanvasWidth}
+          heightUnits={starCanvasWidth}
         >
-          <StarCanvas initialSize={this.size}/>
+          <div
+            className='bornStarCanvas'
+            onAnimationEnd={preventChildrenFromCalling(() => this.setState({
+              controlsNotReady: false,
+            }))}
+          >
+            <StarCanvas/>
+          </div>
         </ScalingSection>
         <ScalingSection
-          topUnits={namePlateTop}
           topFreeSpace={0.5}
-          heightUnits={nameplateHeight}
+          topUnits={controlPanelTop}
+          heightUnits={controlPaneHeight}
         >
-          <p>{this.name}</p>
+          <Inert
+            inert={controlsNotReady}
+            className='bornStarControlPanel'
+          >
+            <p className='starName bornStarName'>{name}</p>
+          </Inert>
         </ScalingSection>
         <ScalingSection
           topUnits={buttonTop}
@@ -70,8 +94,8 @@ class BornStarScreen extends Component {
         >
           <button
             className='outlined'
-            onClick={this.onSparkle}
-            disabled={this.state.animationInProgress}
+            onClick={onSparkle}
+            disabled={animationInProgress}
           >
             Sparkle
           </button>
@@ -85,8 +109,8 @@ class BornStarScreen extends Component {
         >
           <button
             className='outlined'
-            onClick={this.onTwirl}
-            disabled={this.state.animationInProgress}
+            onClick={onTwirl}
+            disabled={animationInProgress}
           >
             Twirl
           </button>
@@ -100,8 +124,8 @@ class BornStarScreen extends Component {
         >
           <button
             className='outlined'
-            onClick={this.onSupernova}
-            disabled={this.state.animationInProgress}
+            onClick={onSupernova}
+            disabled={animationInProgress}
           >
             Supernova
           </button>
