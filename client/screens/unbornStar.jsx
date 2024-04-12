@@ -41,6 +41,8 @@ const revealOuterHeight = 96;
 const buttonHeight = 40;
 const buttonSpacing = 24;
 const whyDoYouResembleOuterHeight = 200;
+const customizationHeaderTop = 42;
+const customizationHeaderHeight = 30;
 
 const yourStarDescendsOuterTop = (unitsVerticalInner - yourStarDescendsOuterHeight) / 2;
 const starCanvasTop = (unitsVerticalInner - unitsHorizontalInner) / 2;
@@ -99,7 +101,13 @@ const nameClassNames = {
   progress: 'quizProgress quizProgressIn',
   progressPercent: 'quizProgressPercent unbornProgressName',
 };
-const confirmationClassNames = {};
+const confirmationClassNames = {
+  yourStarDescendsOuter: 'hiddenStill',
+  revealOuter: 'hiddenStill',
+  starCanvasTransition: 'unbornStarCanvasTransition unbornStarCanvasTransitionConfirmation',
+  progress: 'quizProgress quizProgressIn',
+  progressPercent: 'quizProgressPercent unbornProgressConfirmation',
+};
 const sendoffClassNames = {};
 const witnessJoinClassNames = {};
 
@@ -294,6 +302,7 @@ class UnbornStarScreen extends Component {
         <GalleryItem
           itemIndex={0}
           currentGalleryIndex={currentGalleryIndex}
+          previousGalleryIndex={previousGalleryIndex}
           galleryIndexDelta={galleryIndexDelta}
           onInAnimationFinished={galleryStoppedMoving}
         >
@@ -379,9 +388,16 @@ class UnbornStarScreen extends Component {
         <GalleryItem
           itemIndex={1}
           currentGalleryIndex={currentGalleryIndex}
+          previousGalleryIndex={previousGalleryIndex}
           galleryIndexDelta={galleryIndexDelta}
           onInAnimationFinished={galleryStoppedMoving}
         >
+          <ScalingSection
+            topUnits={customizationHeaderTop}
+            heightUnits={customizationHeaderHeight}
+          >
+            <p className='header customizationHeader'>What <span className='emphasized'>color</span> is your star?</p>
+          </ScalingSection>
           <ScalingSection
             leftUnits={-unitsPaddingHorizontal}
             topUnits={radialColorPickerTop}
@@ -419,6 +435,104 @@ class UnbornStarScreen extends Component {
               galleryIndexDelta={galleryIndexDelta}
             >
               Next
+            </GalleryButton>
+          </ScalingSection>
+        </GalleryItem>
+        <GalleryItem
+          itemIndex={2}
+          currentGalleryIndex={currentGalleryIndex}
+          previousGalleryIndex={previousGalleryIndex}
+          galleryIndexDelta={galleryIndexDelta}
+          onInAnimationFinished={galleryStoppedMoving}
+        >
+          <ScalingSection
+            topUnits={customizationHeaderTop}
+            heightUnits={customizationHeaderHeight}
+          >
+            <p className='header customizationHeader'>What will you <span className='emphasized'>name</span> your star?</p>
+          </ScalingSection>
+          <ScalingSection
+            topFreeSpace={1}
+            topUnits={buttonTop}
+            widthUnits={buttonHalfWidth}
+            heightUnits={buttonHeight}
+          >
+            <GalleryButton
+              disabled={waitingForNewName}
+              onClick={galleryPrev}
+              expectedPreviousGalleryIndex={2}
+              expectedGalleryIndexDelta={-1}
+              previousGalleryIndex={previousGalleryIndex}
+              galleryIndexDelta={galleryIndexDelta}
+            >
+              Color
+            </GalleryButton>
+          </ScalingSection>
+          <ScalingSection
+            leftUnits={buttonHalfRightLeft}
+            topFreeSpace={1}
+            topUnits={buttonTop}
+            widthUnits={buttonHalfWidth}
+            heightUnits={buttonHeight}
+          >
+            <GalleryButton
+              disabled={waitingForNewName}
+              onClick={galleryNext}
+              expectedPreviousGalleryIndex={2}
+              expectedGalleryIndexDelta={1}
+              previousGalleryIndex={previousGalleryIndex}
+              galleryIndexDelta={galleryIndexDelta}
+            >
+              Finalize
+            </GalleryButton>
+          </ScalingSection>
+        </GalleryItem>
+        <GalleryItem
+          itemIndex={3}
+          currentGalleryIndex={currentGalleryIndex}
+          previousGalleryIndex={previousGalleryIndex}
+          galleryIndexDelta={galleryIndexDelta}
+          onInAnimationFinished={galleryStoppedMoving}
+        >
+          <ScalingSection
+            topUnits={customizationHeaderTop}
+            heightUnits={customizationHeaderHeight}
+          >
+            <p className='header customizationHeader'>Does <span className='emphasized'>this star</span> show your shine?</p>
+          </ScalingSection>
+          <ScalingSection
+            topFreeSpace={1}
+            topUnits={buttonTop}
+            widthUnits={buttonHalfWidth}
+            heightUnits={buttonHeight}
+          >
+            <GalleryButton
+              disabled={waitingForNewName}
+              onClick={galleryPrev}
+              expectedPreviousGalleryIndex={3}
+              expectedGalleryIndexDelta={-1}
+              previousGalleryIndex={previousGalleryIndex}
+              galleryIndexDelta={galleryIndexDelta}
+            >
+              Not Yet!
+            </GalleryButton>
+          </ScalingSection>
+          <ScalingSection
+            leftUnits={buttonHalfRightLeft}
+            topFreeSpace={1}
+            topUnits={buttonTop}
+            widthUnits={buttonHalfWidth}
+            heightUnits={buttonHeight}
+          >
+            <GalleryButton
+              disabled={waitingForNewName}
+              // onClick={galleryNext}
+              expectedPreviousGalleryIndex={3}
+              expectedGalleryIndexDelta={1}
+              previousGalleryIndex={previousGalleryIndex}
+              galleryIndexDelta={galleryIndexDelta}
+            >
+              Yes!
             </GalleryButton>
           </ScalingSection>
         </GalleryItem>

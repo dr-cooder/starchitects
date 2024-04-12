@@ -69,6 +69,10 @@ p {
   margin-bottom: 0.5em;
 }
 
+.customizationHeader {
+  text-align: center;
+}
+
 button {
   font-weight: 700;
   outline: none;

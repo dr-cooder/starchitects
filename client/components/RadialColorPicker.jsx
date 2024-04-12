@@ -598,7 +598,8 @@ class RadialColorPicker extends Component {
       // console.log('updating listeners');
 
       const { addEventListener, removeEventListener } = document;
-      const eventListenerMutator = this.state.disabled ? removeEventListener : addEventListener;
+      const { disabled: disabledState } = this.state;
+      const eventListenerMutator = disabledState ? removeEventListener : addEventListener;
 
       eventListenerMutator('mousedown', handlePointerDown);
       eventListenerMutator('touchstart', handlePointerDown);
@@ -612,6 +613,10 @@ class RadialColorPicker extends Component {
       eventListenerMutator('touchend', handlePointerUp);
 
       this.setState({ awaitingListenerUpdate: false });
+
+      // console.log(
+      //   `${disabledState ? 'Removed' : 'Added'} event listeners for ${id} color picker`,
+      // );
     };
 
     this.getValue = () => {

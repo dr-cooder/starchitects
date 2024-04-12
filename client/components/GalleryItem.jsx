@@ -8,6 +8,7 @@ const { px, preventChildrenFromCalling } = require('../../common/helpers.js');
 
 const GalleryItem = ({
   currentGalleryIndex,
+  previousGalleryIndex,
   galleryIndexDelta,
   itemIndex,
   onInAnimationFinished,
@@ -32,7 +33,7 @@ const GalleryItem = ({
           setClassName('');
           setInert(false);
       }
-    } else {
+    } else if (itemIndex === previousGalleryIndex) {
       setInert(true);
       switch (galleryIndexDelta) {
         case 1:
@@ -45,7 +46,7 @@ const GalleryItem = ({
           setClassName('hiddenStill');
       }
     }
-  }, [currentGalleryIndex, galleryIndexDelta]);
+  }, [currentGalleryIndex, previousGalleryIndex, galleryIndexDelta]);
   return (
     <Inert
       inert={inert}
@@ -65,6 +66,7 @@ const GalleryItem = ({
 
 GalleryItem.propTypes = {
   currentGalleryIndex: PropTypes.number,
+  previousGalleryIndex: PropTypes.number,
   galleryIndexDelta: PropTypes.number,
   itemIndex: PropTypes.number,
   onInAnimationFinished: PropTypes.func,
