@@ -177,6 +177,19 @@
   animation-timing-function: cubic-bezier(0, 0, 0, 1);
 }
 
+.pulseButton::before {
+  transition-property: transform, opacity;
+  transition-duration: 0.25s;
+  transform: scale(1.5, 1.5);
+  opacity: 0;
+}
+
+.pulseButton:active:before {
+  transition-duration: 0s;
+  transform: scale(1, 1);
+  opacity: 1;
+}
+
 .swipeYourStarUp {
   animation-name: swipeYourStarUp;
   animation-duration: 2s;

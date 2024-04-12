@@ -26,6 +26,7 @@ const { starchetypes } = require('../starchetypes.js');
 const {
   misc: {
     progressStar,
+    shuffleButton,
   },
   videos: {
     preReveal: preRevealVideo,
@@ -47,6 +48,8 @@ const customizationHeaderHeight = 30;
 const wintessJoinHeight = 60;
 const starNameHeight = 40;
 const starNameNameTopFromCenter = 108;
+const nameShuffleButtonWidth = 32;
+const nameShuffleButtonTopFromName = 56;
 const starNameConfirmationTopFromCenter = 156;
 
 const yourStarDescendsOuterTop = (unitsVerticalInner - yourStarDescendsOuterHeight) / 2;
@@ -58,6 +61,8 @@ const buttonHalfRightLeft = buttonHalfWidth + buttonSpacing;
 const whyDoYouResembleOuterTop = buttonTop - whyDoYouResembleOuterHeight;
 const radialColorPickerTop = unitsVerticalInnerHalf - unitsHorizontalOuterHalf;
 const starNameNameTop = unitsVerticalInnerHalf + starNameNameTopFromCenter;
+const nameShuffleButtonLeft = (unitsHorizontalInner - nameShuffleButtonWidth) / 2;
+const nameShuffleButtonTop = starNameNameTop + nameShuffleButtonTopFromName;
 const starNameConfirmationTop = unitsVerticalInnerHalf + starNameConfirmationTopFromCenter;
 const witnessJoinTop = (unitsVerticalInner - wintessJoinHeight) / 2;
 
@@ -309,6 +314,7 @@ class UnbornStarScreen extends Component {
       galleryPrev,
       galleryStoppedMoving,
       onStarColorUpdate,
+      onNewNameRequest,
       onSwipeStarUp,
       onWitnessJoinFinished,
     } = this;
@@ -504,6 +510,21 @@ class UnbornStarScreen extends Component {
             heightUnits={starNameHeight}
           >
             <p className='starName'>{name}</p>
+          </ScalingSection>
+          <ScalingSection
+            leftUnits={nameShuffleButtonLeft}
+            topFreeSpace={0.5}
+            topUnits={nameShuffleButtonTop}
+            widthUnits={nameShuffleButtonWidth}
+            heightUnits={nameShuffleButtonWidth}
+          >
+            <Inert
+              inert={waitingForNewName}
+              className='pulseButton'
+              onClick={onNewNameRequest}
+            >
+              <img src={getBlob(shuffleButton)} alt='Shuffle name'/>
+            </Inert>
           </ScalingSection>
           <ScalingSection
             topFreeSpace={1}

@@ -597,6 +597,9 @@ const misc = {
   progressStar: {
     url: '/images/progress-star.svg',
   },
+  shuffleButton: {
+    url: '/images/shuffle-button.svg',
+  },
 };
 
 const getURL = (item) => item.url;

@@ -285,6 +285,30 @@ button, .outlined {
   margin-bottom: 0;
 }
 
+/* https://www.youtube.com/watch?v=dqTE2K-shts */
+.pulseButton {
+  cursor: pointer;
+  position: relative;
+  width: inherit;
+  height: inherit;
+}
+
+.pulseButton::before, .pulseButton>* {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  right: 0;
+}
+
+.pulseButton::before {
+  content: '';
+  display: block;
+  border-radius: 50%;
+  background-color: var(--color-bright);
+  pointer-events: none;
+}
+
 .swipeTwinkleContainer {
   width: inherit;
   height: inherit;
