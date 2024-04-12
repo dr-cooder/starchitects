@@ -73,7 +73,7 @@ p {
   margin-bottom: 0.5em;
 }
 
-.customizationHeader {
+.customizationHeader, .witnessJoin {
   text-align: center;
 }
 

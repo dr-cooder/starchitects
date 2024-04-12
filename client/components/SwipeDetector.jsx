@@ -190,6 +190,13 @@ class SwipeDetector extends Component {
     };
   }
 
+  static getDerivedStateFromProps({ disabled }, { disabled: previousDisabled }) {
+    return {
+      disabled,
+      awaitingListenerUpdate: disabled !== previousDisabled,
+    };
+  }
+
   componentDidMount() {
     const { state: { disabled }, updateListeners } = this;
     if (!disabled) updateListeners();

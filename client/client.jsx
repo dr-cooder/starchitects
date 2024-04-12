@@ -101,20 +101,25 @@ createImageVideoEls().then(() => {
       } = wsHeaders;
       const unbornStarScreenRef = createRef();
       webSocket.onMessage(({ header, data }) => {
+        const name = header === newNameReceivedHeader ? data : null;
+        Object.assign(starData, { name });
         unbornStarScreenRef.current.applyNewName(
-          header === newNameReceivedHeader ? data : null,
+          name,
         );
       });
       return setScreen(<screens.unbornStar
         ref={unbornStarScreenRef}
         starData={starData}
         onStarColorUpdate={({ starColor, starShade }) => {
+          Object.assign(starData, { starColor, starShade });
           webSocket.send(makeWsMsg(updateStarColorHeader, { starColor, starShade }));
         }}
         onDustTypeUpdate={(dustType) => {
+          Object.assign(starData, { dustType });
           webSocket.send(makeWsMsg(updateDustTypeHeader, dustType));
         }}
         onDustColorUpdate={({ dustColor, dustShade }) => {
+          Object.assign(starData, { dustColor, dustShade });
           webSocket.send(makeWsMsg(updateDustColorHeader, { dustColor, dustShade }));
         }}
         onNewNameRequest={() => {

@@ -44,6 +44,7 @@ const buttonSpacing = 24;
 const whyDoYouResembleOuterHeight = 200;
 const customizationHeaderTop = 42;
 const customizationHeaderHeight = 30;
+const wintessJoinHeight = 60;
 
 const yourStarDescendsOuterTop = (unitsVerticalInner - yourStarDescendsOuterHeight) / 2;
 const starCanvasTop = (unitsVerticalInner - unitsHorizontalInner) / 2;
@@ -53,6 +54,7 @@ const buttonHalfWidth = (unitsHorizontalInner - buttonSpacing) / 2;
 const buttonHalfRightLeft = buttonHalfWidth + buttonSpacing;
 const whyDoYouResembleOuterTop = buttonTop - whyDoYouResembleOuterHeight;
 const radialColorPickerTop = unitsVerticalInnerHalf - unitsHorizontalOuterHalf;
+const witnessJoinTop = (unitsVerticalInner - wintessJoinHeight) / 2;
 
 const waitingForBackgroundClassNames = {
   yourStarDescendsOuter: 'hiddenStill',
@@ -61,6 +63,7 @@ const waitingForBackgroundClassNames = {
   whyDoYouResembleOuter: 'hiddenStill',
   progress: 'hiddenStill',
   swipeYourStarUp: 'hiddenStill',
+  witnessJoin: 'hiddenStill',
 };
 const yourStarDescendsClassNames = {
   yourStarDescendsOuter: 'yourStarDescendsOuter',
@@ -69,6 +72,7 @@ const yourStarDescendsClassNames = {
   whyDoYouResembleOuter: 'hiddenStill',
   progress: 'hiddenStill',
   swipeYourStarUp: 'hiddenStill',
+  witnessJoin: 'hiddenStill',
 };
 const revealClassNames = {
   yourStarDescendsOuter: 'hiddenStill',
@@ -78,6 +82,7 @@ const revealClassNames = {
   whyDoYouResembleOuter: 'hiddenStill',
   progress: 'hiddenStill',
   swipeYourStarUp: 'hiddenStill',
+  witnessJoin: 'hiddenStill',
 };
 const whyDoYouResembleClassNames = {
   yourStarDescendsOuter: 'hiddenStill',
@@ -86,6 +91,7 @@ const whyDoYouResembleClassNames = {
   whyDoYouResembleOuter: 'whyDoYouResembleOuter',
   progress: 'hiddenStill',
   swipeYourStarUp: 'hiddenStill',
+  witnessJoin: 'hiddenStill',
 };
 const starColorClassNames = {
   yourStarDescendsOuter: 'hiddenStill',
@@ -94,6 +100,7 @@ const starColorClassNames = {
   progress: 'quizProgress quizProgressIn',
   progressPercent: 'quizProgressPercent unbornProgressStarColor',
   swipeYourStarUp: 'hiddenStill',
+  witnessJoin: 'hiddenStill',
 };
 // const dustTypeClassNames = {};
 // const dustColorClassNames = {};
@@ -104,6 +111,7 @@ const nameClassNames = {
   progress: 'quizProgress quizProgressIn',
   progressPercent: 'quizProgressPercent unbornProgressName',
   swipeYourStarUp: 'hiddenStill',
+  witnessJoin: 'hiddenStill',
 };
 const confirmationClassNames = {
   yourStarDescendsOuter: 'hiddenStill',
@@ -112,6 +120,7 @@ const confirmationClassNames = {
   progress: 'quizProgress quizProgressIn',
   progressPercent: 'quizProgressPercent unbornProgressConfirmation',
   swipeYourStarUp: 'hiddenStill',
+  witnessJoin: 'hiddenStill',
 };
 const sendoffClassNames = {
   yourStarDescendsOuter: 'hiddenStill',
@@ -121,8 +130,28 @@ const sendoffClassNames = {
   progressPercent: 'quizProgressPercent unbornProgressConfirmation',
   confirmationOuter: 'unbornConfirmationOuterOut',
   swipeYourStarUp: 'header customizationHeader swipeYourStarUp',
+  witnessJoin: 'hiddenStill',
 };
-const witnessJoinClassNames = {};
+const sendoffPlayingClassNames = {
+  yourStarDescendsOuter: 'hiddenStill',
+  revealOuter: 'hiddenStill',
+  starCanvasTransition: 'hiddenStill',
+  progress: 'hiddenStill',
+  progressPercent: 'hiddenStill',
+  confirmationOuter: 'hiddenStill',
+  swipeYourStarUp: 'hiddenStill',
+  witnessJoin: 'hiddenStill',
+};
+const witnessJoinClassNames = {
+  yourStarDescendsOuter: 'hiddenStill',
+  revealOuter: 'hiddenStill',
+  starCanvasTransition: 'hiddenStill',
+  progress: 'hiddenStill',
+  progressPercent: 'hiddenStill',
+  confirmationOuter: 'hiddenStill',
+  swipeYourStarUp: 'hiddenStill',
+  witnessJoin: 'header witnessJoin',
+};
 
 const galleryClassNames = [
   whyDoYouResembleClassNames,
@@ -186,6 +215,7 @@ class UnbornStarScreen extends Component {
       previousGalleryIndex: 0,
       galleryIndexDelta: 0,
       galleryMoving: false,
+      notReadyToSwipe: true,
     };
     this.classNamesSetter = (classNames) => () => this.setState({
       classNames,
@@ -255,6 +285,7 @@ class UnbornStarScreen extends Component {
           progressPercent: progressPercentClassName,
           confirmationOuter: confirmationOuterClassName,
           swipeYourStarUp: swipeYourStarUpClassName,
+          witnessJoin: witnessJoinClassName,
         },
         backgroundVideoPlaying,
         whyDoYouResembleAnimationNotFinishedYet,
@@ -262,6 +293,7 @@ class UnbornStarScreen extends Component {
         previousGalleryIndex,
         galleryIndexDelta,
         galleryMoving,
+        notReadyToSwipe,
       },
       playBackgroundVideo,
       backgroundVideoEnded,
@@ -272,6 +304,8 @@ class UnbornStarScreen extends Component {
       galleryPrev,
       galleryStoppedMoving,
       onStarColorUpdate,
+      onSwipeStarUp,
+      onWitnessJoinFinished,
     } = this;
     return (
       <Background
@@ -297,7 +331,10 @@ class UnbornStarScreen extends Component {
               {
                 el: getEl(sendoffVideo),
                 className: 'background',
-                onEnd: backgroundVideoEnded,
+                onEnd: () => {
+                  backgroundVideoEnded();
+                  classNamesSetter(witnessJoinClassNames)();
+                },
               },
             ]}
             onReady={classNamesSetter(yourStarDescendsClassNames)}
@@ -502,6 +539,9 @@ class UnbornStarScreen extends Component {
           <Inert
             inert={!!confirmationOuterClassName}
             className={confirmationOuterClassName}
+            onAnimationEnd={preventChildrenFromCalling(() => this.setState({
+              notReadyToSwipe: false,
+            }))}
           >
             <ScalingSection
               topUnits={customizationHeaderTop}
@@ -552,9 +592,28 @@ class UnbornStarScreen extends Component {
             <p className={swipeYourStarUpClassName}>Swipe your <span className='emphasized'>star</span> up into space!</p>
           </ScalingSection>
           <SwipeDetector
-            disabled={false}
-            onSwipe={() => console.log('Oh, man!')}
+            disabled={notReadyToSwipe}
+            onSwipe={() => {
+              this.setState({
+                notReadyToSwipe: true,
+                classNames: sendoffPlayingClassNames,
+              });
+              playBackgroundVideo();
+              onSwipeStarUp();
+            }}
           ></SwipeDetector>
+          <ScalingSection
+            topUnits={witnessJoinTop}
+            topFreeSpace={0.5}
+            heightUnits={wintessJoinHeight}
+          >
+            <p
+              className={witnessJoinClassName}
+              onAnimationEnd={preventChildrenFromCalling(onWitnessJoinFinished)}
+            >
+              Now witness your star<br/><span className='emphasized'>join the galaxy.</span>
+            </p>
+          </ScalingSection>
         </GalleryItem>
       </Background>
     );
