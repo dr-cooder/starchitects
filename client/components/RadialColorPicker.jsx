@@ -555,7 +555,7 @@ class RadialColorPicker extends Component {
           shadeMoverType: newShadeMoverType,
           shadeMoverTouchIdentifier: newShadeMoverTouchIdentifier,
         } = this.state;
-        if (isMouseEvent(event)) {
+        if (eventIsMouseEvent) {
           if (colorMoverTypeMatchesExpected) {
             newColorMoverType = noMoverType;
           }
@@ -612,7 +612,15 @@ class RadialColorPicker extends Component {
       eventListenerMutator('touchcancel', handlePointerUp);
       eventListenerMutator('touchend', handlePointerUp);
 
-      this.setState({ awaitingListenerUpdate: false });
+      this.setState({
+        ...(disabled ? {
+          colorMoverType: controllerMoverTypes.none,
+          colorMoverTouchIdentifier: undefined,
+          shadeMoverType: controllerMoverTypes.none,
+          shadeMoverTouchIdentifier: undefined,
+        } : {}),
+        awaitingListenerUpdate: false,
+      });
 
       // console.log(
       //   `${disabledState ? 'Removed' : 'Added'} event listeners for ${id} color picker`,

@@ -45,6 +45,7 @@ const ensureNumber = (value) => Number(value) || 0;
 const lerp = (a, b, t) => a + (b - a) * t;
 
 const clamp01 = (value) => Math.max(0, Math.min(value, 1));
+const isWithin01 = (value) => value >= 0 && value <= 1;
 
 const radianRange = 2 * Math.PI;
 const num01ToRadianRange = (num01) => radianRange * num01;
@@ -117,6 +118,7 @@ module.exports = {
   ensureNumber,
   lerp,
   clamp01,
+  isWithin01,
   num01ToRadianRange,
   numRadianTo01Range,
   num01ToDegreeRange,
