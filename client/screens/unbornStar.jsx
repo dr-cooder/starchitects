@@ -45,6 +45,9 @@ const whyDoYouResembleOuterHeight = 200;
 const customizationHeaderTop = 42;
 const customizationHeaderHeight = 30;
 const wintessJoinHeight = 60;
+const starNameHeight = 40;
+const starNameNameTopFromCenter = 108;
+const starNameConfirmationTopFromCenter = 156;
 
 const yourStarDescendsOuterTop = (unitsVerticalInner - yourStarDescendsOuterHeight) / 2;
 const starCanvasTop = (unitsVerticalInner - unitsHorizontalInner) / 2;
@@ -54,6 +57,8 @@ const buttonHalfWidth = (unitsHorizontalInner - buttonSpacing) / 2;
 const buttonHalfRightLeft = buttonHalfWidth + buttonSpacing;
 const whyDoYouResembleOuterTop = buttonTop - whyDoYouResembleOuterHeight;
 const radialColorPickerTop = unitsVerticalInnerHalf - unitsHorizontalOuterHalf;
+const starNameNameTop = unitsVerticalInnerHalf + starNameNameTopFromCenter;
+const starNameConfirmationTop = unitsVerticalInnerHalf + starNameConfirmationTopFromCenter;
 const witnessJoinTop = (unitsVerticalInner - wintessJoinHeight) / 2;
 
 const waitingForBackgroundClassNames = {
@@ -494,6 +499,13 @@ class UnbornStarScreen extends Component {
             <p className='header customizationHeader'>What will you <span className='emphasized'>name</span> your star?</p>
           </ScalingSection>
           <ScalingSection
+            topFreeSpace={0.5}
+            topUnits={starNameNameTop}
+            heightUnits={starNameHeight}
+          >
+            <p className='starName'>{name}</p>
+          </ScalingSection>
+          <ScalingSection
             topFreeSpace={1}
             topUnits={buttonTop}
             widthUnits={buttonHalfWidth}
@@ -548,6 +560,13 @@ class UnbornStarScreen extends Component {
               heightUnits={customizationHeaderHeight}
             >
               <p className='header customizationHeader'>Does <span className='emphasized'>this star</span> show your shine?</p>
+            </ScalingSection>
+            <ScalingSection
+              topFreeSpace={0.5}
+              topUnits={starNameConfirmationTop}
+              heightUnits={starNameHeight}
+            >
+              <p className='starName'>{name}</p>
             </ScalingSection>
             <ScalingSection
               topFreeSpace={1}

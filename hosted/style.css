@@ -277,6 +277,14 @@ button, .outlined {
   font-weight: 500;
 }
 
+.starName {
+  text-align: center;
+  font-size: 2em;
+  letter-spacing: -0.05em;
+  font-weight: bold;
+  margin-bottom: 0;
+}
+
 .swipeTwinkleContainer {
   width: inherit;
   height: inherit;
