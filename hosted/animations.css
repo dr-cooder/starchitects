@@ -135,8 +135,24 @@
   transform: scale(0.65, 0.65) translate(0, 0);
 }
 
+.unbornStarCanvasTransitionName {
+  transform: scale(0.65, 0.65) translate(0, 0);
+}
+
+.unbornStarCanvasTransitionConfirmation {
+  transform: scale(0.8, 0.8) translate(0, 0);
+}
+
 .unbornProgressStarColor {
   width: 0%;
+}
+
+.unbornProgressName {
+  width: 50%;
+}
+
+.unbornProgressConfirmation {
+  width: 100%;
 }
 
 .whyDoYouResembleOuter {

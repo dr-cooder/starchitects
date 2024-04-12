@@ -54,39 +54,91 @@ const applyBornStarBehavior = (id) => {
 
 const applyUnbornStarBehavior = async (id) => {
   const socket = starSockets[id];
+  const {
+    webAppToServer: {
+      newName: newNameHeader,
+      birthStar: birthStarHeader,
+      updateStarColor: updateStarColorHeader,
+      updateDustType: updateDustTypeHeader,
+      updateDustColor: updateDustColorHeader,
+    },
+    serverToWebApp: {
+      errorMsg: errorMsgHeader,
+      newName: newNameReceivedHeader,
+    },
+  } = wsHeaders;
   const unbornListener = async (rawData) => {
     const { header, data } = parseWsMsg(rawData);
-    if (header === wsHeaders.webAppToServer.newName) {
+    if (header === updateStarColorHeader) {
+      const { starColor, starShade } = data;
+      try {
+        await StarModel.findByIdAndUpdate(
+          id,
+          { starColor, starShade },
+          { new: true, runValidators: true },
+        );
+      } catch {
+        socket.send(makeWsMsg(
+          errorMsgHeader,
+          'Invalid star color data.',
+        ));
+      }
+    } else if (header === updateDustTypeHeader) {
+      try {
+        await StarModel.findByIdAndUpdate(
+          id,
+          { dustType: data },
+          { new: true, runValidators: true },
+        );
+      } catch {
+        socket.send(makeWsMsg(
+          errorMsgHeader,
+          'Invalid shine type data.',
+        ));
+      }
+    } else if (header === updateDustColorHeader) {
+      const { dustColor, dustShade } = data;
+      try {
+        await StarModel.findByIdAndUpdate(
+          id,
+          { dustColor, dustShade },
+          { new: true, runValidators: true },
+        );
+      } catch {
+        socket.send(makeWsMsg(
+          errorMsgHeader,
+          'Invalid shine color data.',
+        ));
+      }
+    } else if (header === newNameHeader) {
       const newName = generateName();
-      // TODO: CATCH MONGODB ERRORS!
-      await StarModel.findByIdAndUpdate(...[
+      await StarModel.findByIdAndUpdate(
         id,
         { name: newName },
         { new: true, runValidators: true },
-      ]);
+      );
       socket.send(makeWsMsg(
-        wsHeaders.serverToWebApp.newName,
+        newNameReceivedHeader,
         newName,
       ));
-    } else if (header === wsHeaders.webAppToServer.birthStar) {
-      // TODO: send these whenever the respective customization screen is left
-      const {
-        starColor, starShade, dustColor, dustShade, dustType,
-      } = data;
+    } else if (header === birthStarHeader) {
+      // const {
+      //   starColor, starShade, dustColor, dustShade, dustType,
+      // } = data;
       const update = {
-        starColor,
-        starShade,
-        dustColor,
-        dustShade,
-        dustType,
+        // starColor,
+        // starShade,
+        // dustColor,
+        // dustShade,
+        // dustType,
         born: true,
         birthDate: Date.now(),
       };
-      const result = await StarModel.findByIdAndUpdate(...[
+      const result = await StarModel.findByIdAndUpdate(
         id,
         update,
         { new: true, runValidators: true },
-      ]);
+      );
       if (roomSocket) {
         roomSocket.send(makeWsMsg(
           wsHeaders.serverToRoom.newStar,
@@ -163,7 +215,6 @@ const joinAsExistingStar = async (socket, id, sayRejoined = true) => {
 const quizAnswersRegExp = /[01]{5}/;
 const dustTypeCount = 3;
 const joinAsNewStar = async (socket, quizAnswers) => {
-  // TODO: Store star in database
   if (quizAnswersRegExp.test(quizAnswers)) {
     // Parameters initialized in the unborn state
     const newStarData = {

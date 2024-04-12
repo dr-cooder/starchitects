@@ -90,9 +90,15 @@ const starColorClassNames = {
   progress: 'quizProgress quizProgressIn',
   progressPercent: 'quizProgressPercent unbornProgressStarColor',
 };
-const dustTypeClassNames = {};
-const dustColorClassNames = {};
-const nameClassNames = {};
+// const dustTypeClassNames = {};
+// const dustColorClassNames = {};
+const nameClassNames = {
+  yourStarDescendsOuter: 'hiddenStill',
+  revealOuter: 'hiddenStill',
+  starCanvasTransition: 'unbornStarCanvasTransition unbornStarCanvasTransitionName',
+  progress: 'quizProgress quizProgressIn',
+  progressPercent: 'quizProgressPercent unbornProgressName',
+};
 const confirmationClassNames = {};
 const sendoffClassNames = {};
 const witnessJoinClassNames = {};
@@ -100,8 +106,8 @@ const witnessJoinClassNames = {};
 const galleryClassNames = [
   whyDoYouResembleClassNames,
   starColorClassNames,
-  dustTypeClassNames,
-  dustColorClassNames,
+  // dustTypeClassNames,
+  // dustColorClassNames,
   nameClassNames,
   confirmationClassNames,
 ];
@@ -124,6 +130,7 @@ class UnbornStarScreen extends Component {
       onDustColorUpdate,
       onNewNameRequest,
       onSwipeStarUp,
+      onWitnessJoinFinished,
     } = props;
 
     this.starchetype = starchetypes[shape];
@@ -132,6 +139,16 @@ class UnbornStarScreen extends Component {
     this.initialDustColor = dustColor;
     this.initialDustShade = dustShade;
     this.initialDustType = dustType;
+
+    this.onStarColorUpdate = onStarColorUpdate;
+    this.onDustTypeUpdate = onDustTypeUpdate;
+    this.onDustColorUpdate = onDustColorUpdate;
+    this.onNewNameRequest = () => {
+      this.setState({ waitingForNewName: true });
+      onNewNameRequest();
+    };
+    this.onSwipeStarUp = onSwipeStarUp;
+    this.onWitnessJoinFinished = onWitnessJoinFinished;
 
     this.state = {
       name,
@@ -197,11 +214,6 @@ class UnbornStarScreen extends Component {
       compositeWorkerManager.setDustType(newDustType);
       this.setState({ dustType: newDustType });
     };
-    this.onSwipeStarUp = onSwipeStarUp;
-    this.onNewNameRequest = () => {
-      this.setState({ waitingForNewName: true });
-      onNewNameRequest();
-    };
     this.applyNewName = (newName) => {
       this.setState({ ...(newName != null && { name: newName }), waitingForNewName: false });
     };
@@ -215,6 +227,11 @@ class UnbornStarScreen extends Component {
         description: starchetypeDescription,
       },
       state: {
+        starColor,
+        starShade,
+        // dustType,
+        // dustColor,
+        // dustShade,
         name,
         waitingForNewName,
         classNames: {
@@ -241,6 +258,7 @@ class UnbornStarScreen extends Component {
       galleryNext,
       galleryPrev,
       galleryStoppedMoving,
+      onStarColorUpdate,
     } = this;
     return (
       <Background
@@ -364,49 +382,6 @@ class UnbornStarScreen extends Component {
           galleryIndexDelta={galleryIndexDelta}
           onInAnimationFinished={galleryStoppedMoving}
         >
-          {/* <ScalingSection
-            topUnits={unitsHorizontalInner}
-            topFreeSpace={0.5}
-            heightUnits={slidersHeight}
-            heightFreeSpace={0.5}
-          >
-            <p>
-              Here is your star! (swipe it up when you are done customizing it)<br />
-              Shine Type: <select onChange={this.setDustType} value={this.initialDustType}>
-                <option value={0}>Plasmo</option>
-                <option value={1}>Electro</option>
-                <option value={2}>Nucleo</option>
-              </select><br />
-              Shine Color: <input type='range' defaultValue={this.initialDustColor * sliderGranularity} max={sliderGranularity} onChange={this.setDustColor} /><br />
-              Shine Shade: <input type='range' defaultValue={this.initialDustShade * sliderGranularity} max={sliderGranularity} onChange={this.setDustShade} /><br />
-              Name: {name}
-            </p>
-            <button
-              disabled={waitingForNewName}
-              onClick={this.onNewNameRequest}
-            >New name</button>
-            <button
-              disabled={waitingForNewName}
-              onClick={() => {
-                const {
-                  // name,
-                  starColor,
-                  starShade,
-                  dustColor,
-                  dustShade,
-                  dustType,
-                } = this.state;
-                this.onSwipeStarUp({
-                  // name,
-                  starColor,
-                  starShade,
-                  dustColor,
-                  dustShade,
-                  dustType,
-                });
-              }}
-            >&quot;Swipe up&quot;</button>
-          </ScalingSection> */}
           <ScalingSection
             leftUnits={-unitsPaddingHorizontal}
             topUnits={radialColorPickerTop}
@@ -428,6 +403,24 @@ class UnbornStarScreen extends Component {
               }}
             />
           </ScalingSection>
+          <ScalingSection
+            topFreeSpace={1}
+            topUnits={buttonTop}
+            heightUnits={buttonHeight}
+          >
+            <GalleryButton
+              onClick={() => {
+                onStarColorUpdate({ starColor, starShade });
+                galleryNext();
+              }}
+              expectedPreviousGalleryIndex={1}
+              expectedGalleryIndexDelta={1}
+              previousGalleryIndex={previousGalleryIndex}
+              galleryIndexDelta={galleryIndexDelta}
+            >
+              Next
+            </GalleryButton>
+          </ScalingSection>
         </GalleryItem>
       </Background>
     );
@@ -438,6 +431,10 @@ UnbornStarScreen.propTypes = {
   starData: PropTypes.object,
   onNewNameRequest: PropTypes.func,
   onSwipeStarUp: PropTypes.func,
+  onStarColorUpdate: PropTypes.func,
+  onDustTypeUpdate: PropTypes.func,
+  onDustColorUpdate: PropTypes.func,
+  onWitnessJoinFinished: PropTypes.func,
 };
 
 module.exports = UnbornStarScreen;

@@ -120,13 +120,11 @@ createImageVideoEls().then(() => {
         onNewNameRequest={() => {
           webSocket.send(makeWsMsg(newNameHeader));
         }}
-        onSwipeStarUp={(customization) => {
-          const bornStarData = starData; // JSON.parse(JSON.stringify(starData));
-          Object.assign(bornStarData, customization);
-          // Can't edit function parameters as per ESLint rules, but
-          // mutating starData via a shallow copy shouldn't be an issue
-          webSocket.send(makeWsMsg(birthStarHeader, customization));
-          setAppState.bornStar(bornStarData);
+        onSwipeStarUp={() => {
+          webSocket.send(makeWsMsg(birthStarHeader));
+        }}
+        onWitnessJoinFinished={() => {
+          setAppState.bornStar(starData);
         }}
       />);
     },
