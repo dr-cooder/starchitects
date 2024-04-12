@@ -62,6 +62,7 @@ const waitingForBackgroundClassNames = {
   starCanvasTransition: 'hiddenStill',
   whyDoYouResembleOuter: 'hiddenStill',
   progress: 'hiddenStill',
+  swipeYourStarUp: 'hiddenStill',
 };
 const yourStarDescendsClassNames = {
   yourStarDescendsOuter: 'yourStarDescendsOuter',
@@ -69,6 +70,7 @@ const yourStarDescendsClassNames = {
   starCanvasTransition: 'hiddenStill',
   whyDoYouResembleOuter: 'hiddenStill',
   progress: 'hiddenStill',
+  swipeYourStarUp: 'hiddenStill',
 };
 const revealClassNames = {
   yourStarDescendsOuter: 'hiddenStill',
@@ -77,6 +79,7 @@ const revealClassNames = {
   starCanvasTransition: 'unbornStarCanvasTransition unbornStarCanvasTransitionReveal',
   whyDoYouResembleOuter: 'hiddenStill',
   progress: 'hiddenStill',
+  swipeYourStarUp: 'hiddenStill',
 };
 const whyDoYouResembleClassNames = {
   yourStarDescendsOuter: 'hiddenStill',
@@ -84,6 +87,7 @@ const whyDoYouResembleClassNames = {
   starCanvasTransition: 'unbornStarCanvasTransition unbornStarCanvasTransitionWhyDoYouResemble',
   whyDoYouResembleOuter: 'whyDoYouResembleOuter',
   progress: 'hiddenStill',
+  swipeYourStarUp: 'hiddenStill',
 };
 const starColorClassNames = {
   yourStarDescendsOuter: 'hiddenStill',
@@ -91,6 +95,7 @@ const starColorClassNames = {
   starCanvasTransition: 'unbornStarCanvasTransition unbornStarCanvasTransitionStarColor',
   progress: 'quizProgress quizProgressIn',
   progressPercent: 'quizProgressPercent unbornProgressStarColor',
+  swipeYourStarUp: 'hiddenStill',
 };
 // const dustTypeClassNames = {};
 // const dustColorClassNames = {};
@@ -100,6 +105,7 @@ const nameClassNames = {
   starCanvasTransition: 'unbornStarCanvasTransition unbornStarCanvasTransitionName',
   progress: 'quizProgress quizProgressIn',
   progressPercent: 'quizProgressPercent unbornProgressName',
+  swipeYourStarUp: 'hiddenStill',
 };
 const confirmationClassNames = {
   yourStarDescendsOuter: 'hiddenStill',
@@ -107,8 +113,17 @@ const confirmationClassNames = {
   starCanvasTransition: 'unbornStarCanvasTransition unbornStarCanvasTransitionConfirmation',
   progress: 'quizProgress quizProgressIn',
   progressPercent: 'quizProgressPercent unbornProgressConfirmation',
+  swipeYourStarUp: 'hiddenStill',
 };
-const sendoffClassNames = {};
+const sendoffClassNames = {
+  yourStarDescendsOuter: 'hiddenStill',
+  revealOuter: 'hiddenStill',
+  starCanvasTransition: 'unbornStarCanvasTransition unbornStarCanvasTransitionSendoff',
+  progress: 'quizProgress unbornProgressOut',
+  progressPercent: 'quizProgressPercent unbornProgressConfirmation',
+  confirmationOuter: 'unbornConfirmationOuterOut',
+  swipeYourStarUp: 'header customizationHeader swipeYourStarUp',
+};
 const witnessJoinClassNames = {};
 
 const galleryClassNames = [
@@ -250,6 +265,8 @@ class UnbornStarScreen extends Component {
           whyDoYouResembleOuter: whyDoYouResembleOuterClassName,
           progress: progressClassName,
           progressPercent: progressPercentClassName,
+          confirmationOuter: confirmationOuterClassName,
+          swipeYourStarUp: swipeYourStarUpClassName,
         },
         backgroundVideoPlaying,
         whyDoYouResembleAnimationNotFinishedYet,
@@ -494,46 +511,57 @@ class UnbornStarScreen extends Component {
           galleryIndexDelta={galleryIndexDelta}
           onInAnimationFinished={galleryStoppedMoving}
         >
+          <Inert
+            inert={!!confirmationOuterClassName}
+            className={confirmationOuterClassName}
+          >
+            <ScalingSection
+              topUnits={customizationHeaderTop}
+              heightUnits={customizationHeaderHeight}
+            >
+              <p className='header customizationHeader'>Does <span className='emphasized'>this star</span> show your shine?</p>
+            </ScalingSection>
+            <ScalingSection
+              topFreeSpace={1}
+              topUnits={buttonTop}
+              widthUnits={buttonHalfWidth}
+              heightUnits={buttonHeight}
+            >
+              <GalleryButton
+                disabled={waitingForNewName}
+                onClick={galleryPrev}
+                expectedPreviousGalleryIndex={3}
+                expectedGalleryIndexDelta={-1}
+                previousGalleryIndex={previousGalleryIndex}
+                galleryIndexDelta={galleryIndexDelta}
+              >
+                Not Yet!
+              </GalleryButton>
+            </ScalingSection>
+            <ScalingSection
+              leftUnits={buttonHalfRightLeft}
+              topFreeSpace={1}
+              topUnits={buttonTop}
+              widthUnits={buttonHalfWidth}
+              heightUnits={buttonHeight}
+            >
+              <GalleryButton
+                disabled={waitingForNewName}
+                onClick={classNamesSetter(sendoffClassNames)}
+                expectedPreviousGalleryIndex={3}
+                expectedGalleryIndexDelta={1}
+                previousGalleryIndex={previousGalleryIndex}
+                galleryIndexDelta={galleryIndexDelta}
+              >
+                Yes!
+              </GalleryButton>
+            </ScalingSection>
+          </Inert>
           <ScalingSection
             topUnits={customizationHeaderTop}
             heightUnits={customizationHeaderHeight}
           >
-            <p className='header customizationHeader'>Does <span className='emphasized'>this star</span> show your shine?</p>
-          </ScalingSection>
-          <ScalingSection
-            topFreeSpace={1}
-            topUnits={buttonTop}
-            widthUnits={buttonHalfWidth}
-            heightUnits={buttonHeight}
-          >
-            <GalleryButton
-              disabled={waitingForNewName}
-              onClick={galleryPrev}
-              expectedPreviousGalleryIndex={3}
-              expectedGalleryIndexDelta={-1}
-              previousGalleryIndex={previousGalleryIndex}
-              galleryIndexDelta={galleryIndexDelta}
-            >
-              Not Yet!
-            </GalleryButton>
-          </ScalingSection>
-          <ScalingSection
-            leftUnits={buttonHalfRightLeft}
-            topFreeSpace={1}
-            topUnits={buttonTop}
-            widthUnits={buttonHalfWidth}
-            heightUnits={buttonHeight}
-          >
-            <GalleryButton
-              disabled={waitingForNewName}
-              // onClick={galleryNext}
-              expectedPreviousGalleryIndex={3}
-              expectedGalleryIndexDelta={1}
-              previousGalleryIndex={previousGalleryIndex}
-              galleryIndexDelta={galleryIndexDelta}
-            >
-              Yes!
-            </GalleryButton>
+            <p className={swipeYourStarUpClassName}>Swipe your <span className='emphasized'>star</span> up into space!</p>
           </ScalingSection>
         </GalleryItem>
       </Background>

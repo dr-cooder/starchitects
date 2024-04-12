@@ -83,6 +83,12 @@
   opacity: 0;
 }
 
+.unbornProgressOut {
+  animation-name: simpleFadeOut;
+  animation-duration: 1s;
+  opacity: 0;
+}
+
 .questionBlockOut {
   animation-name: questionBlockOut;
   animation-duration: 2s;
@@ -143,6 +149,10 @@
   transform: scale(1, 1) translate(0, 0);
 }
 
+.unbornStarCanvasTransitionSendoff {
+  transform: scale(0.65, 0.65) translate(0, 0);
+}
+
 .unbornProgressStarColor {
   width: 0%;
 }
@@ -155,10 +165,21 @@
   width: 100%;
 }
 
+.unbornConfirmationOuterOut {
+  animation-name: simpleFadeOut;
+  animation-duration: 1s;
+  opacity: 0;
+}
+
 .whyDoYouResembleOuter {
   animation-name: whyDoYouResembleOuter;
   animation-duration: 1s;
   animation-timing-function: cubic-bezier(0, 0, 0, 1);
+}
+
+.swipeYourStarUp {
+  animation-name: swipeYourStarUp;
+  animation-duration: 2s;
 }
 
 .galleryInFromRight, .galleryInFromLeft, .galleryOutToLeft, .galleryOutToRight {
@@ -460,6 +481,16 @@
   to {
     opacity: 1;
     transform: none;
+  }
+}
+
+@keyframes swipeYourStarUp {
+  from, 50% {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 }
 
