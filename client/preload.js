@@ -45,78 +45,79 @@ const scripts = [
   },
 ];
 
+// TODO: Geode/Innovator renders, alongside dust variations for all
 const images = {
   thinker1: {
-    urlRel: 'composite/placeholder/1.jpg',
+    urlRel: 'composite/chess/0.jpg',
   },
   thinker2: {
-    urlRel: 'composite/placeholder/2.jpg',
+    urlRel: 'composite/chess/0.jpg',
   },
   thinker3: {
-    urlRel: 'composite/placeholder/3.jpg',
+    urlRel: 'composite/chess/0.jpg',
   },
   dreamer1: {
-    urlRel: 'composite/placeholder/1.jpg',
+    urlRel: 'composite/balloon/0.jpg',
   },
   dreamer2: {
-    urlRel: 'composite/placeholder/2.jpg',
+    urlRel: 'composite/balloon/0.jpg',
   },
   dreamer3: {
-    urlRel: 'composite/placeholder/3.jpg',
+    urlRel: 'composite/balloon/0.jpg',
   },
   producer1: {
-    urlRel: 'composite/placeholder/1.jpg',
+    urlRel: 'composite/appliance/0.jpg',
   },
   producer2: {
-    urlRel: 'composite/placeholder/2.jpg',
+    urlRel: 'composite/appliance/0.jpg',
   },
   producer3: {
-    urlRel: 'composite/placeholder/3.jpg',
+    urlRel: 'composite/appliance/0.jpg',
   },
   disciplined1: {
-    urlRel: 'composite/placeholder/1.jpg',
+    urlRel: 'composite/bonsai/0.jpg',
   },
   disciplined2: {
-    urlRel: 'composite/placeholder/2.jpg',
+    urlRel: 'composite/bonsai/0.jpg',
   },
   disciplined3: {
-    urlRel: 'composite/placeholder/3.jpg',
+    urlRel: 'composite/bonsai/0.jpg',
   },
   innovator1: {
-    urlRel: 'composite/placeholder/1.jpg',
+    urlRel: 'composite/appliance/0.jpg',
   },
   innovator2: {
-    urlRel: 'composite/placeholder/2.jpg',
+    urlRel: 'composite/appliance/0.jpg',
   },
   innovator3: {
-    urlRel: 'composite/placeholder/3.jpg',
+    urlRel: 'composite/appliance/0.jpg',
   },
   visionary1: {
-    urlRel: 'composite/placeholder/1.jpg',
+    urlRel: 'composite/duck/0.jpg',
   },
   visionary2: {
-    urlRel: 'composite/placeholder/2.jpg',
+    urlRel: 'composite/duck/0.jpg',
   },
   visionary3: {
-    urlRel: 'composite/placeholder/3.jpg',
+    urlRel: 'composite/duck/0.jpg',
   },
   independent1: {
-    urlRel: 'composite/placeholder/1.jpg',
+    urlRel: 'composite/plane/0.jpg',
   },
   independent2: {
-    urlRel: 'composite/placeholder/2.jpg',
+    urlRel: 'composite/plane/0.jpg',
   },
   independent3: {
-    urlRel: 'composite/placeholder/3.jpg',
+    urlRel: 'composite/plane/0.jpg',
   },
   listener1: {
-    urlRel: 'composite/placeholder/1.jpg',
+    urlRel: 'composite/radio/0.jpg',
   },
   listener2: {
-    urlRel: 'composite/placeholder/2.jpg',
+    urlRel: 'composite/radio/0.jpg',
   },
   listener3: {
-    urlRel: 'composite/placeholder/3.jpg',
+    urlRel: 'composite/radio/0.jpg',
   },
 };
 
@@ -127,11 +128,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/placeholder/1.webm',
+        urlRel: 'composite/chess/0.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/placeholder/1.mp4',
+        urlRel: 'composite/chess/0.mp4',
       },
     ],
   },
@@ -139,11 +140,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/placeholder/2.webm',
+        urlRel: 'composite/chess/0.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/placeholder/2.mp4',
+        urlRel: 'composite/chess/0.mp4',
       },
     ],
   },
@@ -151,11 +152,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/placeholder/3.webm',
+        urlRel: 'composite/chess/0.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/placeholder/3.mp4',
+        urlRel: 'composite/chess/0.mp4',
       },
     ],
   },
@@ -163,11 +164,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/placeholder/1.webm',
+        urlRel: 'composite/balloon/0.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/placeholder/1.mp4',
+        urlRel: 'composite/balloon/0.mp4',
       },
     ],
   },
@@ -175,11 +176,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/placeholder/2.webm',
+        urlRel: 'composite/balloon/0.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/placeholder/2.mp4',
+        urlRel: 'composite/balloon/0.mp4',
       },
     ],
   },
@@ -187,11 +188,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/placeholder/3.webm',
+        urlRel: 'composite/balloon/0.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/placeholder/3.mp4',
+        urlRel: 'composite/balloon/0.mp4',
       },
     ],
   },
@@ -199,11 +200,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/placeholder/1.webm',
+        urlRel: 'composite/appliance/0.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/placeholder/1.mp4',
+        urlRel: 'composite/appliance/0.mp4',
       },
     ],
   },
@@ -211,11 +212,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/placeholder/2.webm',
+        urlRel: 'composite/appliance/0.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/placeholder/2.mp4',
+        urlRel: 'composite/appliance/0.mp4',
       },
     ],
   },
@@ -223,11 +224,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/placeholder/3.webm',
+        urlRel: 'composite/appliance/0.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/placeholder/3.mp4',
+        urlRel: 'composite/appliance/0.mp4',
       },
     ],
   },
@@ -235,11 +236,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/placeholder/1.webm',
+        urlRel: 'composite/bonsai/0.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/placeholder/1.mp4',
+        urlRel: 'composite/bonsai/0.mp4',
       },
     ],
   },
@@ -247,11 +248,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/placeholder/2.webm',
+        urlRel: 'composite/bonsai/0.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/placeholder/2.mp4',
+        urlRel: 'composite/bonsai/0.mp4',
       },
     ],
   },
@@ -259,11 +260,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/placeholder/3.webm',
+        urlRel: 'composite/bonsai/0.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/placeholder/3.mp4',
+        urlRel: 'composite/bonsai/0.mp4',
       },
     ],
   },
@@ -271,11 +272,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/placeholder/1.webm',
+        urlRel: 'composite/appliance/0.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/placeholder/1.mp4',
+        urlRel: 'composite/appliance/0.mp4',
       },
     ],
   },
@@ -283,11 +284,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/placeholder/2.webm',
+        urlRel: 'composite/appliance/0.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/placeholder/2.mp4',
+        urlRel: 'composite/appliance/0.mp4',
       },
     ],
   },
@@ -295,11 +296,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/placeholder/3.webm',
+        urlRel: 'composite/appliance/0.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/placeholder/3.mp4',
+        urlRel: 'composite/appliance/0.mp4',
       },
     ],
   },
@@ -307,11 +308,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/placeholder/1.webm',
+        urlRel: 'composite/duck/0.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/placeholder/1.mp4',
+        urlRel: 'composite/duck/0.mp4',
       },
     ],
   },
@@ -319,11 +320,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/placeholder/2.webm',
+        urlRel: 'composite/duck/0.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/placeholder/2.mp4',
+        urlRel: 'composite/duck/0.mp4',
       },
     ],
   },
@@ -331,11 +332,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/placeholder/3.webm',
+        urlRel: 'composite/duck/0.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/placeholder/3.mp4',
+        urlRel: 'composite/duck/0.mp4',
       },
     ],
   },
@@ -343,11 +344,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/placeholder/1.webm',
+        urlRel: 'composite/plane/0.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/placeholder/1.mp4',
+        urlRel: 'composite/plane/0.mp4',
       },
     ],
   },
@@ -355,11 +356,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/placeholder/2.webm',
+        urlRel: 'composite/plane/0.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/placeholder/2.mp4',
+        urlRel: 'composite/plane/0.mp4',
       },
     ],
   },
@@ -367,11 +368,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/placeholder/3.webm',
+        urlRel: 'composite/plane/0.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/placeholder/3.mp4',
+        urlRel: 'composite/plane/0.mp4',
       },
     ],
   },
@@ -379,11 +380,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/placeholder/1.webm',
+        urlRel: 'composite/radio/0.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/placeholder/1.mp4',
+        urlRel: 'composite/radio/0.mp4',
       },
     ],
   },
@@ -391,11 +392,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/placeholder/2.webm',
+        urlRel: 'composite/radio/0.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/placeholder/2.mp4',
+        urlRel: 'composite/radio/0.mp4',
       },
     ],
   },
@@ -403,11 +404,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/placeholder/3.webm',
+        urlRel: 'composite/radio/0.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/placeholder/3.mp4',
+        urlRel: 'composite/radio/0.mp4',
       },
     ],
   },
