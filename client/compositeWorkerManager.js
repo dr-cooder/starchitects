@@ -116,9 +116,6 @@ const applyStarData = (starData) => {
     shape, starColor, starShade, dustColor, dustShade, dustType,
   } = starData;
   const { dustTypeImages, dustTypeVideos } = starchetypes[shape];
-  // TODO: starShape and dustType should map to the blob URL
-  // of the corresponding videos, whose canplaythrough events should be awaited
-  // setVidSrc(blobs[blobFilenames.thinker1]);
   imageEls = dustTypeImages.map(getEl);
   videoEls = [];
   for (let i = 0; i < dustTypeVideos.length; i++) {

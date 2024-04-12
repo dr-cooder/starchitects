@@ -1,21 +1,23 @@
 const React = require('react');
 const { Component } = require('react');
 const PropTypes = require('prop-types');
-const { Inert, ScalingSection, StarCanvas } = require('../components');
+const {
+  Inert, ScalingSection, ScalingSectionRelative, StarCanvas,
+} = require('../components');
 const { unitsHorizontalInner, unitsVerticalInner } = require('../measurements.js');
 const { preventChildrenFromCalling } = require('../../common/helpers.js');
 
 const starCanvasWidth = 210;
-const buttonHeight = 40;
-const buttonSpacing = 24;
+const buttonWidth = 100;
+const buttonHeight = 111;
+const buttonUpperTop = 76;
 const controlPanelTop = 218;
 
 const starCanvasLeft = (unitsHorizontalInner - starCanvasWidth) / 2;
-const buttonTop = unitsVerticalInner - buttonHeight;
-const buttonWidth = (unitsHorizontalInner - buttonSpacing * 2) / 3;
-const middleButtonOffset = buttonWidth + buttonSpacing;
-const rightButtonOffset = middleButtonOffset * 2;
 const controlPaneHeight = unitsVerticalInner - controlPanelTop;
+const buttonRightLeft = unitsHorizontalInner - buttonWidth;
+const buttonMiddleLeft = buttonRightLeft / 2;
+const buttonLowerTop = buttonUpperTop + buttonHeight;
 
 class BornStarScreen extends Component {
   constructor(props) {
@@ -84,51 +86,48 @@ class BornStarScreen extends Component {
             className='bornStarControlPanel'
           >
             <p className='starName bornStarName'>{name}</p>
+            <ScalingSectionRelative
+              topUnits={buttonUpperTop}
+              widthUnits={buttonWidth}
+              heightUnits={buttonHeight}
+            >
+              <button
+                className='outlined'
+                onClick={onSparkle}
+                disabled={animationInProgress}
+              >
+                Sparkle
+              </button>
+            </ScalingSectionRelative>
+            <ScalingSectionRelative
+              leftUnits={buttonRightLeft}
+              topUnits={buttonUpperTop}
+              widthUnits={buttonWidth}
+              heightUnits={buttonHeight}
+            >
+              <button
+                className='outlined'
+                onClick={onTwirl}
+                disabled={animationInProgress}
+              >
+                Twirl
+              </button>
+            </ScalingSectionRelative>
+            <ScalingSectionRelative
+              leftUnits={buttonMiddleLeft}
+              topUnits={buttonLowerTop}
+              widthUnits={buttonWidth}
+              heightUnits={buttonHeight}
+            >
+              <button
+                className='outlined'
+                onClick={onSupernova}
+                disabled={animationInProgress}
+              >
+                Supernova
+              </button>
+            </ScalingSectionRelative>
           </Inert>
-        </ScalingSection>
-        <ScalingSection
-          topUnits={buttonTop}
-          topFreeSpace={1}
-          widthUnits={buttonWidth}
-          heightUnits={buttonHeight}
-        >
-          <button
-            className='outlined'
-            onClick={onSparkle}
-            disabled={animationInProgress}
-          >
-            Sparkle
-          </button>
-        </ScalingSection>
-        <ScalingSection
-          leftUnits={middleButtonOffset}
-          topUnits={buttonTop}
-          topFreeSpace={1}
-          widthUnits={buttonWidth}
-          heightUnits={buttonHeight}
-        >
-          <button
-            className='outlined'
-            onClick={onTwirl}
-            disabled={animationInProgress}
-          >
-            Twirl
-          </button>
-        </ScalingSection>
-        <ScalingSection
-          leftUnits={rightButtonOffset}
-          topUnits={buttonTop}
-          topFreeSpace={1}
-          widthUnits={buttonWidth}
-          heightUnits={buttonHeight}
-        >
-          <button
-            className='outlined'
-            onClick={onSupernova}
-            disabled={animationInProgress}
-          >
-            Supernova
-          </button>
         </ScalingSection>
       </>
     );

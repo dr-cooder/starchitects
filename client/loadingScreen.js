@@ -136,6 +136,7 @@ window.onload = () => {
 };
 
 // TODO: Ensure browser has support for the following:
+// - Inert (most browsers from before mid-2022: https://caniuse.com/?search=inert)
 // - CSS Animations (Opera Mini: https://caniuse.com/css-animation)
 //   - Refuse to start - "Please try a more powerful web browser!"
 // - Canvas
