@@ -174,7 +174,9 @@ createImageVideoEls().then(() => {
       // setAppState.personalityQuiz();
     })}>
       <Background background={
-        <img className='background' src={misc.backgroundImg.blob}/>
+        // TODO: DRY class for images; they are all non-draggable and
+        // get their src from a misc preloaded item's blob
+        <img draggable={false} className='background' src={misc.backgroundImg.blob}/>
       }>
         <ChangingScreen ref={screenRef}/>
       </Background>

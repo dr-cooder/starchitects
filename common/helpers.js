@@ -67,9 +67,25 @@ const colorToRGB = (hue) => {
   ].map(clamp01);
 };
 
-const applyShadeToRGB = (rgb, shade) => rgb.map(
-  (channel) => lerp(channel, shade, 0.35),
-);
+const shadeContrast = 0.65; // <-- This may be adjusted
+const shadeContrastTimesTwo = 2 * shadeContrast;
+const shadeContrastTimesNegativeTwo = -2 * shadeContrast;
+const darkBasis = -0.5 * shadeContrast + 0.5;
+const brightBasis = -1.5 * shadeContrast + 0.5;
+const applyShadeToRGB = (rgb, shade) => {
+  let multiply;
+  let add;
+  if (shade < 0.5) {
+    multiply = shadeContrastTimesTwo * shade;
+    add = darkBasis;
+  } else {
+    multiply = shadeContrastTimesNegativeTwo * shade + shadeContrastTimesTwo;
+    add = shadeContrastTimesTwo * shade + brightBasis;
+  }
+  return rgb.map(
+    (channel) => multiply * channel + add,
+  );
+};
 
 const colorShadeToRGB = (color, shade) => (
   applyShadeToRGB(colorToRGB(color), shade)

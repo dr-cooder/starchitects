@@ -66,15 +66,15 @@ const nameShuffleButtonTop = starNameNameTop + nameShuffleButtonTopFromName;
 const starNameConfirmationTop = unitsVerticalInnerHalf + starNameConfirmationTopFromCenter;
 const witnessJoinTop = (unitsVerticalInner - wintessJoinHeight) / 2;
 
-const waitingForBackgroundClassNames = {
-  yourStarDescendsOuter: 'hiddenStill',
-  revealOuter: 'hiddenStill',
-  starCanvasTransition: 'hiddenStill',
-  whyDoYouResembleOuter: 'hiddenStill',
-  progress: 'hiddenStill',
-  swipeYourStarUp: 'hiddenStill',
-  witnessJoin: 'hiddenStill',
-};
+// const waitingForBackgroundClassNames = {
+//   yourStarDescendsOuter: 'hiddenStill',
+//   revealOuter: 'hiddenStill',
+//   starCanvasTransition: 'hiddenStill',
+//   whyDoYouResembleOuter: 'hiddenStill',
+//   progress: 'hiddenStill',
+//   swipeYourStarUp: 'hiddenStill',
+//   witnessJoin: 'hiddenStill',
+// };
 const yourStarDescendsClassNames = {
   yourStarDescendsOuter: 'yourStarDescendsOuter',
   revealOuter: 'hiddenStill',
@@ -218,7 +218,7 @@ class UnbornStarScreen extends Component {
       dustShade,
       dustType,
       waitingForNewName: false,
-      classNames: waitingForBackgroundClassNames,
+      classNames: yourStarDescendsClassNames,
       backgroundVideoPlaying: false,
       whyDoYouResembleAnimationNotFinishedYet: true,
       currentGalleryIndex: 0,
@@ -328,6 +328,7 @@ class UnbornStarScreen extends Component {
               {
                 el: getEl(preRevealVideo),
                 className: 'background',
+                onPlaying: () => console.log('Pre-reveal video is playing'),
                 onEnd: () => {
                   backgroundVideoEnded();
                   classNamesSetter(revealClassNames)();
@@ -348,7 +349,6 @@ class UnbornStarScreen extends Component {
                 },
               },
             ]}
-            onReady={classNamesSetter(yourStarDescendsClassNames)}
           />
         }
       >
@@ -434,7 +434,7 @@ class UnbornStarScreen extends Component {
           <div className={progressClassName}>
             <div className={progressPercentClassName}>
               <div className='quizProgressBar'></div>
-              <img src={getBlob(progressStar)} alt='Progress star' className='quizProgressStar' />
+              <img draggable={false} src={getBlob(progressStar)} alt='Progress star' className='quizProgressStar' />
             </div>
           </div>
         </ScalingSection>
@@ -523,7 +523,7 @@ class UnbornStarScreen extends Component {
               className='pulseButton'
               onClick={onNewNameRequest}
             >
-              <img src={getBlob(shuffleButton)} alt='Shuffle name'/>
+              <img draggable={false} src={getBlob(shuffleButton)} alt='Shuffle name'/>
             </Inert>
           </ScalingSection>
           <ScalingSection

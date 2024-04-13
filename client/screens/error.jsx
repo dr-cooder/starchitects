@@ -23,7 +23,7 @@ const ErrorScreen = ({ message, onLeave }) => (
       topFreeSpace={0.5}
       heightUnits={buttonHeight}
     >
-      <button className='outlined' onClick={onLeave}>Back</button>
+      <button className='outlined' onClick={onLeave}>Rejoin</button>
     </ScalingSection>
   </>
 );

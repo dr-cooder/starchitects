@@ -10,16 +10,16 @@ class VideoSequence extends Component {
 
     this.divRef = createRef();
 
-    const { onReady, videos } = props;
-    this.onReady = () => {
-      this.ready = true;
-      onReady();
-    };
+    const { videos } = props;
+    // this.onReady = () => {
+    //   this.ready = true;
+    //   onReady();
+    // };
     this.videos = videos;
     const videoCount = videos.length;
     this.videoCount = videoCount;
     // let videoEls = [];
-    this.ready = false;
+    this.ready = true;
     let started = false;
     let currentVideoIndex = -1;
     // Promise.all(videos.map(videoToEl)).then((videoElsReady) => {
@@ -48,22 +48,13 @@ class VideoSequence extends Component {
 
   componentDidMount() {
     const {
-      divRef: { current: divRefCurrent }, onReady, videoCount, videos,
+      divRef: { current: divRefCurrent }, videoCount, videos,
     } = this;
-    const canPlayThroughPromises = [];
     for (let i = 0; i < videoCount; i++) {
       const { el } = videos[i];
-      canPlayThroughPromises.push(new Promise((resolve) => {
-        divRefCurrent.appendChild(el);
-        el.load();
-        const canPlayThroughCallback = () => {
-          el.removeEventListener('canplaythrough', canPlayThroughCallback);
-          resolve();
-        };
-        el.addEventListener('canplaythrough', canPlayThroughCallback);
-      }));
+      divRefCurrent.appendChild(el);
+      el.load();
     }
-    Promise.all(canPlayThroughPromises).then(onReady);
   }
 
   componentWillUnmount() {
@@ -79,7 +70,7 @@ class VideoSequence extends Component {
 }
 
 VideoSequence.propTypes = {
-  onReady: PropTypes.func,
+  // onReady: PropTypes.func,
   videos: PropTypes.arrayOf(PropTypes.object.isRequired),
 };
 

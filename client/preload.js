@@ -744,11 +744,17 @@ const createImageVideoEls = () => new Promise((resolve, reject) => {
 });
 
 const prepareVideo = (props) => {
-  const { el, className, onEnd } = props;
+  const {
+    el, className, onPlaying, onEnd,
+  } = props;
   el.className = className;
   el.onended = onEnd;
   el.loop = !onEnd;
   // el.currentTime = 0;
+  el.onplaying = onPlaying && (() => {
+    el.onplaying = undefined;
+    onPlaying();
+  });
   el.play();
   return el;
 };

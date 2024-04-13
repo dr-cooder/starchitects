@@ -226,6 +226,7 @@ class SwipeDetector extends Component {
       >
         <div ref={boundsRef} className='swipeTwinkleContainer'>
           <img
+            draggable={false}
             className={`swipeTwinkle ${pointerType === noPointerType ? 'swipeTwinkleInactive' : 'swipeTwinkleActive'}`}
             src={getBlob(progressStar)}
             alt='Twinkle'

@@ -18,6 +18,9 @@ body {
   color: var(--color-bright);
   background-color: var(--color-midnight);
   user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
   /* html and body rules above this line are technically overridden by inline styling for before this file is preloaded */
   font-family: Geist, sans-serif;
   font-weight: 400;

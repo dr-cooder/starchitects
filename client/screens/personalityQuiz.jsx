@@ -89,7 +89,7 @@ const PersonalityQuizScreen = ({ onSubmit }) => {
                 width: percent(percentPerQuestion * questionsDone),
               }}>
                 <div className='quizProgressBar'></div>
-                <img src={getBlob(progressStar)} alt='Progress star' className='quizProgressStar'/>
+                <img draggable={false} src={getBlob(progressStar)} alt='Progress star' className='quizProgressStar'/>
               </div>
             </div>
           </ScalingSection>

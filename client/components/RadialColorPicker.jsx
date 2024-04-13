@@ -42,7 +42,7 @@ const arcEndXMax = unitsHorizontalOuterHalf + arcEndDx;
 const arcEndYMax = unitsHorizontalOuterHalf + arcEndDy;
 
 const gradientStopInfosFunctionGenerator = (isShade) => {
-  const granularity = isShade ? 1 : 6;
+  const granularity = isShade ? 2 : 6;
   const angleStart = (isShade ? 0 : 180) + arcSemiCircleOffsetDegrees;
   const rgbShadeFunctionGenerator = isShade
     ? (t) => (rgb) => [rgb, t]

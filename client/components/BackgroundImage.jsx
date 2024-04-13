@@ -9,6 +9,7 @@ const BackgroundImage = ({
     <Background
       background={
         <img
+          draggable={false}
           className='background'
           alt={alt ?? 'Background image'}
           src={src}
