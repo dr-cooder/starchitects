@@ -137,10 +137,8 @@ window.onload = () => {
 
 // TODO: Ensure browser has support for the following:
 // - Inert (most browsers from before mid-2022: https://caniuse.com/?search=inert)
-// - CSS Animations (Opera Mini: https://caniuse.com/css-animation)
-//   - Refuse to start - "Please try a more powerful web browser!"
 // - Canvas
-//   - Refuse to start
+//   - Refuse to start - "Please try a more powerful web browser!"
 // - Video autoplay (Vivaldi Android: https://www.androidpolice.com/vivaldis-latest-update-blocks-pesky-auto-playing-videos/)
 //   - This is a problem for video backgrounds and may not be easy to check - instead,
 //     check if the video is running after a second or so, and if not,

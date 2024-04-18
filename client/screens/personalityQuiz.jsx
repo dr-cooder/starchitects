@@ -1,12 +1,15 @@
 const React = require('react');
-const { useState } = require('react');
+const { useEffect, useState } = require('react');
 const PropTypes = require('prop-types');
 const { questions, percentPerQuestion } = require('../personalityQuizQuestions.js');
 const { unitsHorizontalInnerHalf, unitsVerticalInner } = require('../measurements.js');
 const { Inert, ScalingSection } = require('../components');
 const { misc: { progressStar }, getBlob } = require('../preload.js');
-const { percent, preventChildrenFromCalling } = require('../../common/helpers.js');
+const { percent } = require('../../common/helpers.js');
 
+const questionBlockInDuration = 1000;
+const questionBlockOutDuration = 2000;
+const quizFadeOutDuration = 500;
 const questionHeight = 116;
 const answerButtonHeight = 64;
 
@@ -70,17 +73,30 @@ const PersonalityQuizScreen = ({ onSubmit }) => {
   const [answerList, setAnswerList] = useState('');
   const [outerClassName, setOuterClassName] = useState('quizFadeIn');
   const registerAnswer = (answerId) => {
+    const newAnswerList = answerList + answerId;
     setCurrentAnswer(answerId);
-    setAnswerList(answerList + answerId);
+    setAnswerList(newAnswerList);
     setQuestionsDone(questionsDone + 1);
     setAnimationClassName(goingOut);
+    setTimeout(() => {
+      const { next } = currentQuestion.answers[answerId];
+      if (next) {
+        setCurrentQuestion(questions[next]);
+        setCurrentAnswer(undefined);
+        setAnimationClassName(goingIn);
+        setTimeout(() => setAnimationClassName(idle), questionBlockInDuration);
+      } else {
+        setOuterClassName('quizFadeOut');
+        setTimeout(() => onSubmit(newAnswerList), quizFadeOutDuration);
+      }
+    }, questionBlockOutDuration);
   };
-  // useEffect(nextBackground, []);
+  useEffect(() => {
+    setTimeout(() => setAnimationClassName(idle), questionBlockInDuration);
+    return () => {};
+  }, []);
   return (
-    <div
-      className={outerClassName}
-      onAnimationEnd={outerClassName === 'quizFadeOut' ? preventChildrenFromCalling(() => onSubmit(answerList)) : undefined}
-    >
+    <div className={outerClassName}>
       <Inert inert={animationClassName !== idle}>
         <div className='quizProgressIn'>
           <ScalingSection heightUnits={0}>
@@ -94,23 +110,7 @@ const PersonalityQuizScreen = ({ onSubmit }) => {
             </div>
           </ScalingSection>
         </div>
-        <div
-          className={quesionBlockClassName}
-          onAnimationEnd={preventChildrenFromCalling(() => {
-            if (animationClassName === goingIn) {
-              setAnimationClassName(idle);
-            } else {
-              const { next } = currentQuestion.answers[currentAnswer];
-              if (next) {
-                setCurrentQuestion(questions[next]);
-                setCurrentAnswer(undefined);
-                setAnimationClassName(goingIn);
-              } else {
-                setOuterClassName('quizFadeOut');
-              }
-            }
-          })}
-        >
+        <div className={quesionBlockClassName}>
           <ScalingSection
             topUnits={questionTop}
             topFreeSpace={0.5}

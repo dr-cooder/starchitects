@@ -5,8 +5,8 @@ const {
   Inert, ScalingSection, ScalingSectionRelative, StarCanvas,
 } = require('../components');
 const { unitsHorizontalInner, unitsVerticalInner } = require('../measurements.js');
-const { preventChildrenFromCalling } = require('../../common/helpers.js');
 
+const bornStarCanvasAnimationDuration = 1000;
 const starCanvasWidth = 210;
 const buttonWidth = 100;
 const buttonHeight = 111;
@@ -59,6 +59,11 @@ class BornStarScreen extends Component {
       onTwirl,
       onSupernova,
     } = this;
+    if (controlsNotReady) {
+      setTimeout(() => this.setState({
+        controlsNotReady: false,
+      }), bornStarCanvasAnimationDuration);
+    }
     return (
       <>
         <ScalingSection
@@ -67,12 +72,7 @@ class BornStarScreen extends Component {
           widthUnits={starCanvasWidth}
           heightUnits={starCanvasWidth}
         >
-          <div
-            className='bornStarCanvas'
-            onAnimationEnd={preventChildrenFromCalling(() => this.setState({
-              controlsNotReady: false,
-            }))}
-          >
+          <div className='bornStarCanvas'>
             <StarCanvas/>
           </div>
         </ScalingSection>

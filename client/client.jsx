@@ -1,5 +1,5 @@
 const React = require('react');
-const { createRef } = require('react');
+const { createRef, useEffect } = require('react');
 const { createRoot } = require('react-dom/client');
 const { ChangingScreen, Background } = require('./components');
 const screens = require('./screens');
@@ -10,7 +10,10 @@ const { getStarId, setStarId /* , unsetStarId */ } = require('./localStorage.js'
 const compositeWorkerManager = require('./compositeWorkerManager.js');
 const webSocket = require('./clientWebSocket.js');
 const { wsHeaders, makeWsMsg } = require('../common/webSocket.js');
-const { preventChildrenFromCalling, starIsBorn } = require('../common/helpers.js');
+const { starIsBorn } = require('../common/helpers.js');
+
+// TODO: Centralize these durations in a single js file consistent with animations.css
+const appFadeInDuration = 150;
 
 assignPreloadInfoToVideosImagesMisc(preloadInfoFromDoc());
 createImageVideoEls().then(() => {
@@ -166,22 +169,25 @@ createImageVideoEls().then(() => {
 
   webSocket.onError(() => setAppState.error('Connection error.'));
 
-  const App = () => (
-    <div className='appFadeIn' onAnimationEnd={preventChildrenFromCalling(() => {
+  const App = () => {
+    useEffect(() => setTimeout(() => {
       document.querySelector('#loadingStar').remove();
       document.querySelector('#loadingProgress').remove();
       setAppState.title();
       // setAppState.personalityQuiz();
-    })}>
-      <Background background={
-        // TODO: DRY class for images; they are all non-draggable and
-        // get their src from a misc preloaded item's blob
-        <img draggable={false} className='background' src={misc.backgroundImg.blob}/>
-      }>
-        <ChangingScreen ref={screenRef}/>
-      </Background>
-    </div>
-  );
+    }, appFadeInDuration), []);
+    return (
+      <div className='appFadeIn'>
+        <Background background={
+          // TODO: DRY class for images; they are all non-draggable and
+          // get their src from a misc preloaded item's blob
+          <img draggable={false} className='background' src={misc.backgroundImg.blob}/>
+        }>
+          <ChangingScreen ref={screenRef}/>
+        </Background>
+      </div>
+    );
+  };
 
   // window.onload not necessary - event will have already passed during preload script
   createRoot(document.querySelector('#root')).render(<App />);

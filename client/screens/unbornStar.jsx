@@ -21,7 +21,6 @@ const {
   unitsVerticalInnerHalf,
   unitsHorizontalOuterHalf,
 } = require('../measurements.js');
-const { preventChildrenFromCalling } = require('../../common/helpers.js');
 const { starchetypes } = require('../starchetypes.js');
 const {
   misc: {
@@ -37,7 +36,13 @@ const {
   getBlob,
 } = require('../preload.js');
 
+const yourStarDescendsAnimationDuration = 2500;
 const revealVideoDelay = 250;
+const revealAnimationDuration = 2000;
+const whyDoYouResembleAnimationDuration = 1000;
+const unbornConfirmationOutAnimationDuration = 1000;
+const witnessJoinAnimationDuration = 2500;
+
 const yourStarDescendsOuterHeight = 56;
 const revealOuterHeight = 96;
 const buttonHeight = 40;
@@ -227,9 +232,9 @@ class UnbornStarScreen extends Component {
       galleryMoving: false,
       notReadyToSwipe: true,
     };
-    this.classNamesSetter = (classNames) => () => this.setState({
-      classNames,
-    });
+    // this.classNamesSetter = (classNames) => () => this.setState({
+    //   classNames,
+    // });
     this.whyDoYouResembleAnimationHasFinished = () => this.setState({
       whyDoYouResembleAnimationNotFinishedYet: false,
     });
@@ -270,6 +275,11 @@ class UnbornStarScreen extends Component {
     };
   }
 
+  componentDidMount() {
+    const { playBackgroundVideo } = this;
+    setTimeout(playBackgroundVideo, yourStarDescendsAnimationDuration);
+  }
+
   render() {
     const {
       starchetype: {
@@ -308,7 +318,7 @@ class UnbornStarScreen extends Component {
       playBackgroundVideo,
       backgroundVideoEnded,
       backgroundVideoRef,
-      classNamesSetter,
+      // classNamesSetter,
       whyDoYouResembleAnimationHasFinished,
       galleryNext,
       galleryPrev,
@@ -328,11 +338,22 @@ class UnbornStarScreen extends Component {
               {
                 el: getEl(preRevealVideo),
                 className: 'background',
-                onPlaying: () => console.log('Pre-reveal video is playing'),
+                // onPlaying: () => console.log('Pre-reveal video is playing'),
                 onEnd: () => {
                   backgroundVideoEnded();
-                  classNamesSetter(revealClassNames)();
+                  this.setState({
+                    classNames: revealClassNames,
+                  });
                   setTimeout(playBackgroundVideo, revealVideoDelay);
+                  setTimeout(() => {
+                    this.setState({
+                      classNames: whyDoYouResembleClassNames,
+                    });
+                    setTimeout(
+                      whyDoYouResembleAnimationHasFinished,
+                      whyDoYouResembleAnimationDuration,
+                    );
+                  }, revealAnimationDuration);
                 },
               },
               {
@@ -345,7 +366,8 @@ class UnbornStarScreen extends Component {
                 className: 'background',
                 onEnd: () => {
                   backgroundVideoEnded();
-                  classNamesSetter(witnessJoinClassNames)();
+                  this.setState({ classNames: witnessJoinClassNames });
+                  setTimeout(onWitnessJoinFinished, witnessJoinAnimationDuration);
                 },
               },
             ]}
@@ -364,10 +386,7 @@ class UnbornStarScreen extends Component {
             topUnits={yourStarDescendsOuterTop}
             heightUnits={yourStarDescendsOuterHeight}
           >
-            <div
-              className={yourStarDescendsOuterClassName}
-              onAnimationEnd={preventChildrenFromCalling(playBackgroundVideo)}
-            >
+            <div className={yourStarDescendsOuterClassName}>
               <p className='yourStarDescends'>Your star descends</p>
               <div className='yourStarDescendsSeparator'></div>
               <p className='theGreatCosmosDeemsYou'>The Great Cosmos deems you…</p>
@@ -378,12 +397,7 @@ class UnbornStarScreen extends Component {
             topUnits={revealOuterTop}
             heightUnits={revealOuterHeight}
           >
-            <div
-              className={revealOuterClassName}
-              onAnimationEnd={preventChildrenFromCalling(
-                classNamesSetter(whyDoYouResembleClassNames),
-              )}
-            >
+            <div className={revealOuterClassName}>
               <p className='revealName'>{starchetypeName}</p>
               <div className='revealSeparator'></div>
               <p className='revealTagline'>{starchetypeTagline}</p>
@@ -392,7 +406,6 @@ class UnbornStarScreen extends Component {
           <Inert
             inert={whyDoYouResembleAnimationNotFinishedYet}
             className={whyDoYouResembleOuterClassName}
-            onAnimationEnd={preventChildrenFromCalling(whyDoYouResembleAnimationHasFinished)}
           >
             <ScalingSection
               topFreeSpace={1}
@@ -572,9 +585,6 @@ class UnbornStarScreen extends Component {
           <Inert
             inert={!!confirmationOuterClassName}
             className={confirmationOuterClassName}
-            onAnimationEnd={preventChildrenFromCalling(() => this.setState({
-              notReadyToSwipe: false,
-            }))}
           >
             <ScalingSection
               topUnits={customizationHeaderTop}
@@ -596,7 +606,6 @@ class UnbornStarScreen extends Component {
               heightUnits={buttonHeight}
             >
               <GalleryButton
-                disabled={waitingForNewName}
                 onClick={galleryPrev}
                 expectedPreviousGalleryIndex={3}
                 expectedGalleryIndexDelta={-1}
@@ -614,8 +623,12 @@ class UnbornStarScreen extends Component {
               heightUnits={buttonHeight}
             >
               <GalleryButton
-                disabled={waitingForNewName}
-                onClick={classNamesSetter(sendoffClassNames)}
+                onClick={() => {
+                  this.setState({ classNames: sendoffClassNames });
+                  setTimeout(() => this.setState({
+                    notReadyToSwipe: false,
+                  }), unbornConfirmationOutAnimationDuration);
+                }}
                 expectedPreviousGalleryIndex={3}
                 expectedGalleryIndexDelta={1}
                 previousGalleryIndex={previousGalleryIndex}
@@ -647,10 +660,7 @@ class UnbornStarScreen extends Component {
             topFreeSpace={0.5}
             heightUnits={wintessJoinHeight}
           >
-            <p
-              className={witnessJoinClassName}
-              onAnimationEnd={preventChildrenFromCalling(onWitnessJoinFinished)}
-            >
+            <p className={witnessJoinClassName}>
               Now witness your star<br/><span className='emphasized'>join the galaxy.</span>
             </p>
           </ScalingSection>

@@ -1,10 +1,11 @@
 const React = require('react');
-const { useState } = require('react');
+const { useEffect, useState } = require('react');
 const PropTypes = require('prop-types');
 const { Inert, ScalingSection } = require('../components/index.js');
 const { unitsVerticalInner } = require('../measurements.js');
-const { preventChildrenFromCalling } = require('../../common/helpers.js');
 
+const inAnimationDuration = 1500;
+const outAnimationDuration = 750;
 const textHeight = 190;
 const buttonHeight = 40;
 
@@ -33,6 +34,10 @@ const OnboardingScreen = ({ onCreateStar/* , onSimulateRoom, onSkipQuiz */ }) =>
     text: textClassName,
     button: buttonClassName,
   } = animationClassName;
+  useEffect(() => {
+    setTimeout(() => setAnimationClassName(idle), inAnimationDuration);
+    return () => {};
+  }, []);
   return (
     <Inert inert={animationClassName !== idle}>
       <ScalingSection
@@ -40,16 +45,7 @@ const OnboardingScreen = ({ onCreateStar/* , onSimulateRoom, onSkipQuiz */ }) =>
         topFreeSpace={0.5}
         heightUnits={textHeight}
       >
-        <div
-          className={textClassName}
-          onAnimationEnd={preventChildrenFromCalling(() => {
-            if (animationClassName === goingIn) {
-              setAnimationClassName(idle);
-            } else {
-              onCreateStar();
-            }
-          })}
-        >
+        <div className={textClassName}>
           <p className='header showUsYourShine'>Show us <span className='emphasized'>your</span> shine!</p>
           <p>Every atom that makes up your body was created from a star before Earth
             was even born. We are all made up of <span className='emphasized'>stardust</span>.</p>
@@ -66,27 +62,29 @@ const OnboardingScreen = ({ onCreateStar/* , onSimulateRoom, onSkipQuiz */ }) =>
           className={buttonClassName}
           onClick={() => {
             setAnimationClassName(goingOut);
+            setTimeout(onCreateStar, outAnimationDuration);
           }}
         >
           Begin Survey
         </button>
       </ScalingSection>
-      {/* <ScalingSection
-        heightUnits={buttonHeight}
-      >
-        <button className='outlined' onClick={onSimulateRoom}>(DEBUG) Room Sim</button>
-      </ScalingSection>
-      <ScalingSection
-        heightUnits={buttonHeight}
-        topUnits={buttonHeight}
-      >
-        <button className='outlined' onClick={() => onSkipQuiz('00000')}>
-          (DEBUG) Skip Quiz (Thinker)
-        </button>
-      </ScalingSection> */}
     </Inert>
   );
 };
+
+/* <ScalingSection
+  heightUnits={buttonHeight}
+>
+  <button className='outlined' onClick={onSimulateRoom}>(DEBUG) Room Sim</button>
+</ScalingSection>
+<ScalingSection
+  heightUnits={buttonHeight}
+  topUnits={buttonHeight}
+>
+  <button className='outlined' onClick={() => onSkipQuiz('00000')}>
+    (DEBUG) Skip Quiz (Thinker)
+  </button>
+</ScalingSection> */
 
 OnboardingScreen.propTypes = {
   onCreateStar: PropTypes.func,

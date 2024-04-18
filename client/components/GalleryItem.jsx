@@ -4,7 +4,9 @@ const PropTypes = require('prop-types');
 const Inert = require('./Inert.jsx');
 const { unitsPerEm } = require('../measurements.js');
 const { usePixelsPerUnit } = require('../measurementsReact.js');
-const { px, preventChildrenFromCalling } = require('../../common/helpers.js');
+const { px } = require('../../common/helpers.js');
+
+const animationDuration = 1000;
 
 const GalleryItem = ({
   currentGalleryIndex,
@@ -20,19 +22,27 @@ const GalleryItem = ({
   const [className, setClassName] = useState('hiddenStill');
   useEffect(() => {
     if (itemIndex === currentGalleryIndex) {
+      let newInert;
       switch (galleryIndexDelta) {
         case 1:
           setClassName('galleryInFromRight');
-          setInert(true);
+          newInert = true;
           break;
         case -1:
           setClassName('galleryInFromLeft');
-          setInert(true);
+          newInert = true;
           break;
         default:
           setClassName('');
-          setInert(false);
+          newInert = false;
       }
+      if (newInert) {
+        setTimeout(() => {
+          setInert(false);
+          onInAnimationFinishedFinal();
+        }, animationDuration);
+      }
+      setInert(newInert);
     } else if (itemIndex === previousGalleryIndex) {
       setInert(true);
       switch (galleryIndexDelta) {
@@ -54,10 +64,6 @@ const GalleryItem = ({
         fontSize: px(pixelsPerUnit * unitsPerEm),
       }}
       className={className}
-      onAnimationEnd={itemIndex === currentGalleryIndex ? preventChildrenFromCalling(() => {
-        setInert(false);
-        onInAnimationFinishedFinal();
-      }) : undefined}
     >
       {children}
     </Inert>
