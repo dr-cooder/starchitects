@@ -1,8 +1,9 @@
 const React = require('react');
-const { useEffect, useState } = require('react');
+const { useState } = require('react');
 const PropTypes = require('prop-types');
 const { Inert, ScalingSection } = require('../components/index.js');
 const { unitsVerticalInner } = require('../measurements.js');
+const { setTimeoutBetter } = require('../../common/helpers.js');
 
 const inAnimationDuration = 1500;
 const outAnimationDuration = 750;
@@ -30,14 +31,15 @@ const animationClassNames = {
 const OnboardingScreen = ({ onCreateStar/* , onSimulateRoom, onSkipQuiz */ }) => {
   const { goingIn, idle, goingOut } = animationClassNames;
   const [animationClassName, setAnimationClassName] = useState(goingIn);
+  const [idleTimeoutNotSet, setIdleTimeoutNotSet] = useState(true);
   const {
     text: textClassName,
     button: buttonClassName,
   } = animationClassName;
-  useEffect(() => {
-    setTimeout(() => setAnimationClassName(idle), inAnimationDuration);
-    return () => {};
-  }, []);
+  if (idleTimeoutNotSet) {
+    setTimeoutBetter(() => setAnimationClassName(idle), inAnimationDuration);
+    setIdleTimeoutNotSet(false);
+  }
   return (
     <Inert inert={animationClassName !== idle}>
       <ScalingSection
@@ -61,8 +63,8 @@ const OnboardingScreen = ({ onCreateStar/* , onSimulateRoom, onSkipQuiz */ }) =>
         <button
           className={buttonClassName}
           onClick={() => {
+            setTimeoutBetter(onCreateStar, outAnimationDuration);
             setAnimationClassName(goingOut);
-            setTimeout(onCreateStar, outAnimationDuration);
           }}
         >
           Begin Survey

@@ -123,6 +123,20 @@ const setIntervalWithInitialCall = (callback, ms) => {
   return setInterval(callback, ms);
 };
 
+// I've learned the hard way that Safari is *very* unreliable when it comes to time-based events,
+// hence the need to re-check every single frame
+const setTimeoutBetter = (callback, ms) => {
+  const startTime = Date.now();
+  const timeChecker = () => {
+    if (Date.now() - startTime < ms) {
+      requestAnimationFrame(timeChecker);
+    } else {
+      callback();
+    }
+  };
+  timeChecker();
+};
+
 const starIsBorn = ({ born }) => born;
 
 module.exports = {
@@ -150,5 +164,6 @@ module.exports = {
   isMouseEvent,
   preventChildrenFromCalling,
   setIntervalWithInitialCall,
+  setTimeoutBetter,
   starIsBorn,
 };

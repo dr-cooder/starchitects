@@ -1,11 +1,11 @@
 const React = require('react');
-const { useEffect, useState } = require('react');
+const { useState } = require('react');
 const PropTypes = require('prop-types');
 const { questions, percentPerQuestion } = require('../personalityQuizQuestions.js');
 const { unitsHorizontalInnerHalf, unitsVerticalInner } = require('../measurements.js');
 const { Inert, ScalingSection } = require('../components');
 const { misc: { progressStar }, getBlob } = require('../preload.js');
-const { percent } = require('../../common/helpers.js');
+const { percent, setTimeoutBetter } = require('../../common/helpers.js');
 
 const questionBlockInDuration = 1000;
 const questionBlockOutDuration = 2000;
@@ -72,29 +72,30 @@ const PersonalityQuizScreen = ({ onSubmit }) => {
   const [currentAnswer, setCurrentAnswer] = useState(undefined);
   const [answerList, setAnswerList] = useState('');
   const [outerClassName, setOuterClassName] = useState('quizFadeIn');
+  const [firstQuestionIdleTimeoutNotSet, setFirstQuestionIdleTimeoutNotSet] = useState(true);
   const registerAnswer = (answerId) => {
     const newAnswerList = answerList + answerId;
+    setTimeoutBetter(() => {
+      const { next } = currentQuestion.answers[answerId];
+      if (next) {
+        setTimeoutBetter(() => setAnimationClassName(idle), questionBlockInDuration);
+        setCurrentQuestion(questions[next]);
+        setCurrentAnswer(undefined);
+        setAnimationClassName(goingIn);
+      } else {
+        setTimeoutBetter(() => onSubmit(newAnswerList), quizFadeOutDuration);
+        setOuterClassName('quizFadeOut');
+      }
+    }, questionBlockOutDuration);
     setCurrentAnswer(answerId);
     setAnswerList(newAnswerList);
     setQuestionsDone(questionsDone + 1);
     setAnimationClassName(goingOut);
-    setTimeout(() => {
-      const { next } = currentQuestion.answers[answerId];
-      if (next) {
-        setCurrentQuestion(questions[next]);
-        setCurrentAnswer(undefined);
-        setAnimationClassName(goingIn);
-        setTimeout(() => setAnimationClassName(idle), questionBlockInDuration);
-      } else {
-        setOuterClassName('quizFadeOut');
-        setTimeout(() => onSubmit(newAnswerList), quizFadeOutDuration);
-      }
-    }, questionBlockOutDuration);
   };
-  useEffect(() => {
-    setTimeout(() => setAnimationClassName(idle), questionBlockInDuration);
-    return () => {};
-  }, []);
+  if (firstQuestionIdleTimeoutNotSet) {
+    setTimeoutBetter(() => setAnimationClassName(idle), questionBlockInDuration);
+    setFirstQuestionIdleTimeoutNotSet(false);
+  }
   return (
     <div className={outerClassName}>
       <Inert inert={animationClassName !== idle}>

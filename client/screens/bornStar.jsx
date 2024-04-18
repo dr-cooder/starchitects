@@ -5,6 +5,7 @@ const {
   Inert, ScalingSection, ScalingSectionRelative, StarCanvas,
 } = require('../components');
 const { unitsHorizontalInner, unitsVerticalInner } = require('../measurements.js');
+const { setTimeoutBetter } = require('../../common/helpers.js');
 
 const bornStarCanvasAnimationDuration = 1000;
 const starCanvasWidth = 210;
@@ -32,6 +33,7 @@ class BornStarScreen extends Component {
     this.state = {
       animationInProgress: false,
       controlsNotReady: true,
+      controlsReadyTimeoutNotSet: true,
     };
 
     const startAnimation = (callback) => () => {
@@ -53,16 +55,18 @@ class BornStarScreen extends Component {
       state: {
         controlsNotReady,
         animationInProgress,
+        controlsReadyTimeoutNotSet,
       },
       name,
       onSparkle,
       onTwirl,
       onSupernova,
     } = this;
-    if (controlsNotReady) {
-      setTimeout(() => this.setState({
+    if (controlsReadyTimeoutNotSet) {
+      setTimeoutBetter(() => this.setState({
         controlsNotReady: false,
       }), bornStarCanvasAnimationDuration);
+      this.setState({ controlsReadyTimeoutNotSet: false });
     }
     return (
       <>

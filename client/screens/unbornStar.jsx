@@ -35,6 +35,7 @@ const {
   getEl,
   getBlob,
 } = require('../preload.js');
+const { setTimeoutBetter } = require('../../common/helpers.js');
 
 const yourStarDescendsAnimationDuration = 2500;
 const revealVideoDelay = 250;
@@ -231,6 +232,7 @@ class UnbornStarScreen extends Component {
       galleryIndexDelta: 0,
       galleryMoving: false,
       notReadyToSwipe: true,
+      yourStarDescendsTimeoutNotSet: true,
     };
     // this.classNamesSetter = (classNames) => () => this.setState({
     //   classNames,
@@ -275,11 +277,6 @@ class UnbornStarScreen extends Component {
     };
   }
 
-  componentDidMount() {
-    const { playBackgroundVideo } = this;
-    setTimeout(playBackgroundVideo, yourStarDescendsAnimationDuration);
-  }
-
   render() {
     const {
       starchetype: {
@@ -314,6 +311,7 @@ class UnbornStarScreen extends Component {
         galleryIndexDelta,
         galleryMoving,
         notReadyToSwipe,
+        yourStarDescendsTimeoutNotSet,
       },
       playBackgroundVideo,
       backgroundVideoEnded,
@@ -328,6 +326,10 @@ class UnbornStarScreen extends Component {
       onSwipeStarUp,
       onWitnessJoinFinished,
     } = this;
+    if (yourStarDescendsTimeoutNotSet) {
+      setTimeoutBetter(playBackgroundVideo, yourStarDescendsAnimationDuration);
+      this.setState({ yourStarDescendsTimeoutNotSet: false });
+    }
     return (
       <Background
         visible={backgroundVideoPlaying}
@@ -340,20 +342,20 @@ class UnbornStarScreen extends Component {
                 className: 'background',
                 // onPlaying: () => console.log('Pre-reveal video is playing'),
                 onEnd: () => {
+                  setTimeoutBetter(playBackgroundVideo, revealVideoDelay);
+                  setTimeoutBetter(() => {
+                    setTimeoutBetter(
+                      whyDoYouResembleAnimationHasFinished,
+                      whyDoYouResembleAnimationDuration,
+                    );
+                    this.setState({
+                      classNames: whyDoYouResembleClassNames,
+                    });
+                  }, revealAnimationDuration);
                   backgroundVideoEnded();
                   this.setState({
                     classNames: revealClassNames,
                   });
-                  setTimeout(playBackgroundVideo, revealVideoDelay);
-                  setTimeout(() => {
-                    this.setState({
-                      classNames: whyDoYouResembleClassNames,
-                    });
-                    setTimeout(
-                      whyDoYouResembleAnimationHasFinished,
-                      whyDoYouResembleAnimationDuration,
-                    );
-                  }, revealAnimationDuration);
                 },
               },
               {
@@ -365,9 +367,9 @@ class UnbornStarScreen extends Component {
                 el: getEl(sendoffVideo),
                 className: 'background',
                 onEnd: () => {
+                  setTimeoutBetter(onWitnessJoinFinished, witnessJoinAnimationDuration);
                   backgroundVideoEnded();
                   this.setState({ classNames: witnessJoinClassNames });
-                  setTimeout(onWitnessJoinFinished, witnessJoinAnimationDuration);
                 },
               },
             ]}
@@ -624,10 +626,10 @@ class UnbornStarScreen extends Component {
             >
               <GalleryButton
                 onClick={() => {
-                  this.setState({ classNames: sendoffClassNames });
-                  setTimeout(() => this.setState({
+                  setTimeoutBetter(() => this.setState({
                     notReadyToSwipe: false,
                   }), unbornConfirmationOutAnimationDuration);
+                  this.setState({ classNames: sendoffClassNames });
                 }}
                 expectedPreviousGalleryIndex={3}
                 expectedGalleryIndexDelta={1}

@@ -1,4 +1,4 @@
-const { dictToElement } = require('../common/helpers.js');
+const { dictToElement, setTimeoutBetter } = require('../common/helpers.js');
 
 // ~~~ INFO OF ITEMS TO PRELOAD, LOAD RESULTS BEING STATEFUL ~~~
 
@@ -765,7 +765,7 @@ const hideAndRewindVideo = (props) => {
   el.pause();
   // Bit of a hacky anti-flicker measure that assumes the no element
   // will be re-appended within a split second of its removal
-  setTimeout(() => { el.currentTime = 0; }, 100);
+  setTimeoutBetter(() => { el.currentTime = 0; }, 100);
 };
 
 const removeAndRewindVideo = (props) => {

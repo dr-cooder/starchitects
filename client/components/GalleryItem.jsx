@@ -4,7 +4,7 @@ const PropTypes = require('prop-types');
 const Inert = require('./Inert.jsx');
 const { unitsPerEm } = require('../measurements.js');
 const { usePixelsPerUnit } = require('../measurementsReact.js');
-const { px } = require('../../common/helpers.js');
+const { px, setTimeoutBetter } = require('../../common/helpers.js');
 
 const animationDuration = 1000;
 
@@ -37,7 +37,7 @@ const GalleryItem = ({
           newInert = false;
       }
       if (newInert) {
-        setTimeout(() => {
+        setTimeoutBetter(() => {
           setInert(false);
           onInAnimationFinishedFinal();
         }, animationDuration);
