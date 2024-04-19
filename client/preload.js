@@ -27,9 +27,7 @@ const fonts = [
 
 const styles = [
   {
-    url: 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap-reboot.min.css',
-    integrity: 'sha384-AzXcmcMInlJeZ/nwA+GR1Ta94m/H/FK4P6NcvXCVMWbzM4WyU+i1JgunGXPetEyz',
-    crossorigin: 'anonymous',
+    url: '/bootstrap-reboot.min.css',
   },
   {
     url: '/style.css',
@@ -610,7 +608,6 @@ const fontURLs = fonts.map(getURL);
 const styleURLs = styles.map(getURL);
 const scriptURLs = scripts.map(getURL);
 const imageValues = Object.values(images);
-const imageURLsRel = imageValues.map(getURLRel);
 const videoValues = Object.values(videos);
 const videoSourcesFlat = videoValues.map((video) => video.sources).flat();
 const miscValues = Object.values(misc);
@@ -685,7 +682,7 @@ const assignPreloadInfoToVideosImagesMisc = (preloadInfo) => {
   const { blobs, videoFolder } = preloadInfo;
   assignVideoFolder(videoFolder);
   // assignBlobs(blobs, videoSourcesFlat);
-  assignBlobs(blobs, imageValues);
+  // assignBlobs(blobs, imageValues);
   assignBlobs(blobs, miscValues);
 };
 
@@ -735,7 +732,7 @@ const createImageVideoEls = () => new Promise((resolve, reject) => {
     // videoEl.play();
     // videoEl.pause();
   }
-  Promise.all(imageValues.map((image) => loadImage(getBlob(image)))).then((imageEls) => {
+  Promise.all(imageValues.map((image) => loadImage(getURL(image)))).then((imageEls) => {
     for (let i = 0; i < imageValues.length; i++) {
       imageValues[i].el = imageEls[i];
     }
@@ -815,16 +812,15 @@ const preload = (onProgress) => (preloading ? null : new Promise((resolve, rejec
     reject();
   };
   fetch('/video-folder').then((res) => res.text().then((videoFolder) => {
-    const imageURLs = imageURLsRel.map((imageURLRel) => videoFolder + imageURLRel);
     // assignVideoFolder(videoFolder);
     const allURLsToBecomeBlobs = [...new Set([
       ...fontURLs,
       ...styleURLs,
       ...scriptURLs,
-      ...imageURLs,
       // ...videoSourceURLs, // Apparently Safari doesn't like videos with blob sources,
       // but loading them this way anyway will hopefully cache them
       // https://discussions.apple.com/thread/254893296?sortBy=best
+      // ...imageURLs, // Apparently Safari doesn't like canvas images with blob sources either
       ...miscURLs,
     ])];
     const progresses = Object.assign({}, ...allURLsToBecomeBlobs.map((url) => ({ [url]: {} })));
