@@ -113,7 +113,7 @@ const setDustRGB = (rgb) => {
 
 const setDustType = (dustType) => {
   console.log(`Setting dust type to ${dustType}. Drawing failsafe still image...`);
-  videoCtx.drawImage(imageEls[dustType], 0, 0);
+  // videoCtx.drawImage(imageEls[dustType], 0, 0);
   console.log('Succeeded!');
   currentVideoEl = videoEls[dustType];
   clearInterval(tryCompositeNextVideoFrameInterval);
