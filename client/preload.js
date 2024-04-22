@@ -720,15 +720,15 @@ const createImageVideoEls = () => new Promise((resolve, reject) => {
     videoEl.setAttribute('playsinline', 'playsinline');
     videoEl.setAttribute('preload', 'auto');
     videoEl.className = 'hiddenVideo';
-    for (let j = 0; j < sources.length; j++) {
-      const source = sources[j];
-      const sourceEl = document.createElement('source');
-      sourceEl.onload = () => {};
-      sourceEl.crossOrigin = 'Anonymous';
-      sourceEl.type = source.type;
-      sourceEl.src = getURL(source);
-      videoEl.appendChild(sourceEl);
-    }
+    // for (let j = 0; j < sources.length; j++) {
+    //   const source = sources[j];
+    //   const sourceEl = document.createElement('source');
+    //   sourceEl.onload = () => {};
+    //   sourceEl.crossOrigin = 'Anonymous';
+    //   sourceEl.type = source.type;
+    //   sourceEl.src = getURL(source);
+    //   videoEl.appendChild(sourceEl);
+    // }
     video.el = videoEl;
     mediaBench.appendChild(videoEl);
     // videoEl.load();
