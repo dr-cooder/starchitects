@@ -714,7 +714,7 @@ const createImageVideoEls = () => new Promise((resolve, reject) => {
     const { sources } = video;
     const videoEl = document.createElement('video');
     videoEl.muted = true;
-    // videoEl.onload = () => {};
+    videoEl.onload = () => {};
     videoEl.crossOrigin = 'Anonymous';
     videoEl.setAttribute('webkit-playsinline', 'webkit-playsinline');
     videoEl.setAttribute('playsinline', 'playsinline');
@@ -724,7 +724,7 @@ const createImageVideoEls = () => new Promise((resolve, reject) => {
       const source = sources[j];
       const sourceEl = document.createElement('source');
       sourceEl.onload = () => {};
-      // sourceEl.crossOrigin = 'Anonymous';
+      sourceEl.crossOrigin = 'Anonymous';
       sourceEl.type = source.type;
       sourceEl.src = getURL(source);
       videoEl.appendChild(sourceEl);
