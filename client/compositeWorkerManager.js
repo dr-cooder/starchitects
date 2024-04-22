@@ -66,7 +66,7 @@ const tryComposite = () => {
 
 const tryCompositeNextVideoFrame = () => {
   // It seems cropping a larger video doesn't improve performance
-  videoCtx.drawImage(currentVideoEl, 0, 0);
+  // videoCtx.drawImage(currentVideoEl, 0, 0);
 
   const testingGetImageData = getImageDataTestsPending > 0;
   getImageDataTestsPending--;
