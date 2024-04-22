@@ -714,6 +714,7 @@ const createImageVideoEls = () => new Promise((resolve, reject) => {
     const { sources } = video;
     const videoEl = document.createElement('video');
     videoEl.muted = true;
+    videoEl.onload = () => {};
     videoEl.crossOrigin = 'Anonymous';
     videoEl.setAttribute('webkit-playsinline', 'webkit-playsinline');
     videoEl.setAttribute('playsinline', 'playsinline');
