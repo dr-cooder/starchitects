@@ -66,7 +66,7 @@ const tryComposite = () => {
 
 const tryCompositeNextVideoFrame = () => {
   // It seems cropping a larger video doesn't improve performance
-  videoCtx.drawImage(currentVideoEl, 0, 0);
+  // videoCtx.drawImage(currentVideoEl, 0, 0);
 
   const testingGetImageData = getImageDataTestsPending > 0;
   getImageDataTestsPending--;
@@ -113,7 +113,7 @@ const setDustRGB = (rgb) => {
 
 const setDustType = (dustType) => {
   console.log(`Setting dust type to ${dustType}. Drawing failsafe still image...`);
-  // videoCtx.drawImage(imageEls[dustType], 0, 0);
+  videoCtx.drawImage(imageEls[dustType], 0, 0);
   console.log('Succeeded!');
   currentVideoEl = videoEls[dustType];
   clearInterval(tryCompositeNextVideoFrameInterval);
@@ -136,7 +136,7 @@ const applyStarData = (starData) => {
       className: 'hiddenVideo',
     });
     console.log(`Initial draw of video ${i}...`);
-    videoCtx.drawImage(videoEl, 0, 0); // Avoid "skip" I noticed on Firefox
+    // videoCtx.drawImage(videoEl, 0, 0); // Avoid "skip" I noticed on Firefox
     console.log('Succeeded!');
     videoEls[i] = videoEl;
   }

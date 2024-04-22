@@ -688,14 +688,14 @@ const assignPreloadInfoToVideosImagesMisc = (preloadInfo) => {
 
 const loadImage = (url) => new Promise((resolve, reject) => {
   const img = new Image();
-  img.crossOrigin = 'Anonymous';
-  img.src = url;
   img.onload = () => {
     resolve(img);
   };
   img.onerror = (e) => {
     reject(e);
   };
+  img.crossOrigin = 'Anonymous';
+  img.src = url;
 });
 
 // In-DOM 'bench' exists so that all videos exist in the DOM from the get-go
