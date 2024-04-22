@@ -721,7 +721,7 @@ const createImageVideoEls = () => new Promise((resolve, reject) => {
     videoEl.setAttribute('preload', 'auto');
     videoEl.className = 'hiddenVideo';
     videoEl.src = '';
-    delete videoEl.src;
+    videoEl.removeAttribute('src');
     for (let j = 0; j < sources.length; j++) {
       const source = sources[j];
       const sourceEl = document.createElement('source');
