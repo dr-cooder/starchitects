@@ -720,7 +720,7 @@ const createImageVideoEls = () => new Promise((resolve, reject) => {
     videoEl.setAttribute('playsinline', 'playsinline');
     videoEl.setAttribute('preload', 'auto');
     videoEl.className = 'hiddenVideo';
-    videoEl.src = '';
+    videoEl.src = undefined;
     for (let j = 0; j < sources.length; j++) {
       const source = sources[j];
       const sourceEl = document.createElement('source');
