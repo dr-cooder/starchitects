@@ -136,7 +136,7 @@ const applyStarData = (starData) => {
       className: 'hiddenVideo',
     });
     console.log(`Initial draw of video ${i}...`);
-    videoCtx.drawImage(videoEl, 0, 0); // Avoid "skip" I noticed on Firefox
+    // videoCtx.drawImage(videoEl, 0, 0); // Avoid "skip" I noticed on Firefox
     console.log('Succeeded!');
     videoEls[i] = videoEl;
   }
