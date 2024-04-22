@@ -699,7 +699,7 @@ const loadImage = (url) => new Promise((resolve, reject) => {
 });
 
 // In-DOM 'bench' exists so that all videos exist in the DOM from the get-go
-// and still do so one "removed", a further anti-flicker measure
+// and still do so ocne "removed", a further anti-flicker measure
 let mediaBench;
 
 // No video (or canvas image) will ever need to be in more than one place at any given point

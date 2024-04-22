@@ -29,6 +29,7 @@ let imageEls = [];
 // let imageEl;
 let videoEls = [];
 let currentVideoEl;
+let getImageDataTestsPending = 0;
 
 const videoCanvas = document.createElement('canvas');
 videoCanvas.width = vidWidth;
@@ -67,6 +68,11 @@ const tryCompositeNextVideoFrame = () => {
   // It seems cropping a larger video doesn't improve performance
   videoCtx.drawImage(currentVideoEl, 0, 0);
 
+  const testingGetImageData = getImageDataTestsPending > 0;
+  getImageDataTestsPending--;
+  if (testingGetImageData) {
+    console.log(`Attempting to getImageData... (${getImageDataTestsPending} test${getImageDataTestsPending === 1 ? '' : 's'} remaining)`);
+  }
   Object.assign(compositeParams, {
     basisBytes: videoCtx.getImageData(...basisBounds).data,
     starDiffBytes: videoCtx.getImageData(...starDiffBounds).data,
@@ -74,6 +80,9 @@ const tryCompositeNextVideoFrame = () => {
     starTimesDustDiffBytes: videoCtx.getImageData(...starTimesDustDiffBounds).data,
     alphaBytes: videoCtx.getImageData(...alphaBounds).data,
   });
+  if (testingGetImageData) {
+    console.log('Succeeded!');
+  }
   tryComposite();
 };
 
@@ -103,7 +112,9 @@ const setDustRGB = (rgb) => {
 };
 
 const setDustType = (dustType) => {
+  console.log(`Setting dust type to ${dustType}. Drawing failsafe still image...`);
   videoCtx.drawImage(imageEls[dustType], 0, 0);
+  console.log('Succeeded!');
   currentVideoEl = videoEls[dustType];
   clearInterval(tryCompositeNextVideoFrameInterval);
   tryCompositeNextVideoFrameInterval = (
@@ -112,6 +123,7 @@ const setDustType = (dustType) => {
 };
 
 const applyStarData = (starData) => {
+  console.log(`Applying star data: ${starData}`);
   const {
     shape, starColor, starShade, dustColor, dustShade, dustType,
   } = starData;
@@ -123,13 +135,16 @@ const applyStarData = (starData) => {
       el: getEl(dustTypeVideos[i]),
       className: 'hiddenVideo',
     });
+    console.log(`Initial draw of video ${i}...`);
     videoCtx.drawImage(videoEl, 0, 0); // Avoid "skip" I noticed on Firefox
+    console.log('Succeeded!');
     videoEls[i] = videoEl;
   }
   videoCtx.clearRect(0, 0, vidWidth, vidHeight);
   // document.body.appendChild(starVideoEl);
   setStarRgbWithoutComposite(colorShadeToRGB(starColor, starShade));
   setDustRgbWithoutComposite(colorShadeToRGB(dustColor, dustShade));
+  getImageDataTestsPending = 3;
   setDustType(dustType);
 };
 

@@ -83,7 +83,11 @@ const PersonalityQuizScreen = ({ onSubmit }) => {
         setCurrentAnswer(undefined);
         setAnimationClassName(goingIn);
       } else {
-        setTimeoutBetter(() => onSubmit(newAnswerList), quizFadeOutDuration);
+        setTimeoutBetter(() => {
+          console.log(`Fade-out complete! Submitting answers: ${newAnswerList}`);
+          onSubmit(newAnswerList);
+        }, quizFadeOutDuration);
+        console.log('Quiz completed! Fading out...');
         setOuterClassName('quizFadeOut');
       }
     }, questionBlockOutDuration);
