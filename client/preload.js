@@ -688,6 +688,8 @@ const assignPreloadInfoToVideosImagesMisc = (preloadInfo) => {
 
 const loadImage = (url) => new Promise((resolve, reject) => {
   const img = new Image();
+  // Setting onload and crossOrigin before src is required
+  // for the image to not "taint" the canvas on Safari
   img.onload = () => {
     resolve(img);
   };
@@ -720,6 +722,8 @@ const createImageVideoEls = () => new Promise((resolve, reject) => {
     videoEl.setAttribute('playsinline', 'playsinline');
     videoEl.setAttribute('preload', 'auto');
     videoEl.className = 'hiddenVideo';
+    // Additional redundant Safari anti-"taint" method
+    // required for videos - I understand this one even less
     videoEl.src = '';
     videoEl.removeAttribute('src');
     for (let j = 0; j < sources.length; j++) {

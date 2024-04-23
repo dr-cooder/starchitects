@@ -2,7 +2,12 @@ const React = require('react');
 const { Component } = require('react');
 const PropTypes = require('prop-types');
 const {
-  Inert, ScalingSection, ScalingSectionRelative, StarCanvas,
+  AnimationButtonCooldown,
+  AnimationButtonIcon,
+  Inert,
+  ScalingSection,
+  ScalingSectionRelative,
+  StarCanvas,
 } = require('../components');
 const { unitsHorizontalInner, unitsVerticalInner } = require('../measurements.js');
 const { setTimeoutBetter } = require('../../common/helpers.js');
@@ -68,6 +73,7 @@ class BornStarScreen extends Component {
       }), bornStarCanvasAnimationDuration);
       this.setState({ controlsReadyTimeoutNotSet: false });
     }
+    const animationButtonClassName = animationInProgress ? 'animationButtonDisabled' : 'animationButtonEnabled';
     return (
       <>
         <ScalingSection
@@ -95,13 +101,12 @@ class BornStarScreen extends Component {
               widthUnits={buttonWidth}
               heightUnits={buttonHeight}
             >
-              <button
-                className='outlined'
-                onClick={onSparkle}
-                disabled={animationInProgress}
+              <div
+                className={animationButtonClassName}
+                onClick={animationInProgress ? undefined : onSparkle}
               >
-                Sparkle
-              </button>
+                <AnimationButtonIcon index={0}/>
+              </div>
             </ScalingSectionRelative>
             <ScalingSectionRelative
               leftUnits={buttonRightLeft}
@@ -109,13 +114,12 @@ class BornStarScreen extends Component {
               widthUnits={buttonWidth}
               heightUnits={buttonHeight}
             >
-              <button
-                className='outlined'
-                onClick={onTwirl}
-                disabled={animationInProgress}
+              <div
+                className={animationButtonClassName}
+                onClick={animationInProgress ? undefined : onTwirl}
               >
-                Twirl
-              </button>
+                <AnimationButtonIcon index={1}/>
+              </div>
             </ScalingSectionRelative>
             <ScalingSectionRelative
               leftUnits={buttonMiddleLeft}
@@ -123,13 +127,12 @@ class BornStarScreen extends Component {
               widthUnits={buttonWidth}
               heightUnits={buttonHeight}
             >
-              <button
-                className='outlined'
-                onClick={onSupernova}
-                disabled={animationInProgress}
+              <div
+                className={animationButtonClassName}
+                onClick={animationInProgress ? undefined : onSupernova}
               >
-                Supernova
-              </button>
+                <AnimationButtonIcon index={2}/>
+              </div>
             </ScalingSectionRelative>
           </Inert>
         </ScalingSection>

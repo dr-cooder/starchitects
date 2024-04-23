@@ -4,6 +4,13 @@ const {
   makeWsMsg,
   parseWsMsg,
 } = require('../common/webSocket.js');
+const {
+  starAnimationDurations: {
+    sparkle: sparkleAnimationDuration,
+    twirl: twirlAnimationDuration,
+    supernova: supernovaAnimationDuration,
+  },
+} = require('../common/starAnimations.js');
 const { starPrefix, starSuffix } = require('../common/starNames.js');
 const { randomInt, starIsBorn } = require('../common/helpers.js');
 const StarModel = require('./starModel.js');
@@ -38,13 +45,13 @@ const applyBornStarBehavior = (id) => {
     };
     switch (header) {
       case webAppToServerHeaders.animSparkle:
-        sendAnimMessage(serverToRoomHeaders.animSparkle, 1000);
+        sendAnimMessage(serverToRoomHeaders.animSparkle, sparkleAnimationDuration);
         break;
       case webAppToServerHeaders.animTwirl:
-        sendAnimMessage(serverToRoomHeaders.animTwirl, 2000);
+        sendAnimMessage(serverToRoomHeaders.animTwirl, twirlAnimationDuration);
         break;
       case webAppToServerHeaders.animSupernova:
-        sendAnimMessage(serverToRoomHeaders.animSupernova, 5000);
+        sendAnimMessage(serverToRoomHeaders.animSupernova, supernovaAnimationDuration);
         break;
       default:
         socket.send(makeWsMsg(wsHeaders.serverToWebApp.errorMsg, 'Unexpected star action header.'));

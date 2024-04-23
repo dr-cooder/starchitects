@@ -1,3 +1,5 @@
+module.exports.AnimationButtonCooldown = require('./AnimationButtonCooldown.jsx');
+module.exports.AnimationButtonIcon = require('./AnimationButtonIcon.jsx');
 module.exports.Background = require('./Background.jsx');
 module.exports.BackgroundImage = require('./BackgroundImage.jsx');
 module.exports.BackgroundVideo = require('./BackgroundVideo.jsx');

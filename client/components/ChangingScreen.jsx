@@ -11,13 +11,13 @@ class ChangingScreen extends Component {
     };
 
     this.changeScreen = (newScreen) => {
-      console.log('Changing screen...');
+      // console.log('Changing screen...');
       this.setState({ activeScreen: newScreen });
     };
   }
 
   render() {
-    console.log('Rendering ChangingScreen...');
+    // console.log('Rendering ChangingScreen...');
     return this.state.activeScreen;
   }
 }

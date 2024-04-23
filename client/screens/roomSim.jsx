@@ -9,6 +9,13 @@ const PropTypes = require('prop-types');
 const { webSocketURL } = require('../clientWebSocket.js');
 const { wsHeaders, makeWsMsg, parseWsMsg } = require('../../common/webSocket.js');
 const { ScalingSection } = require('../components');
+const {
+  starAnimationDurations: {
+    sparkle: sparkleAnimationDuration,
+    twirl: twirlAnimationDuration,
+    supernova: supernovaAnimationDuration,
+  },
+} = require('../../common/starAnimations.js');
 const { setTimeoutBetter } = require('../../common/helpers.js');
 
 // This Star class would be somewhat analogous to the Star blueprint
@@ -35,9 +42,9 @@ class Star extends Component {
       }
     };
 
-    this.sparkle = playAnimation('Sparkling', 1000);
-    this.twirl = playAnimation('Twirling', 2000);
-    this.supernova = playAnimation('Going Supernova!', 5000);
+    this.sparkle = playAnimation('Sparkling', sparkleAnimationDuration);
+    this.twirl = playAnimation('Twirling', twirlAnimationDuration);
+    this.supernova = playAnimation('Going Supernova!', supernovaAnimationDuration);
 
     if (animateAppearing) {
       playAnimation('Appearing', 2000)();

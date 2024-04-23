@@ -112,9 +112,9 @@ const setDustRGB = (rgb) => {
 };
 
 const setDustType = (dustType) => {
-  console.log(`Setting dust type to ${dustType}. Drawing failsafe still image...`);
+  // console.log(`Setting dust type to ${dustType}. Drawing failsafe still image...`);
   videoCtx.drawImage(imageEls[dustType], 0, 0);
-  console.log('Succeeded!');
+  // console.log('Succeeded!');
   currentVideoEl = videoEls[dustType];
   clearInterval(tryCompositeNextVideoFrameInterval);
   tryCompositeNextVideoFrameInterval = (
@@ -135,16 +135,16 @@ const applyStarData = (starData) => {
       el: getEl(dustTypeVideos[i]),
       className: 'hiddenVideo',
     });
-    console.log(`Initial draw of video ${i}...`);
+    // console.log(`Initial draw of video ${i}...`);
     videoCtx.drawImage(videoEl, 0, 0); // Avoid "skip" I noticed on Firefox
-    console.log('Succeeded!');
+    // console.log('Succeeded!');
     videoEls[i] = videoEl;
   }
   videoCtx.clearRect(0, 0, vidWidth, vidHeight);
   // document.body.appendChild(starVideoEl);
   setStarRgbWithoutComposite(colorShadeToRGB(starColor, starShade));
   setDustRgbWithoutComposite(colorShadeToRGB(dustColor, dustShade));
-  getImageDataTestsPending = 3;
+  // getImageDataTestsPending = 3;
   setDustType(dustType);
 };
 

@@ -322,6 +322,18 @@ button, .outlined {
   height: inherit;
 }
 
+.animationButtonEnabled, .animationButtonDisabled {
+  fill: var(--color-bright);
+}
+
+.animationButtonEnabled {
+  cursor: pointer;
+}
+
+.animationButtonDisabled {
+  opacity: 0.25;
+}
+
 /* Some browsers may not be able to copy image data from a video if it isn't actively being rendered in the DOM */
 .hiddenVideo {
   position: fixed;
