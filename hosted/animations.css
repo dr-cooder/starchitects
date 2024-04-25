@@ -249,6 +249,28 @@
   animation-timing-function: cubic-bezier(0, 0, 0, 1);
 }
 
+.newStarButton {
+  animation-name: simpleFadeIn;
+  animation-duration: 0.5s;
+}
+
+.restartConfirmationIn {
+  animation-name: simpleFadeIn;
+  animation-duration: 0.5s;
+}
+
+.restartConfirmationOut {
+  animation-name: simpleFadeOut;
+  animation-duration: 0.5s;
+  opacity: 0;
+}
+
+.bornStarFadeOut {
+  animation-name: simpleFadeOut;
+  animation-duration: 0.5s;
+  opacity: 0;
+}
+
 @keyframes simpleFadeIn {
   from {opacity: 0;}
 }

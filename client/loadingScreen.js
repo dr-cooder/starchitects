@@ -34,12 +34,13 @@ const loadingProgressHeightUnits = unitsVerticalInnerHalf - loadingStarHeightHal
 let loadingStar;
 let loadingStarCenter;
 const loadingStarRects = [];
-let loadingProgress;
+let loadingProgressOuter;
+let loadingProgressInner;
 let loadingStarPreviousHalfBrightRect = loadingStarInitialPreviousHalfBrightRect;
 let loadingStarLoadingAnimInterval;
 
 const resize = () => {
-  if (!loadingStar || !loadingProgress) {
+  if (!(loadingStar && loadingProgressOuter)) {
     window.removeEventListener('resize', resize);
   }
   const {
@@ -51,17 +52,17 @@ const resize = () => {
   );
   loadingStar.style.width = px(pixelsPerUnit * loadingStarWidth);
   loadingStar.style.height = px(pixelsPerUnit * loadingStarHeight);
-  loadingProgress.style.left = px(horizontalOffset);
-  loadingProgress.style.top = px(
+  loadingProgressOuter.style.left = px(horizontalOffset);
+  loadingProgressOuter.style.top = px(
     verticalOffset + verticalFreeSpace / 2 + pixelsPerUnit * loadingProgressTopUnits,
   );
-  loadingProgress.style.width = px(pixelsPerUnit * unitsHorizontalInner);
-  loadingProgress.style.height = px(pixelsPerUnit * loadingProgressHeightUnits);
-  loadingProgress.style.fontSize = px(pixelsPerUnit * unitsPerEm);
+  loadingProgressOuter.style.width = px(pixelsPerUnit * unitsHorizontalInner);
+  loadingProgressOuter.style.height = px(pixelsPerUnit * loadingProgressHeightUnits);
+  loadingProgressOuter.style.fontSize = px(pixelsPerUnit * unitsPerEm);
 };
 
 const updateProgress = (message) => {
-  if (message != null) loadingProgress.innerText = message;
+  if (message != null) loadingProgressInner.innerText = message;
 };
 
 const setSvgElementOpacity = (element, opacity) => {
@@ -109,37 +110,47 @@ const darkenLoadingStar = () => {
   setAllLoadingStarRectsOpacity(loadingStarDark);
 };
 
+const isBrowserTooOld = () => {
+  const testElement = document.createElement('canvas');
+  return !(testElement.inert !== undefined && testElement.getContext && testElement.getContext('2d'));
+};
+
+// TODO: https://www.androidpolice.com/vivaldis-latest-update-blocks-pesky-auto-playing-videos/
+// This is a problem for video backgrounds and may not be easy to check -
+// instead, check if the video is running after a second or so?
+const isVivaldiVideoAutoplayBlocked = () => false;
+
 window.onload = () => {
   loadingStar = document.querySelector('#loadingStar');
   loadingStarCenter = loadingStar.querySelector('#center');
   for (let i = 0; i < loadingStarRectCount; i++) {
     loadingStarRects[i] = loadingStar.querySelector(`#rect${i}`);
   }
-  loadingProgress = document.querySelector('#loadingProgress');
+  loadingProgressOuter = document.querySelector('#loadingProgressOuter');
+  loadingProgressInner = document.querySelector('#loadingProgressInner');
   window.addEventListener('resize', resize);
   resize();
-  let loadNotFailedYet = true;
-  playLoadingStarLoadingAnim();
-  preload((progress) => {
-    if (loadNotFailedYet && progress != null) updateProgress(percent(progress, true));
-  }).then((preloadInfo) => {
-    brightenLoadingStar();
-    updateProgress(percent(100));
-    preloadInfoToDoc(preloadInfo);
-    assignPreloadInfoToFontsStylesScripts(preloadInfo);
-    fontsStylesScriptsToHead();
-  }).catch((errorMsg) => {
-    loadNotFailedYet = false;
+  if (isBrowserTooOld()) {
     darkenLoadingStar();
-    updateProgress(errorMsg ?? 'Failed to load');
-  });
+    updateProgress('Please update your web browser!');
+  } else if (isVivaldiVideoAutoplayBlocked()) {
+    darkenLoadingStar();
+    updateProgress('Please enable video autoplay in Vivaldi\'s settings! ("V" logo in corner > Settings > WEB PAGES: Site Settings > Content: Autoplay Videos)');
+  } else {
+    let loadNotFailedYet = true;
+    playLoadingStarLoadingAnim();
+    preload((progress) => {
+      if (loadNotFailedYet && progress != null) updateProgress(percent(progress, true));
+    }).then((preloadInfo) => {
+      brightenLoadingStar();
+      updateProgress(percent(100));
+      preloadInfoToDoc(preloadInfo);
+      assignPreloadInfoToFontsStylesScripts(preloadInfo);
+      fontsStylesScriptsToHead();
+    }).catch((errorMsg) => {
+      loadNotFailedYet = false;
+      darkenLoadingStar();
+      updateProgress(errorMsg ?? 'Failed to load');
+    });
+  }
 };
-
-// TODO: Ensure browser has support for the following:
-// - Inert (most browsers from before mid-2022: https://caniuse.com/?search=inert)
-// - Canvas
-//   - Refuse to start - "Please try a more powerful web browser!"
-// - Video autoplay (Vivaldi Android: https://www.androidpolice.com/vivaldis-latest-update-blocks-pesky-auto-playing-videos/)
-//   - This is a problem for video backgrounds and may not be easy to check - instead,
-//     check if the video is running after a second or so, and if not,
-//     manually call onEnd after a timeout

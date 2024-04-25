@@ -70,9 +70,11 @@ const tryCompositeNextVideoFrame = () => {
 
   const testingGetImageData = getImageDataTestsPending > 0;
   getImageDataTestsPending--;
-  if (testingGetImageData) {
-    console.log(`Attempting to getImageData... (${getImageDataTestsPending} test${getImageDataTestsPending === 1 ? '' : 's'} remaining)`);
-  }
+  // if (testingGetImageData) {
+  //   console.log(`Attempting to getImageData... (${getImageDataTestsPending} test${
+  //     getImageDataTestsPending === 1 ? '' : 's'
+  //   } remaining)`);
+  // }
   Object.assign(compositeParams, {
     basisBytes: videoCtx.getImageData(...basisBounds).data,
     starDiffBytes: videoCtx.getImageData(...starDiffBounds).data,
@@ -123,7 +125,7 @@ const setDustType = (dustType) => {
 };
 
 const applyStarData = (starData) => {
-  console.log(`Applying star data: ${starData}`);
+  // console.log(`Applying star data: ${starData}`);
   const {
     shape, starColor, starShade, dustColor, dustShade, dustType,
   } = starData;

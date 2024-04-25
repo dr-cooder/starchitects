@@ -121,12 +121,12 @@ button.pressed, button:active {
   color: var(--color-midnight);
 }
 
-.backgroundDark, .backgroundContainer, .foreground, .scalingSection, .loadingStar, .loadingProgress {
+.backgroundDark, .backgroundContainer, .foreground, .scalingSection, .loadingStar, .loadingProgress, .restartConfirmation {
   /* object-fit: cover; */
   position: absolute;
 }
 
-.backgroundDark, .foreground {
+.backgroundDark, .foreground, .restartConfirmation {
   width: 100%;
   height: 100%;
   left: 0;
@@ -332,6 +332,29 @@ button, .outlined {
 
 .animationButtonDisabled {
   opacity: 0.25;
+}
+
+.newStarButton {
+  cursor: pointer;
+}
+
+.restartConfirmation {
+  background-color: rgba(0, 0, 0, 0.75);
+}
+
+.restartConfirmationFrame {
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0.25em;
+  outline: var(--color-bright) solid 0.125em !important;
+  outline-offset: -0.125em;
+  background-color: var(--color-midnight);
+}
+
+.wouldYouLikeToMakeANewStar {
+  font-weight: 700;
+  margin-bottom: 0.25em;
 }
 
 /* Some browsers may not be able to copy image data from a video if it isn't actively being rendered in the DOM */

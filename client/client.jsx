@@ -6,7 +6,7 @@ const screens = require('./screens');
 const {
   preloadInfoFromDoc, assignPreloadInfoToVideosImagesMisc, createImageVideoEls, misc,
 } = require('./preload.js');
-const { getStarId, setStarId /* , unsetStarId */ } = require('./localStorage.js');
+const { getStarId, setStarId, unsetStarId } = require('./localStorage.js');
 const compositeWorkerManager = require('./compositeWorkerManager.js');
 const webSocket = require('./clientWebSocket.js');
 const { wsHeaders, makeWsMsg } = require('../common/webSocket.js');
@@ -155,6 +155,11 @@ createImageVideoEls().then(() => {
         onSupernova={() => {
           webSocket.send(makeWsMsg(wsHeaders.webAppToServer.animSupernova));
         }}
+        onConfirmRestart={() => {
+          // webSocket.send(makeWsMsg(wsHeaders.webAppToServer.kill));
+          unsetStarId();
+          setAppState.title();
+        }}
       />);
     },
     error: (message) => {
@@ -185,7 +190,7 @@ createImageVideoEls().then(() => {
   createRoot(document.querySelector('#root')).render(<App />);
   setTimeoutBetter(() => {
     document.querySelector('#loadingStar').remove();
-    document.querySelector('#loadingProgress').remove();
+    document.querySelector('#loadingProgressOuter').remove();
     setAppState.title();
     // setAppState.personalityQuiz();
   }, appFadeInDuration);

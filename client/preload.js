@@ -598,6 +598,9 @@ const misc = {
   shuffleButton: {
     url: '/images/shuffle-button.svg',
   },
+  addButton: {
+    url: '/images/add-button.svg',
+  },
 };
 
 const getURL = (item) => item.url;
