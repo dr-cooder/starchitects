@@ -15,7 +15,7 @@ const { colorShadeToRGB, setIntervalWithInitialCall } = require('../common/helpe
 const {
   misc: { compositeWorker: compositeWorkerSrc }, prepareVideo, removeAndRewindVideo, getEl, getBlob,
 } = require('./preload.js');
-const { starchetypes } = require('./starchetypes.js');
+const { noDustIndex, starchetypes } = require('./starchetypes.js');
 
 const compositeWorkerStates = {
   idle: 0,
@@ -124,7 +124,7 @@ const setDustType = (dustType) => {
   );
 };
 
-const applyStarData = (starData) => {
+const applyStarData = (starData, noDust = false) => {
   // console.log(`Applying star data: ${starData}`);
   const {
     shape, starColor, starShade, dustColor, dustShade, dustType,
@@ -147,7 +147,7 @@ const applyStarData = (starData) => {
   setStarRgbWithoutComposite(colorShadeToRGB(starColor, starShade));
   setDustRgbWithoutComposite(colorShadeToRGB(dustColor, dustShade));
   // getImageDataTestsPending = 3;
-  setDustType(dustType);
+  setDustType(noDust ? noDustIndex : dustType);
 };
 
 const init = () => {

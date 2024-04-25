@@ -3,6 +3,7 @@ const { Component, createRef } = require('react');
 const PropTypes = require('prop-types');
 const {
   Background,
+  DustButtonIcon,
   GalleryButton,
   GalleryItem,
   Inert,
@@ -21,7 +22,7 @@ const {
   unitsVerticalInnerHalf,
   unitsHorizontalOuterHalf,
 } = require('../measurements.js');
-const { starchetypes } = require('../starchetypes.js');
+const { noDustIndex, starchetypes } = require('../starchetypes.js');
 const {
   misc: {
     progressStar,
@@ -48,6 +49,7 @@ const yourStarDescendsOuterHeight = 56;
 const revealOuterHeight = 96;
 const buttonHeight = 40;
 const buttonSpacing = 24;
+const buttonSpacingVertical = 36;
 const whyDoYouResembleOuterHeight = 200;
 const customizationHeaderTop = 42;
 const customizationHeaderHeight = 30;
@@ -64,6 +66,12 @@ const revealOuterTop = starCanvasTop - revealOuterHeight;
 const buttonTop = unitsVerticalInner - buttonHeight;
 const buttonHalfWidth = (unitsHorizontalInner - buttonSpacing) / 2;
 const buttonHalfRightLeft = buttonHalfWidth + buttonSpacing;
+const buttonThirdWidth = (unitsHorizontalInner - 2 * buttonSpacing) / 3;
+const dustTypeButtonTop = (
+  unitsVerticalInner - buttonHeight - buttonSpacingVertical - buttonThirdWidth
+);
+const buttonThirdCenterLeft = buttonThirdWidth + buttonSpacing;
+const buttonThirdRightLeft = 2 * buttonThirdCenterLeft;
 const whyDoYouResembleOuterTop = buttonTop - whyDoYouResembleOuterHeight;
 const radialColorPickerTop = unitsVerticalInnerHalf - unitsHorizontalOuterHalf;
 const starNameNameTop = unitsVerticalInnerHalf + starNameNameTopFromCenter;
@@ -118,8 +126,24 @@ const starColorClassNames = {
   swipeYourStarUp: 'hiddenStill',
   witnessJoin: 'hiddenStill',
 };
-// const dustTypeClassNames = {};
-// const dustColorClassNames = {};
+const dustTypeClassNames = {
+  yourStarDescendsOuter: 'hiddenStill',
+  revealOuter: 'hiddenStill',
+  starCanvasTransition: 'unbornStarCanvasTransition unbornStarCanvasTransitionDustType',
+  progress: 'quizProgress quizProgressIn',
+  progressPercent: 'quizProgressPercent unbornProgressDustType',
+  swipeYourStarUp: 'hiddenStill',
+  witnessJoin: 'hiddenStill',
+};
+const dustColorClassNames = {
+  yourStarDescendsOuter: 'hiddenStill',
+  revealOuter: 'hiddenStill',
+  starCanvasTransition: 'unbornStarCanvasTransition unbornStarCanvasTransitionDustColor',
+  progress: 'quizProgress quizProgressIn',
+  progressPercent: 'quizProgressPercent unbornProgressDustColor',
+  swipeYourStarUp: 'hiddenStill',
+  witnessJoin: 'hiddenStill',
+};
 const nameClassNames = {
   yourStarDescendsOuter: 'hiddenStill',
   revealOuter: 'hiddenStill',
@@ -172,11 +196,48 @@ const witnessJoinClassNames = {
 const galleryClassNames = [
   whyDoYouResembleClassNames,
   starColorClassNames,
-  // dustTypeClassNames,
-  // dustColorClassNames,
+  dustTypeClassNames,
+  dustColorClassNames,
   nameClassNames,
   confirmationClassNames,
 ];
+
+const dustTypeButtonGenerator = (expectedDustType) => {
+  let leftUnits;
+  switch (expectedDustType) {
+    case 1:
+      leftUnits = buttonThirdCenterLeft;
+      break;
+    case 2:
+      leftUnits = buttonThirdRightLeft;
+      break;
+    default:
+  }
+  const DustTypeButton = ({ dustType, dustTypeSetter }) => (
+    <ScalingSection
+      topFreeSpace={0.5}
+      leftUnits={leftUnits}
+      topUnits={dustTypeButtonTop}
+      widthUnits={buttonThirdWidth}
+      heightUnits={buttonThirdWidth}
+    >
+      <button
+        className={`outlined dustTypeButton${expectedDustType === dustType ? ' pressed' : ''}`}
+        onClick={dustTypeSetter(expectedDustType)}
+      >
+        <DustButtonIcon index={expectedDustType}/>
+      </button>
+    </ScalingSection>
+  );
+  DustTypeButton.propTypes = {
+    dustType: PropTypes.number,
+    dustTypeSetter: PropTypes.func,
+  };
+  return DustTypeButton;
+};
+const DustTypeButton0 = dustTypeButtonGenerator(0);
+const DustTypeButton1 = dustTypeButtonGenerator(1);
+const DustTypeButton2 = dustTypeButtonGenerator(2);
 
 class UnbornStarScreen extends Component {
   constructor(props) {
@@ -267,8 +328,7 @@ class UnbornStarScreen extends Component {
     this.backgroundVideoEnded = () => {
       this.setState({ backgroundVideoPlaying: false });
     };
-    this.setDustType = (e) => {
-      const newDustType = e.target.value;
+    this.dustTypeSetter = (newDustType) => () => {
       compositeWorkerManager.setDustType(newDustType);
       this.setState({ dustType: newDustType });
     };
@@ -287,9 +347,9 @@ class UnbornStarScreen extends Component {
       state: {
         starColor,
         starShade,
-        // dustType,
-        // dustColor,
-        // dustShade,
+        dustType,
+        dustColor,
+        dustShade,
         name,
         waitingForNewName,
         classNames: {
@@ -322,9 +382,16 @@ class UnbornStarScreen extends Component {
       galleryPrev,
       galleryStoppedMoving,
       onStarColorUpdate,
+      onDustTypeUpdate,
+      onDustColorUpdate,
       onNewNameRequest,
       onSwipeStarUp,
       onWitnessJoinFinished,
+      initialStarColor,
+      initialStarShade,
+      initialDustColor,
+      initialDustShade,
+      dustTypeSetter,
     } = this;
     if (yourStarDescendsTimeoutNotSet) {
       setTimeoutBetter(playBackgroundVideo, yourStarDescendsAnimationDuration);
@@ -476,8 +543,8 @@ class UnbornStarScreen extends Component {
             <RadialColorPicker
               id='star'
               disabled={galleryMoving || currentGalleryIndex !== 1}
-              initialColorValue={this.initialStarColor}
-              initialShadeValue={this.initialStarShade}
+              initialColorValue={initialStarColor}
+              initialShadeValue={initialStarShade}
               onChange={({ rgb, color, shade }) => {
                 this.setState({
                   starColor: color,
@@ -495,6 +562,7 @@ class UnbornStarScreen extends Component {
             <GalleryButton
               onClick={() => {
                 onStarColorUpdate({ starColor, starShade });
+                compositeWorkerManager.setDustType(dustType);
                 galleryNext();
               }}
               expectedPreviousGalleryIndex={1}
@@ -508,6 +576,141 @@ class UnbornStarScreen extends Component {
         </GalleryItem>
         <GalleryItem
           itemIndex={2}
+          currentGalleryIndex={currentGalleryIndex}
+          previousGalleryIndex={previousGalleryIndex}
+          galleryIndexDelta={galleryIndexDelta}
+          onInAnimationFinished={galleryStoppedMoving}
+        >
+          <ScalingSection
+            topUnits={customizationHeaderTop}
+            heightUnits={customizationHeaderHeight}
+          >
+            <p className='header customizationHeader'>How does your star <span className='emphasized'>shine</span>?</p>
+          </ScalingSection>
+          <DustTypeButton0 dustType={dustType} dustTypeSetter={dustTypeSetter}/>
+          <DustTypeButton1 dustType={dustType} dustTypeSetter={dustTypeSetter}/>
+          <DustTypeButton2 dustType={dustType} dustTypeSetter={dustTypeSetter}/>
+          <ScalingSection
+            topFreeSpace={1}
+            topUnits={buttonTop}
+            widthUnits={buttonHalfWidth}
+            heightUnits={buttonHeight}
+          >
+            <GalleryButton
+              disabled={waitingForNewName}
+              onClick={() => {
+                onDustTypeUpdate(dustType);
+                compositeWorkerManager.setDustType(noDustIndex);
+                galleryPrev();
+              }}
+              expectedPreviousGalleryIndex={2}
+              expectedGalleryIndexDelta={-1}
+              previousGalleryIndex={previousGalleryIndex}
+              galleryIndexDelta={galleryIndexDelta}
+            >
+              Color
+            </GalleryButton>
+          </ScalingSection>
+          <ScalingSection
+            leftUnits={buttonHalfRightLeft}
+            topFreeSpace={1}
+            topUnits={buttonTop}
+            widthUnits={buttonHalfWidth}
+            heightUnits={buttonHeight}
+          >
+            <GalleryButton
+              disabled={waitingForNewName}
+              onClick={() => {
+                onDustTypeUpdate(dustType);
+                galleryNext();
+              }}
+              expectedPreviousGalleryIndex={2}
+              expectedGalleryIndexDelta={1}
+              previousGalleryIndex={previousGalleryIndex}
+              galleryIndexDelta={galleryIndexDelta}
+            >
+              Next
+            </GalleryButton>
+          </ScalingSection>
+        </GalleryItem>
+        <GalleryItem
+          itemIndex={3}
+          currentGalleryIndex={currentGalleryIndex}
+          previousGalleryIndex={previousGalleryIndex}
+          galleryIndexDelta={galleryIndexDelta}
+          onInAnimationFinished={galleryStoppedMoving}
+        >
+          <ScalingSection
+            topUnits={customizationHeaderTop}
+            heightUnits={customizationHeaderHeight}
+          >
+            <p className='header customizationHeader'>What <span className='emphasized'>color</span> is your shine?</p>
+          </ScalingSection>
+          <ScalingSection
+            leftUnits={-unitsPaddingHorizontal}
+            topUnits={radialColorPickerTop}
+            topFreeSpace={0.5}
+            widthUnits={unitsHorizontalOuter}
+            heightUnits={unitsHorizontalOuter}
+          >
+            <RadialColorPicker
+              id='dust'
+              disabled={galleryMoving || currentGalleryIndex !== 3}
+              initialColorValue={initialDustColor}
+              initialShadeValue={initialDustShade}
+              onChange={({ rgb, color, shade }) => {
+                this.setState({
+                  dustColor: color,
+                  dustShade: shade,
+                });
+                compositeWorkerManager.setDustRGB(rgb);
+              }}
+            />
+          </ScalingSection>
+          <ScalingSection
+            topFreeSpace={1}
+            topUnits={buttonTop}
+            widthUnits={buttonHalfWidth}
+            heightUnits={buttonHeight}
+          >
+            <GalleryButton
+              disabled={waitingForNewName}
+              onClick={() => {
+                onDustColorUpdate({ dustColor, dustShade });
+                galleryPrev();
+              }}
+              expectedPreviousGalleryIndex={3}
+              expectedGalleryIndexDelta={-1}
+              previousGalleryIndex={previousGalleryIndex}
+              galleryIndexDelta={galleryIndexDelta}
+            >
+              Type
+            </GalleryButton>
+          </ScalingSection>
+          <ScalingSection
+            leftUnits={buttonHalfRightLeft}
+            topFreeSpace={1}
+            topUnits={buttonTop}
+            widthUnits={buttonHalfWidth}
+            heightUnits={buttonHeight}
+          >
+            <GalleryButton
+              disabled={waitingForNewName}
+              onClick={() => {
+                onDustColorUpdate({ dustColor, dustShade });
+                galleryNext();
+              }}
+              expectedPreviousGalleryIndex={3}
+              expectedGalleryIndexDelta={1}
+              previousGalleryIndex={previousGalleryIndex}
+              galleryIndexDelta={galleryIndexDelta}
+            >
+              Next
+            </GalleryButton>
+          </ScalingSection>
+        </GalleryItem>
+        <GalleryItem
+          itemIndex={4}
           currentGalleryIndex={currentGalleryIndex}
           previousGalleryIndex={previousGalleryIndex}
           galleryIndexDelta={galleryIndexDelta}
@@ -550,12 +753,12 @@ class UnbornStarScreen extends Component {
             <GalleryButton
               disabled={waitingForNewName}
               onClick={galleryPrev}
-              expectedPreviousGalleryIndex={2}
+              expectedPreviousGalleryIndex={4}
               expectedGalleryIndexDelta={-1}
               previousGalleryIndex={previousGalleryIndex}
               galleryIndexDelta={galleryIndexDelta}
             >
-              Color
+              Shine
             </GalleryButton>
           </ScalingSection>
           <ScalingSection
@@ -568,7 +771,7 @@ class UnbornStarScreen extends Component {
             <GalleryButton
               disabled={waitingForNewName}
               onClick={galleryNext}
-              expectedPreviousGalleryIndex={2}
+              expectedPreviousGalleryIndex={4}
               expectedGalleryIndexDelta={1}
               previousGalleryIndex={previousGalleryIndex}
               galleryIndexDelta={galleryIndexDelta}
@@ -578,7 +781,7 @@ class UnbornStarScreen extends Component {
           </ScalingSection>
         </GalleryItem>
         <GalleryItem
-          itemIndex={3}
+          itemIndex={5}
           currentGalleryIndex={currentGalleryIndex}
           previousGalleryIndex={previousGalleryIndex}
           galleryIndexDelta={galleryIndexDelta}
@@ -609,7 +812,7 @@ class UnbornStarScreen extends Component {
             >
               <GalleryButton
                 onClick={galleryPrev}
-                expectedPreviousGalleryIndex={3}
+                expectedPreviousGalleryIndex={5}
                 expectedGalleryIndexDelta={-1}
                 previousGalleryIndex={previousGalleryIndex}
                 galleryIndexDelta={galleryIndexDelta}
@@ -631,7 +834,7 @@ class UnbornStarScreen extends Component {
                   }), unbornConfirmationOutAnimationDuration);
                   this.setState({ classNames: sendoffClassNames });
                 }}
-                expectedPreviousGalleryIndex={3}
+                expectedPreviousGalleryIndex={5}
                 expectedGalleryIndexDelta={1}
                 previousGalleryIndex={previousGalleryIndex}
                 galleryIndexDelta={galleryIndexDelta}

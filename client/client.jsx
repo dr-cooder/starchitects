@@ -21,7 +21,6 @@ createImageVideoEls().then(() => {
 
   // Set rejoin to truthy to affix stars to sessions/tabs rather than browsers via local storage
   // (optimal for debugging multiple client instances on one device)
-  // TODO: REJOIN SHOULD BE TRUE BY THE TIME OF PRESENTATION
   const rejoin = true;
   const screenRef = createRef();
 
@@ -48,7 +47,7 @@ createImageVideoEls().then(() => {
                 compositeWorkerManager.applyStarData(data);
                 setAppState.bornStar(data);
               } else {
-                compositeWorkerManager.applyStarData(data);
+                compositeWorkerManager.applyStarData(data, true);
                 setAppState.unbornStar(data);
               }
             } else {
@@ -84,7 +83,7 @@ createImageVideoEls().then(() => {
           webSocket.hangUp();
         } else if (header === wsHeaders.serverToWebApp.joinSuccess) {
           setStarId(data.id);
-          compositeWorkerManager.applyStarData(data);
+          compositeWorkerManager.applyStarData(data, true);
           setAppState.unbornStar(data);
         }
       });

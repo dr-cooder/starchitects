@@ -141,6 +141,14 @@
   transform: scale(0.65, 0.65) translate(0, 0);
 }
 
+.unbornStarCanvasTransitionDustType {
+  transform: scale(0.65, 0.65) translate(0, -5em);
+}
+
+.unbornStarCanvasTransitionDustColor {
+  transform: scale(0.65, 0.65) translate(0, 0);
+}
+
 .unbornStarCanvasTransitionName {
   transform: scale(0.65, 0.65) translate(0, 0);
 }
@@ -157,8 +165,16 @@
   width: 0%;
 }
 
-.unbornProgressName {
+.unbornProgressDustType {
+  width: 25%;
+}
+
+.unbornProgressDustColor {
   width: 50%;
+}
+
+.unbornProgressName {
+  width: 75%;
 }
 
 .unbornProgressConfirmation {

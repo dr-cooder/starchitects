@@ -1,58 +1,76 @@
 const { images, videos } = require('./preload.js');
 
 const {
+  thinker0: thinker0Img,
   thinker1: thinker1Img,
   thinker2: thinker2Img,
   thinker3: thinker3Img,
+  dreamer0: dreamer0Img,
   dreamer1: dreamer1Img,
   dreamer2: dreamer2Img,
   dreamer3: dreamer3Img,
+  producer0: producer0Img,
   producer1: producer1Img,
   producer2: producer2Img,
   producer3: producer3Img,
+  disciplined0: disciplined0Img,
   disciplined1: disciplined1Img,
   disciplined2: disciplined2Img,
   disciplined3: disciplined3Img,
+  innovator0: innovator0Img,
   innovator1: innovator1Img,
   innovator2: innovator2Img,
   innovator3: innovator3Img,
+  visionary0: visionary0Img,
   visionary1: visionary1Img,
   visionary2: visionary2Img,
   visionary3: visionary3Img,
+  independent0: independent0Img,
   independent1: independent1Img,
   independent2: independent2Img,
   independent3: independent3Img,
+  listener0: listener0Img,
   listener1: listener1Img,
   listener2: listener2Img,
   listener3: listener3Img,
 } = images;
 
 const {
+  thinker0: thinker0Vid,
   thinker1: thinker1Vid,
   thinker2: thinker2Vid,
   thinker3: thinker3Vid,
+  dreamer0: dreamer0Vid,
   dreamer1: dreamer1Vid,
   dreamer2: dreamer2Vid,
   dreamer3: dreamer3Vid,
+  producer0: producer0Vid,
   producer1: producer1Vid,
   producer2: producer2Vid,
   producer3: producer3Vid,
+  disciplined0: disciplined0Vid,
   disciplined1: disciplined1Vid,
   disciplined2: disciplined2Vid,
   disciplined3: disciplined3Vid,
+  innovator0: innovator0Vid,
   innovator1: innovator1Vid,
   innovator2: innovator2Vid,
   innovator3: innovator3Vid,
+  visionary0: visionary0Vid,
   visionary1: visionary1Vid,
   visionary2: visionary2Vid,
   visionary3: visionary3Vid,
+  independent0: independent0Vid,
   independent1: independent1Vid,
   independent2: independent2Vid,
   independent3: independent3Vid,
+  listener0: listener0Vid,
   listener1: listener1Vid,
   listener2: listener2Vid,
   listener3: listener3Vid,
 } = videos;
+
+const noDustIndex = 3;
 
 const starchetypes = [
   {
@@ -63,11 +81,13 @@ const starchetypes = [
       thinker1Img,
       thinker2Img,
       thinker3Img,
+      thinker0Img,
     ],
     dustTypeVideos: [
       thinker1Vid,
       thinker2Vid,
       thinker3Vid,
+      thinker0Vid,
     ],
   },
   {
@@ -78,11 +98,13 @@ const starchetypes = [
       dreamer1Img,
       dreamer2Img,
       dreamer3Img,
+      dreamer0Img,
     ],
     dustTypeVideos: [
       dreamer1Vid,
       dreamer2Vid,
       dreamer3Vid,
+      dreamer0Vid,
     ],
   },
   {
@@ -93,11 +115,13 @@ const starchetypes = [
       producer1Img,
       producer2Img,
       producer3Img,
+      producer0Img,
     ],
     dustTypeVideos: [
       producer1Vid,
       producer2Vid,
       producer3Vid,
+      producer0Vid,
     ],
   },
   {
@@ -108,11 +132,13 @@ const starchetypes = [
       disciplined1Img,
       disciplined2Img,
       disciplined3Img,
+      disciplined0Img,
     ],
     dustTypeVideos: [
       disciplined1Vid,
       disciplined2Vid,
       disciplined3Vid,
+      disciplined0Vid,
     ],
   },
   {
@@ -123,11 +149,13 @@ const starchetypes = [
       innovator1Img,
       innovator2Img,
       innovator3Img,
+      innovator0Img,
     ],
     dustTypeVideos: [
       innovator1Vid,
       innovator2Vid,
       innovator3Vid,
+      innovator0Vid,
     ],
   },
   {
@@ -138,11 +166,13 @@ const starchetypes = [
       visionary1Img,
       visionary2Img,
       visionary3Img,
+      visionary0Img,
     ],
     dustTypeVideos: [
       visionary1Vid,
       visionary2Vid,
       visionary3Vid,
+      visionary0Vid,
     ],
   },
   {
@@ -153,11 +183,13 @@ const starchetypes = [
       independent1Img,
       independent2Img,
       independent3Img,
+      independent0Img,
     ],
     dustTypeVideos: [
       independent1Vid,
       independent2Vid,
       independent3Vid,
+      independent0Vid,
     ],
   },
   {
@@ -168,13 +200,15 @@ const starchetypes = [
       listener1Img,
       listener2Img,
       listener3Img,
+      listener0Img,
     ],
     dustTypeVideos: [
       listener1Vid,
       listener2Vid,
       listener3Vid,
+      listener0Vid,
     ],
   },
 ];
 
-module.exports = { starchetypes };
+module.exports = { noDustIndex, starchetypes };

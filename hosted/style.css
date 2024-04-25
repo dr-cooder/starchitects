@@ -90,6 +90,7 @@ button {
   border: none;
   background-color: var(--color-midnight);
   color: var(--color-bright);
+  fill: var(--color-bright);
 }
 
 button.quizButton1, button.quizButton2 {
@@ -112,6 +113,14 @@ button.quizButton2.pressed, button.quizButton2:active {
   background-color: var(--color-radiance);
 }
 
+button.dustTypeButton {
+  padding: 0.9375em;
+}
+
+button.dustTypeButton.pressed, button.dustTypeButton:active {
+  background: linear-gradient(to right, #F60, #FFBE00);
+}
+
 button:disabled {
   opacity: 0.25;
 }
@@ -119,6 +128,7 @@ button:disabled {
 button.pressed, button:active {
   background-color: var(--color-bright);
   color: var(--color-midnight);
+  fill: var(--color-midnight);
 }
 
 .backgroundDark, .backgroundContainer, .foreground, .scalingSection, .loadingStar, .loadingProgress, .restartConfirmation {

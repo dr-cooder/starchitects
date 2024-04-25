@@ -45,6 +45,9 @@ const scripts = [
 
 // TODO: Geode/Innovator renders, alongside dust variations for all
 const images = {
+  thinker0: {
+    urlRel: 'composite/chess/0.jpg',
+  },
   thinker1: {
     urlRel: 'composite/chess/0.jpg',
   },
@@ -53,6 +56,9 @@ const images = {
   },
   thinker3: {
     urlRel: 'composite/chess/0.jpg',
+  },
+  dreamer0: {
+    urlRel: 'composite/balloon/0.jpg',
   },
   dreamer1: {
     urlRel: 'composite/balloon/0.jpg',
@@ -63,6 +69,9 @@ const images = {
   dreamer3: {
     urlRel: 'composite/balloon/0.jpg',
   },
+  producer0: {
+    urlRel: 'composite/appliance/0.jpg',
+  },
   producer1: {
     urlRel: 'composite/appliance/0.jpg',
   },
@@ -71,6 +80,9 @@ const images = {
   },
   producer3: {
     urlRel: 'composite/appliance/0.jpg',
+  },
+  disciplined0: {
+    urlRel: 'composite/bonsai/0.jpg',
   },
   disciplined1: {
     urlRel: 'composite/bonsai/0.jpg',
@@ -81,6 +93,9 @@ const images = {
   disciplined3: {
     urlRel: 'composite/bonsai/0.jpg',
   },
+  innovator0: {
+    urlRel: 'composite/appliance/0.jpg',
+  },
   innovator1: {
     urlRel: 'composite/appliance/0.jpg',
   },
@@ -89,6 +104,9 @@ const images = {
   },
   innovator3: {
     urlRel: 'composite/appliance/0.jpg',
+  },
+  visionary0: {
+    urlRel: 'composite/duck/0.jpg',
   },
   visionary1: {
     urlRel: 'composite/duck/0.jpg',
@@ -99,6 +117,9 @@ const images = {
   visionary3: {
     urlRel: 'composite/duck/0.jpg',
   },
+  independent0: {
+    urlRel: 'composite/plane/0.jpg',
+  },
   independent1: {
     urlRel: 'composite/plane/0.jpg',
   },
@@ -107,6 +128,9 @@ const images = {
   },
   independent3: {
     urlRel: 'composite/plane/0.jpg',
+  },
+  listener0: {
+    urlRel: 'composite/radio/0.jpg',
   },
   listener1: {
     urlRel: 'composite/radio/0.jpg',
@@ -122,6 +146,18 @@ const images = {
 // Ask server for prefix to video URL's - server should return cloud URL if on Heroku
 // and gitignored local video folder otherwise
 const videos = {
+  thinker0: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/chess/0.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/chess/0.mp4',
+      },
+    ],
+  },
   thinker1: {
     sources: [
       {
@@ -155,6 +191,18 @@ const videos = {
       {
         type: 'video/mp4',
         urlRel: 'composite/chess/0.mp4',
+      },
+    ],
+  },
+  dreamer0: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/balloon/0.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/balloon/0.mp4',
       },
     ],
   },
@@ -194,6 +242,18 @@ const videos = {
       },
     ],
   },
+  producer0: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/appliance/0.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/appliance/0.mp4',
+      },
+    ],
+  },
   producer1: {
     sources: [
       {
@@ -227,6 +287,18 @@ const videos = {
       {
         type: 'video/mp4',
         urlRel: 'composite/appliance/0.mp4',
+      },
+    ],
+  },
+  disciplined0: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/bonsai/0.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/bonsai/0.mp4',
       },
     ],
   },
@@ -266,6 +338,18 @@ const videos = {
       },
     ],
   },
+  innovator0: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/appliance/0.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/appliance/0.mp4',
+      },
+    ],
+  },
   innovator1: {
     sources: [
       {
@@ -299,6 +383,18 @@ const videos = {
       {
         type: 'video/mp4',
         urlRel: 'composite/appliance/0.mp4',
+      },
+    ],
+  },
+  visionary0: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/duck/0.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/duck/0.mp4',
       },
     ],
   },
@@ -338,6 +434,18 @@ const videos = {
       },
     ],
   },
+  independent0: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/plane/0.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/plane/0.mp4',
+      },
+    ],
+  },
   independent1: {
     sources: [
       {
@@ -371,6 +479,18 @@ const videos = {
       {
         type: 'video/mp4',
         urlRel: 'composite/plane/0.mp4',
+      },
+    ],
+  },
+  listener0: {
+    sources: [
+      {
+        type: 'video/webm',
+        urlRel: 'composite/radio/0.webm',
+      },
+      {
+        type: 'video/mp4',
+        urlRel: 'composite/radio/0.mp4',
       },
     ],
   },

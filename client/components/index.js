@@ -5,6 +5,7 @@ module.exports.BackgroundImage = require('./BackgroundImage.jsx');
 module.exports.BackgroundVideo = require('./BackgroundVideo.jsx');
 module.exports.ChangingScreen = require('./ChangingScreen.jsx');
 module.exports.ChangingVideo = require('./ChangingVideo.jsx');
+module.exports.DustButtonIcon = require('./DustButtonIcon.jsx');
 module.exports.GalleryItem = require('./GalleryItem.jsx');
 module.exports.GalleryButton = require('./GalleryButton.jsx');
 module.exports.Inert = require('./Inert.jsx');
