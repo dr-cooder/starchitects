@@ -36,6 +36,8 @@ const px = (pixels) => `${pixels}px`;
 
 const blurPx = (radiusPixels) => `blur(${px(radiusPixels)})`;
 
+const seconds = (miliseconds) => `${miliseconds / 1000}s`;
+
 const percent = (numberOutOfHundred, floor = false) => `${floor ? parseInt(numberOutOfHundred, 10) : parseFloat(numberOutOfHundred)}%`;
 
 const randomInt = (maxExclusive) => Math.floor(Math.random() * maxExclusive);
@@ -143,6 +145,7 @@ module.exports = {
   Queue,
   px,
   blurPx,
+  seconds,
   percent,
   randomInt,
   ensureNumber,

@@ -43,7 +43,6 @@ const scripts = [
   },
 ];
 
-// TODO: Geode/Innovator renders, alongside dust variations for all
 const images = {
   thinker0: {
     urlRel: 'composite/chess/0.jpg',

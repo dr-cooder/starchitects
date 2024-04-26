@@ -265,6 +265,11 @@
   animation-timing-function: cubic-bezier(0, 0, 0, 1);
 }
 
+.animationButtonPressed .animationButtonCooldown {
+  animation-name: animationButtonCooldown;
+  animation-timing-function: linear;
+}
+
 .newStarButton {
   animation-name: simpleFadeIn;
   animation-duration: 0.5s;
@@ -656,5 +661,15 @@
 
   to {
     transform: none;
+  }
+}
+
+@keyframes animationButtonCooldown {
+  from {
+    stroke-dashoffset: 232.05897734516606;
+  }
+
+  to {
+    stroke-dashoffset: 0;
   }
 }

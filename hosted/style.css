@@ -337,15 +337,28 @@ button, .outlined {
   height: inherit;
 }
 
-.animationButtonEnabled, .animationButtonDisabled {
+.animationButtonEnabled, .animationButtonDisabled, .animationButtonPressed {
   fill: var(--color-bright);
+  stroke: var(--color-bright);
+  stroke-width: 0;
+}
+
+.animationButtonCooldown {
+  stroke: var(--color-bright);
+  stroke-dasharray: 232.05897734516606;
+  stroke-dashoffset: 0;
+  visibility: hidden;
 }
 
 .animationButtonEnabled {
   cursor: pointer;
 }
 
-.animationButtonDisabled {
+.animationButtonPressed .animationButtonCooldown {
+  visibility: visible;
+}
+
+.animationButtonDisabled .animationButtonMain, .animationButtonPressed .animationButtonMain {
   opacity: 0.25;
 }
 

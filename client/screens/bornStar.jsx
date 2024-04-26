@@ -2,7 +2,6 @@ const React = require('react');
 const { Component } = require('react');
 const PropTypes = require('prop-types');
 const {
-  AnimationButtonCooldown,
   AnimationButtonIcon,
   Inert,
   ScalingSection,
@@ -64,6 +63,19 @@ const fadingOutToRestartClassNames = {
   outer: 'bornStarFadeOut',
 };
 
+const animationButtonClassNameGenerator = (expectedAnimationId) => ({
+  animationInProgress, currentAnimationId,
+}) => {
+  let animationButtonClassName = 'animationButtonEnabled';
+  if (animationInProgress) {
+    animationButtonClassName = currentAnimationId === expectedAnimationId ? 'animationButtonPressed' : 'animationButtonDisabled';
+  }
+  return animationButtonClassName;
+};
+const sparkleButtonClassName = animationButtonClassNameGenerator(0);
+const twirlButtonClassName = animationButtonClassNameGenerator(1);
+const supernovaButtonClassName = animationButtonClassNameGenerator(2);
+
 class BornStarScreen extends Component {
   constructor(props) {
     super(props);
@@ -76,23 +88,23 @@ class BornStarScreen extends Component {
     } = props;
 
     this.state = {
-      animationInProgress: false,
+      currentAnimationId: null,
       controlsNotReady: true,
       controlsReadyTimeoutNotSet: true,
       classNames: restartInactiveClassNames,
     };
 
-    const startAnimation = (callback) => () => {
-      this.setState({ animationInProgress: true });
+    const startAnimation = ({ callback, animationId }) => () => {
+      this.setState({ currentAnimationId: animationId });
       callback();
     };
 
     this.name = name;
-    this.onSparkle = startAnimation(onSparkle);
-    this.onTwirl = startAnimation(onTwirl);
-    this.onSupernova = startAnimation(onSupernova);
+    this.onSparkle = startAnimation({ callback: onSparkle, animationId: 0 });
+    this.onTwirl = startAnimation({ callback: onTwirl, animationId: 1 });
+    this.onSupernova = startAnimation({ callback: onSupernova, animationId: 2 });
     this.animationFinished = () => {
-      this.setState({ animationInProgress: false });
+      this.setState({ currentAnimationId: null });
     };
 
     const restartConfirmationActiveSetter = (active) => () => {
@@ -120,7 +132,7 @@ class BornStarScreen extends Component {
     const {
       state: {
         controlsNotReady,
-        animationInProgress,
+        currentAnimationId,
         controlsReadyTimeoutNotSet,
         classNames: {
           restartConfirmation: restartConfirmationClassName,
@@ -141,7 +153,7 @@ class BornStarScreen extends Component {
       }), bornStarCanvasAnimationDuration);
       this.setState({ controlsReadyTimeoutNotSet: false });
     }
-    const animationButtonClassName = animationInProgress ? 'animationButtonDisabled' : 'animationButtonEnabled';
+    const animationInProgress = currentAnimationId != null;
     return (
       <div className={outerClassName}>
         <Inert inert={restartConfirmationClassName !== 'hiddenStill'}>
@@ -183,7 +195,7 @@ class BornStarScreen extends Component {
                   heightUnits={animationButtonHeight}
                 >
                   <div
-                    className={animationButtonClassName}
+                    className={sparkleButtonClassName({ animationInProgress, currentAnimationId })}
                     onClick={animationInProgress ? undefined : onSparkle}
                   >
                     <AnimationButtonIcon index={0}/>
@@ -196,7 +208,7 @@ class BornStarScreen extends Component {
                   heightUnits={animationButtonHeight}
                 >
                   <div
-                    className={animationButtonClassName}
+                    className={twirlButtonClassName({ animationInProgress, currentAnimationId })}
                     onClick={animationInProgress ? undefined : onTwirl}
                   >
                     <AnimationButtonIcon index={1}/>
@@ -209,7 +221,9 @@ class BornStarScreen extends Component {
                   heightUnits={animationButtonHeight}
                 >
                   <div
-                    className={animationButtonClassName}
+                    className={
+                      supernovaButtonClassName({ animationInProgress, currentAnimationId })
+                    }
                     onClick={animationInProgress ? undefined : onSupernova}
                   >
                     <AnimationButtonIcon index={2}/>

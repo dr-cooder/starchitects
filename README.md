@@ -18,6 +18,8 @@ Take a personality quiz to form your personalized star, then find it in the gala
 - https://www.geeksforgeeks.org/implementation-queue-javascript/
 - https://stackoverflow.com/questions/66952087/how-to-create-a-gradient-progress-bar-with-a-fixed-gradient
 - https://www.youtube.com/watch?v=dqTE2K-shts
+- https://stackoverflow.com/questions/22999829/disable-chrome-pinch-zoom-for-use-in-kiosk
+- https://glennmccomb.com/articles/building-a-pure-css-animated-svg-spinner/
 ### External Components
 - Bootstrap
 - React
