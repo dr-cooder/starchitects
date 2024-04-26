@@ -78,6 +78,7 @@ p {
 
 .bornStarName::after {
   font-size: 0.5em;
+  width: 100%;
 }
 
 .customizationHeader, .witnessJoin {
@@ -301,6 +302,10 @@ button, .outlined {
   font-weight: bold;
   margin-bottom: 0;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
 /* https://www.youtube.com/watch?v=dqTE2K-shts */
