@@ -49,97 +49,97 @@ const images = {
     urlRel: 'composite/chess/0.jpg',
   },
   thinker1: {
-    urlRel: 'composite/chess/0.jpg',
+    urlRel: 'composite/chess/1.jpg',
   },
   thinker2: {
-    urlRel: 'composite/chess/0.jpg',
+    urlRel: 'composite/chess/2.jpg',
   },
   thinker3: {
-    urlRel: 'composite/chess/0.jpg',
+    urlRel: 'composite/chess/3.jpg',
   },
   dreamer0: {
     urlRel: 'composite/balloon/0.jpg',
   },
   dreamer1: {
-    urlRel: 'composite/balloon/0.jpg',
+    urlRel: 'composite/balloon/1.jpg',
   },
   dreamer2: {
-    urlRel: 'composite/balloon/0.jpg',
+    urlRel: 'composite/balloon/2.jpg',
   },
   dreamer3: {
-    urlRel: 'composite/balloon/0.jpg',
+    urlRel: 'composite/balloon/3.jpg',
   },
   producer0: {
     urlRel: 'composite/appliance/0.jpg',
   },
   producer1: {
-    urlRel: 'composite/appliance/0.jpg',
+    urlRel: 'composite/appliance/1.jpg',
   },
   producer2: {
-    urlRel: 'composite/appliance/0.jpg',
+    urlRel: 'composite/appliance/2.jpg',
   },
   producer3: {
-    urlRel: 'composite/appliance/0.jpg',
+    urlRel: 'composite/appliance/3.jpg',
   },
   disciplined0: {
     urlRel: 'composite/bonsai/0.jpg',
   },
   disciplined1: {
-    urlRel: 'composite/bonsai/0.jpg',
+    urlRel: 'composite/bonsai/1.jpg',
   },
   disciplined2: {
-    urlRel: 'composite/bonsai/0.jpg',
+    urlRel: 'composite/bonsai/2.jpg',
   },
   disciplined3: {
-    urlRel: 'composite/bonsai/0.jpg',
+    urlRel: 'composite/bonsai/3.jpg',
   },
   innovator0: {
-    urlRel: 'composite/appliance/0.jpg',
+    urlRel: 'composite/geode/0.jpg',
   },
   innovator1: {
-    urlRel: 'composite/appliance/0.jpg',
+    urlRel: 'composite/geode/1.jpg',
   },
   innovator2: {
-    urlRel: 'composite/appliance/0.jpg',
+    urlRel: 'composite/geode/2.jpg',
   },
   innovator3: {
-    urlRel: 'composite/appliance/0.jpg',
+    urlRel: 'composite/geode/3.jpg',
   },
   visionary0: {
     urlRel: 'composite/duck/0.jpg',
   },
   visionary1: {
-    urlRel: 'composite/duck/0.jpg',
+    urlRel: 'composite/duck/1.jpg',
   },
   visionary2: {
-    urlRel: 'composite/duck/0.jpg',
+    urlRel: 'composite/duck/2.jpg',
   },
   visionary3: {
-    urlRel: 'composite/duck/0.jpg',
+    urlRel: 'composite/duck/3.jpg',
   },
   independent0: {
     urlRel: 'composite/plane/0.jpg',
   },
   independent1: {
-    urlRel: 'composite/plane/0.jpg',
+    urlRel: 'composite/plane/1.jpg',
   },
   independent2: {
-    urlRel: 'composite/plane/0.jpg',
+    urlRel: 'composite/plane/2.jpg',
   },
   independent3: {
-    urlRel: 'composite/plane/0.jpg',
+    urlRel: 'composite/plane/3.jpg',
   },
   listener0: {
     urlRel: 'composite/radio/0.jpg',
   },
   listener1: {
-    urlRel: 'composite/radio/0.jpg',
+    urlRel: 'composite/radio/1.jpg',
   },
   listener2: {
-    urlRel: 'composite/radio/0.jpg',
+    urlRel: 'composite/radio/2.jpg',
   },
   listener3: {
-    urlRel: 'composite/radio/0.jpg',
+    urlRel: 'composite/radio/3.jpg',
   },
 };
 
@@ -162,11 +162,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/chess/0.webm',
+        urlRel: 'composite/chess/1.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/chess/0.mp4',
+        urlRel: 'composite/chess/1.mp4',
       },
     ],
   },
@@ -174,11 +174,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/chess/0.webm',
+        urlRel: 'composite/chess/2.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/chess/0.mp4',
+        urlRel: 'composite/chess/2.mp4',
       },
     ],
   },
@@ -186,11 +186,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/chess/0.webm',
+        urlRel: 'composite/chess/3.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/chess/0.mp4',
+        urlRel: 'composite/chess/3.mp4',
       },
     ],
   },
@@ -210,11 +210,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/balloon/0.webm',
+        urlRel: 'composite/balloon/1.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/balloon/0.mp4',
+        urlRel: 'composite/balloon/1.mp4',
       },
     ],
   },
@@ -222,11 +222,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/balloon/0.webm',
+        urlRel: 'composite/balloon/2.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/balloon/0.mp4',
+        urlRel: 'composite/balloon/2.mp4',
       },
     ],
   },
@@ -234,11 +234,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/balloon/0.webm',
+        urlRel: 'composite/balloon/3.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/balloon/0.mp4',
+        urlRel: 'composite/balloon/3.mp4',
       },
     ],
   },
@@ -258,11 +258,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/appliance/0.webm',
+        urlRel: 'composite/appliance/1.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/appliance/0.mp4',
+        urlRel: 'composite/appliance/1.mp4',
       },
     ],
   },
@@ -270,11 +270,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/appliance/0.webm',
+        urlRel: 'composite/appliance/2.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/appliance/0.mp4',
+        urlRel: 'composite/appliance/2.mp4',
       },
     ],
   },
@@ -282,11 +282,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/appliance/0.webm',
+        urlRel: 'composite/appliance/3.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/appliance/0.mp4',
+        urlRel: 'composite/appliance/3.mp4',
       },
     ],
   },
@@ -306,11 +306,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/bonsai/0.webm',
+        urlRel: 'composite/bonsai/1.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/bonsai/0.mp4',
+        urlRel: 'composite/bonsai/1.mp4',
       },
     ],
   },
@@ -318,11 +318,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/bonsai/0.webm',
+        urlRel: 'composite/bonsai/2.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/bonsai/0.mp4',
+        urlRel: 'composite/bonsai/2.mp4',
       },
     ],
   },
@@ -330,11 +330,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/bonsai/0.webm',
+        urlRel: 'composite/bonsai/3.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/bonsai/0.mp4',
+        urlRel: 'composite/bonsai/3.mp4',
       },
     ],
   },
@@ -342,11 +342,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/appliance/0.webm',
+        urlRel: 'composite/geode/0.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/appliance/0.mp4',
+        urlRel: 'composite/geode/0.mp4',
       },
     ],
   },
@@ -354,11 +354,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/appliance/0.webm',
+        urlRel: 'composite/geode/1.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/appliance/0.mp4',
+        urlRel: 'composite/geode/1.mp4',
       },
     ],
   },
@@ -366,11 +366,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/appliance/0.webm',
+        urlRel: 'composite/geode/2.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/appliance/0.mp4',
+        urlRel: 'composite/geode/2.mp4',
       },
     ],
   },
@@ -378,11 +378,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/appliance/0.webm',
+        urlRel: 'composite/geode/3.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/appliance/0.mp4',
+        urlRel: 'composite/geode/3.mp4',
       },
     ],
   },
@@ -402,11 +402,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/duck/0.webm',
+        urlRel: 'composite/duck/1.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/duck/0.mp4',
+        urlRel: 'composite/duck/1.mp4',
       },
     ],
   },
@@ -414,11 +414,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/duck/0.webm',
+        urlRel: 'composite/duck/2.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/duck/0.mp4',
+        urlRel: 'composite/duck/2.mp4',
       },
     ],
   },
@@ -426,11 +426,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/duck/0.webm',
+        urlRel: 'composite/duck/3.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/duck/0.mp4',
+        urlRel: 'composite/duck/3.mp4',
       },
     ],
   },
@@ -450,11 +450,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/plane/0.webm',
+        urlRel: 'composite/plane/1.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/plane/0.mp4',
+        urlRel: 'composite/plane/1.mp4',
       },
     ],
   },
@@ -462,11 +462,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/plane/0.webm',
+        urlRel: 'composite/plane/2.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/plane/0.mp4',
+        urlRel: 'composite/plane/2.mp4',
       },
     ],
   },
@@ -474,11 +474,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/plane/0.webm',
+        urlRel: 'composite/plane/3.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/plane/0.mp4',
+        urlRel: 'composite/plane/3.mp4',
       },
     ],
   },
@@ -498,11 +498,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/radio/0.webm',
+        urlRel: 'composite/radio/1.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/radio/0.mp4',
+        urlRel: 'composite/radio/1.mp4',
       },
     ],
   },
@@ -510,11 +510,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/radio/0.webm',
+        urlRel: 'composite/radio/2.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/radio/0.mp4',
+        urlRel: 'composite/radio/2.mp4',
       },
     ],
   },
@@ -522,11 +522,11 @@ const videos = {
     sources: [
       {
         type: 'video/webm',
-        urlRel: 'composite/radio/0.webm',
+        urlRel: 'composite/radio/3.webm',
       },
       {
         type: 'video/mp4',
-        urlRel: 'composite/radio/0.mp4',
+        urlRel: 'composite/radio/3.mp4',
       },
     ],
   },

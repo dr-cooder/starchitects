@@ -157,6 +157,7 @@ createImageVideoEls().then(() => {
         onConfirmRestart={() => {
           // webSocket.send(makeWsMsg(wsHeaders.webAppToServer.kill));
           unsetStarId();
+          webSocket.hangUp();
           setAppState.title();
         }}
       />);
