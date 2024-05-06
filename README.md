@@ -1,6 +1,14 @@
 # Starchitects
 ## Idea
 Take a personality quiz to form your personalized star, then find it in the galaxy room.
+## How to run locally
+1. Make sure you have node, npm, and MongoDB installed
+2. Clone the repo
+3. Download videos folder from [here](https://drive.google.com/file/d/1vc0VHVhICcrn4tjdgCBeNB1r0HryFsr-/view?usp=sharing) and extract its contents into `hosted/videos/`
+4. Run `npm i`
+5. Make sure your local MongoDB server is running (stars will appear in the Starchitects database)
+6. Run `npm start`
+7. Open `localhost:3000` in your web browser
 ## External Code
 ### Help and Snippets
 - https://stackoverflow.com/questions/36212722/how-to-prevent-pull-down-to-refresh-of-mobile-chrome
@@ -25,8 +33,4 @@ Take a personality quiz to form your personalized star, then find it in the gala
 - React
 - Framer Motion
 ## To-Do
-- Room simulation
 - Make it possible for stars to be deleted
-- Quiz functionality
-- Database storage of stars
-- Visuals

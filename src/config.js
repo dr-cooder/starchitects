@@ -22,7 +22,7 @@ const connections = {
 };
 
 module.exports = {
-  connections: connections[NODE_ENV],
+  connections: connections[NODE_ENV ?? 'development'],
   useHelmet: NODE_ENV === 'production',
   secret: process.env.SECRET,
 };
